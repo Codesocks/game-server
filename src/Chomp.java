@@ -11,7 +11,13 @@ public class Chomp extends Game implements Recordable{
     }
 
     @Override
-    public void deleteMove() {
+    public void newMove(int row, int column, Player player) {
+        Move currentMove = new Move(row, column, player);
+        stack.push(currentMove);
+    }
 
+    @Override
+    public void deleteMove() {
+        stack.pop();
     }
 }
