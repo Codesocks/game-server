@@ -5,7 +5,7 @@ public class Main {
         int cols = 7;
         boolean player1Turn = true;
 
-        Connect4Game myGame = new Connect4Game(rows, cols);
+        Connect4 myGame = new Connect4(rows, cols);
         myGame.move(3,2);
         myGame.move(3,1);
         myGame.move(3,1);
