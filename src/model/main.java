@@ -15,15 +15,11 @@ public class main {
 			Scanner bf = new Scanner(System.in);
 			System.out.println("x:...");
 			int x = bf.nextInt();
-			System.out.println("y:...");
-			int y = bf.nextInt();
 			
-			Move nextMV;
-			if(player == false) nextMV = new Move(p1,x, y);
-			else nextMV = new Move(p2,x, y);
+			if(player == false) mygame.move(p1, x);
+			else mygame.move(p2, x);
 			player = !player;
 			
-			mygame.move(nextMV);
 			System.out.println(mygame.toString());
 		}
 	}

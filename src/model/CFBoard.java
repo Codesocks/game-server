@@ -19,15 +19,20 @@ public class CFBoard extends Board {
 
 	@Override
 	boolean move(Move m) {
-		// Check whether move is valid (field is empty and exists)
-		if (m.getX() < 0 || m.getY() < 0 || m.getX() >= super.width || m.getY() >= super.height) {
+		// Check whether field can exist.
+		if (m.getX() < 0 || m.getX() >= super.width) {
 			throw new IllegalArgumentException("The field you try to choose does not exist!");
-		} else if (super.board[m.getX()][m.getY()] != null) {
-			return false;
+		}
+		
+		// Calculate y-Coordinate.
+		if(super.board[m.getX()][0] != null) return false;
+		int y = height -1;
+		while(super.board[m.getX()][y] != null) {
+			y--;
 		}
 		
 		// Move is valid, save it.
-		super.board[m.getX()][m.getY()] = m.getPlayer();
+		super.board[m.getX()][y] = m.getPlayer();
 		return true;
 	}
 

@@ -13,4 +13,9 @@ public class ChGame extends Game {
 		super(player1, player2);
 		super.board = new ChBoard(this, width, height);
 	}
+	
+	public void move(Player player, int x, int y) {
+		Move m = new Move(player, x, y);
+		this.move(m);
+	}
 }

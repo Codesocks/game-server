@@ -13,4 +13,9 @@ public class CFGame extends Game {
 		super(player1, player2);
 		super.board = new CFBoard(this, width, height);
 	}
+
+	public void move(Player player, int x) {
+		Move m = new Move(player, x, -1);
+		this.move(m);
+	}
 }

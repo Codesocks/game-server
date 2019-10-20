@@ -40,7 +40,7 @@ abstract class Board {
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
 				if (board[j][i] == null) {
-					s.append("\u2610");
+					s.append("-");
 				} else if (board[j][i].equals(game.getPlayer1())) {
 					s.append("0");
 				} else {

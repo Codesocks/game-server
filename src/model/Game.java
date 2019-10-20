@@ -18,7 +18,7 @@ public abstract class Game {
 		player[1] = player2;
 	}
 
-	public void move(Move m) {
+	protected void move(Move m) {
 		boolean validMove = board.move(m);
 
 		if (validMove) {
