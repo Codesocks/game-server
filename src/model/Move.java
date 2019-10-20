@@ -10,7 +10,7 @@ public class Move {
 	// Constructor.
     public Move(Player player, int x, int y) {
         this.x = x;
-        this.x = y;
+        this.y = y;
         this.player = player;
     }
     

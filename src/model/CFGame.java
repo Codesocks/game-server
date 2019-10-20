@@ -1,7 +1,8 @@
 package model;
 
 public class CFGame extends Game {	
-	public CFGame(int width, int height) {
-		super.board = new CFBoard(width, height);
+	public CFGame(Player player1, Player player2, int width, int height) {
+		super(player1, player2);
+		super.board = new CFBoard(this, width, height);
 	}
 }
