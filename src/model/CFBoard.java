@@ -18,7 +18,7 @@ public class CFBoard extends Board {
 	}
 
 	@Override
-	public boolean move(Move m) {
+	boolean move(Move m) {
 		// Check whether move is valid (field is empty and exists)
 		if (m.getX() < 0 || m.getY() < 0 || m.getX() >= super.width || m.getY() >= super.height) {
 			throw new IllegalArgumentException("The field you try to choose does not exist!");

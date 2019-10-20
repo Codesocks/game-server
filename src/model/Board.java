@@ -20,6 +20,18 @@ abstract class Board {
 
 	abstract boolean isWon();
 
+	/**
+	 * Returns the player at the position (x, y) of the board. {@code null} is
+	 * returned if no player has made a move at that position.
+	 * 
+	 * @param x X-Coordinate of the given move.
+	 * @param y Y-Coordinate of the given move.
+	 * @return Player who has made a move at the given position.
+	 */
+	protected Player getPlayerAt(int x, int y) {
+		return board[x][y];
+	}
+	
 	@Override
 	public String toString() {
 		StringBuilder s = new StringBuilder();

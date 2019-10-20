@@ -9,7 +9,7 @@ public class ChBoard extends Board {
 	 * @param width  Width (in fields) of the board.
 	 * @param height Height (in fields) of the board.
 	 */
-	public ChBoard(Game game, int width, int height) {
+	ChBoard(Game game, int width, int height) {
 		super(game, width, height);
 		
 		// If board can never be won or has negative size.
@@ -19,7 +19,7 @@ public class ChBoard extends Board {
 	}
 
 	@Override
-	public boolean move(Move m) {
+	boolean move(Move m) {
 		// Check whether move is valid (field is empty and exists)
 		if (m.getX() < 1 || m.getY() < 1 || m.getX() >= super.width || m.getY() >= super.height) {
 			throw new IllegalArgumentException("The field you try to choose does not exist!");
