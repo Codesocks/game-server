@@ -21,6 +21,7 @@ public abstract class Game {
 	protected void move(Move m) {
 		boolean validMove = board.move(m);
 
+		System.out.println("Winning: " + board.isWon());
 		if (validMove) {
 			protocol.push(m);
 		}
