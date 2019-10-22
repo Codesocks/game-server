@@ -1,6 +1,7 @@
 package model;
 
 public class ChBoard extends Board {
+	private boolean isWon;
 
 	/**
 	 * Creates a new chomp board with the given width and height. The board must
@@ -30,16 +31,25 @@ public class ChBoard extends Board {
 		// Move is valid, save it.
 		for (int i = m.getX(); i < super.width; i++) {
 			for (int j = m.getY(); j < super.height; j++) {
-				super.board[i][j] = m.getPlayer();
+				if (board[i][j] == null)
+					super.board[i][j] = m.getPlayer();
 			}
 		}
-		return false;
+
+		// Check whether game is won with this move.
+		isWon = moveIsWinningMove(m.getX(), m.getY(), m.getPlayer());
+
+		// Output that move is valid.
+		return true;
 	}
+
+	private boolean moveIsWinningMove(int x, int y, Player p) {
+        return x == 0 && y == 0;
+    }
 
 	@Override
 	boolean isWon() {
-		// TODO Auto-generated method stub
-		return false;
+		return isWon;
 	}
 
 }
