@@ -1,9 +1,7 @@
 package model;
 
 public class ChBoard extends Board {
-	private boolean isWon;
-
-	/**
+		/**
 	 * Creates a new chomp board with the given width and height. The board must
 	 * have at least 2 fields (otherwise it cannot be played).
 	 * 
@@ -22,7 +20,7 @@ public class ChBoard extends Board {
 	@Override
 	boolean move(Move m) {
 		// Check whether move is valid (field is empty and exists)
-		if (m.getX() < 1 || m.getY() < 1 || m.getX() >= super.width || m.getY() >= super.height) {
+		if (m.getX() < 0 || m.getY() < 0 || m.getX() >= width || m.getY() >= height) {
 			throw new IllegalArgumentException("The field you try to choose does not exist!");
 		} else if (super.board[m.getX()][m.getY()] != null) {
 			return false;
@@ -44,12 +42,6 @@ public class ChBoard extends Board {
 	}
 
 	private boolean moveIsWinningMove(int x, int y, Player p) {
-        return x == 0 && y == 0;
-    }
-
-	@Override
-	boolean isWon() {
-		return isWon;
+		return x == 0 && y == 0;
 	}
-
 }

@@ -3,27 +3,30 @@ package model;
 import java.io.IOException;
 import java.util.Scanner;
 
-public class main {
+public class chomp {
 
 	public static void main(String[] args) throws IOException {
 		Player p1 = new Player();
 		Player p2 = new Player();
-		CFGame mygame = new CFGame(p1, p2, 8, 4);
+		ChGame mygame = new ChGame(p1, p2, 8, 4);
 		boolean player = false;
 
-		while (true) {
+		while (!mygame.isWon()) {
 			Scanner bf = new Scanner(System.in);
 			System.out.println("x:...");
 			int x = bf.nextInt();
+			System.out.println("y:...");
+			int y = bf.nextInt();
 
 			if (player == false)
-				mygame.move(p1, x);
+				mygame.move(p1, x, y);
 			else
-				mygame.move(p2, x);
+				mygame.move(p2, x, y);
 			player = !player;
 
 			System.out.println(mygame.toString());
 		}
+		System.out.println("Spiel wurde gewonnen!");
 	}
 
 }

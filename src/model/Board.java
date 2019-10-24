@@ -5,6 +5,8 @@ abstract class Board {
 	protected Game game;
 	protected int width;
 	protected int height;
+	protected boolean isWon;
+
 
 	protected Board(Game game, int width, int height) {
 		if (width < 1 || height < 1)
@@ -18,7 +20,9 @@ abstract class Board {
 
 	abstract boolean move(Move m);
 
-	abstract boolean isWon();
+	boolean isWon() {
+		return isWon;
+	}
 
 	/**
 	 * Returns the player at the position (x, y) of the board. {@code null} is

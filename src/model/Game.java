@@ -19,12 +19,18 @@ public abstract class Game {
 	}
 
 	protected void move(Move m) {
-		boolean validMove = board.move(m);
+		if (!board.isWon()) {
+			boolean validMove = board.move(m);
 
-		System.out.println("Winning: " + board.isWon());
-		if (validMove) {
-			protocol.push(m);
+			System.out.println("Winning: " + board.isWon());
+			if (validMove) {
+				protocol.push(m);
+			}
 		}
+	}
+
+	public boolean isWon() {
+		return board.isWon();
 	}
 
 	/**

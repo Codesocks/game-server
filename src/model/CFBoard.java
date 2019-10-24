@@ -1,8 +1,6 @@
 package model;
 
 public class CFBoard extends Board {
-	private boolean isWon;
-
 	/**
 	 * Creates a new connect four board with the given width and height. The board
 	 * must have at least 8 fields (otherwise it cannot be won).
@@ -45,9 +43,13 @@ public class CFBoard extends Board {
 	}
 
 	private boolean moveIsWinningMove(int x, int y, Player p) {
+		int i = 0;
+
 		// Check horizontal.
 		int count = 0;
-		for (int i = x - 3; (i >= 0 && i <= x + 3 && i < width); i++) {
+		if(x - 3 < 0) i=0;
+		else i= x-3;
+		for (;(i >= 0 && i <= x + 3 && i < width); i++) {
 			if (board[i][y] != null && board[i][y].equals(p))
 				count++;
 			else
@@ -59,7 +61,7 @@ public class CFBoard extends Board {
 
 		// Check vertical.
 		count = 0;
-		for (int i = y; (i <= y + 3 && i < height); i++) {
+		for (i = y; (i <= y + 3 && i < height); i++) {
 			if (board[x][i] != null && board[x][i].equals(p))
 				count++;
 			else
@@ -70,7 +72,7 @@ public class CFBoard extends Board {
 		}
 
 		// Check diagonal (top-left to bottom-right).
-		int i = 0;
+		i = 0;
 		for (; x - 3 + i < 0 || y - 3 + i < 0;) i++;
 		for (; x - 3 + i < width && y - 3 + i < height; i++) {
 			if (board[x - 3 + i][y - 3 + i] != null && board[x - 3 + i][y - 3 + i].equals(p))
@@ -97,10 +99,4 @@ public class CFBoard extends Board {
 		
 		return false;
 	}
-
-	@Override
-	boolean isWon() {
-		return isWon;
-	}
-
 }
