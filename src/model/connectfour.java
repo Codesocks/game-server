@@ -16,12 +16,17 @@ public class connectfour {
 			System.out.println("x:...");
 			int x = bf.nextInt();
 
-			if (player == false)
-				mygame.move(p1, x);
-			else
-				mygame.move(p2, x);
+			if (x >= 0) {
+				if (player == false)
+					mygame.move(p1, x);
+				else
+					mygame.move(p2, x);
+				player = !player;
+			} else {
+				mygame.undoLastMove();
+			}
 			player = !player;
-
+			
 			System.out.println(mygame.toString());
 		}
 	}

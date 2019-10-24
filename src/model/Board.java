@@ -1,14 +1,15 @@
 package model;
 
 abstract class Board {
-	protected Player[][] board;
-	protected Game game;
-	protected int width;
-	protected int height;
-	protected boolean isWon;
+	Player[][] board;
+	Game game;
+	int width;
+	int height;
+	boolean isWon;
+	Player winner;
 
 
-	protected Board(Game game, int width, int height) {
+	Board(Game game, int width, int height) {
 		if (width < 1 || height < 1)
 			throw new IllegalArgumentException("A board cannot have negative fields!");
 
@@ -20,6 +21,10 @@ abstract class Board {
 
 	abstract boolean move(Move m);
 
+	Player getWinner() {
+		return winner;
+	}
+	
 	boolean isWon() {
 		return isWon;
 	}
@@ -32,7 +37,7 @@ abstract class Board {
 	 * @param y Y-Coordinate of the given move.
 	 * @return Player who has made a move at the given position.
 	 */
-	protected Player getPlayerAt(int x, int y) {
+	Player getPlayerAt(int x, int y) {
 		return board[x][y];
 	}
 	
@@ -56,4 +61,10 @@ abstract class Board {
 		}
 		return s.toString();
 	}
+
+	abstract void undoLastMove(Move m);
+		// Subclasses overrride this method and use this method:
+//		winner = null;
+//		isWon = false;
+	
 }

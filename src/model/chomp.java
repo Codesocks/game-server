@@ -18,10 +18,14 @@ public class chomp {
 			System.out.println("y:...");
 			int y = bf.nextInt();
 
-			if (player == false)
-				mygame.move(p1, x, y);
-			else
-				mygame.move(p2, x, y);
+			if (x >= 0) {
+				if (player == false)
+					mygame.move(p1, x, y);
+				else
+					mygame.move(p2, x, y);
+			} else {
+				mygame.undoLastMove();
+			}
 			player = !player;
 
 			System.out.println(mygame.toString());

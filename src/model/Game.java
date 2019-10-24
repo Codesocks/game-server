@@ -29,6 +29,11 @@ public abstract class Game {
 		}
 	}
 
+	/**
+	 * Returns whether the game is won.
+	 * 
+	 * @return Whether game is won.
+	 */
 	public boolean isWon() {
 		return board.isWon();
 	}
@@ -73,6 +78,25 @@ public abstract class Game {
 		return player[1];
 	}
 
+	/**
+	 * Returns the winner of the game. If {@code null} no one has won the game yet.
+	 * 
+	 * @return Winner of the game.
+	 */
+	public Player getWinner() {
+		return board.getWinner();
+	}
+	
+	/**
+	 * Attempts to undo the last move. If no move can be undone, nothing happens.
+	 */
+	public void undoLastMove() {
+		if(!protocol.isEmpty()) {
+			Move m = protocol.pop();
+			board.undoLastMove(m);
+		}
+	}
+	
 	@Override
 	public String toString() {
 		return board.toString();

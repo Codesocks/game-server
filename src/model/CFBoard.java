@@ -33,10 +33,11 @@ public class CFBoard extends Board {
 		}
 
 		// Move is valid, save it.
-		super.board[m.getX()][y] = m.getPlayer();
+		board[m.getX()][y] = m.getPlayer();
 
 		// Check whether game is won with this move.
 		isWon = moveIsWinningMove(m.getX(), y, m.getPlayer());
+		if(isWon) winner = m.getPlayer();
 
 		// Output that move is valid.
 		return true;
@@ -98,5 +99,19 @@ public class CFBoard extends Board {
 		}
 		
 		return false;
+	}
+
+	
+	@Override
+	void undoLastMove(Move m) {
+		winner = null;
+		isWon = false;
+		
+		int y = 0;
+		while (board[m.getX()][y] == null) {
+			y++;
+		}
+		
+		board[m.getX()][y] = null;
 	}
 }
