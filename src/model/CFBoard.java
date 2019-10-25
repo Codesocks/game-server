@@ -44,7 +44,55 @@ public class CFBoard extends Board {
 	}
 
 	private boolean moveIsWinningMove(int x, int y, Player p) {
-		int i = 0;
+		int connected = 1;
+		// vertical
+		for (int j = y + 1; j < height && board[x][j].equals(p); j++) {
+			connected++;
+			if (connected == 4)
+				return true;
+		}
+
+		connected = 1;
+		// horizontal
+		for (int i = x - 1; i >= 0 && board[i][y] != null && board[i][y].equals(p); i--) {
+			connected++;
+			if (connected == 4)
+				return true;
+		}
+		for (int i = x + 1; i < width && board[i][y] != null && board[i][y].equals(p); i++) {
+			connected++;
+			if (connected == 4)
+				return true;
+		}
+
+		connected = 1;
+		// diagonal (top-left to bottom-right)
+		for (int i = x - 1, j = y - 1; i >= 0 && j >= 0 && board[i][j] != null && board[i][j].equals(p) ; i--, j--) {
+			connected++;
+			if (connected == 4)
+				return true;
+		}
+		for (int i = x + 1, j = y + 1; i < width && j < height && board[i][j] != null && board[i][j].equals(p); i++, j++) {
+			connected++;
+			if (connected == 4)
+				return true;
+		}
+
+        connected = 1;
+        // diagonal (top-right to bottom-left)
+        for (int i = x + 1, j = y - 1; i < width && j >= 0 && board[i][j] != null && board[i][j].equals(p) ; i++, j--) {
+            connected++;
+            if (connected == 4)
+                return true;
+        }
+        for (int i = x - 1, j = y + 1; i >= 0 && j < height && board[i][j] != null && board[i][j].equals(p); i--, j++) {
+            connected++;
+            if (connected == 4)
+                return true;
+        }
+
+
+		/*int i = 0;
 
 		// Check horizontal.
 		int count = 0;
@@ -97,7 +145,7 @@ public class CFBoard extends Board {
 			if (count == 4)
 				return true;
 		}
-		
+		*/
 		return false;
 	}
 

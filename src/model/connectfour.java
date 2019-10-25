@@ -21,10 +21,17 @@ public class connectfour {
 					mygame.move(p1, x);
 				else
 					mygame.move(p2, x);
-				player = !player;
 			} else {
 				mygame.undoLastMove();
 			}
+
+			if (mygame.isWon()) {
+				if (mygame.getWinner().equals(mygame.getPlayer1()))
+					System.out.println("Winner is Player 1");
+				else
+					System.out.println("Winner is Player 2");
+			}
+
 			player = !player;
 			
 			System.out.println(mygame.toString());
