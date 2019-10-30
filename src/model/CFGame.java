@@ -1,6 +1,8 @@
 package model;
 
-public class CFGame extends Game {	
+import java.util.Random;
+
+public class CFGame extends Game {
 	/**
 	 * Creates a new game of connect four with the two given players as players.
 	 * 
@@ -17,5 +19,15 @@ public class CFGame extends Game {
 	public void move(Player player, int x) {
 		Move m = new Move(player, x, -1);
 		this.move(m);
+	}
+
+	public void move(Player player) {
+		Random rand = new Random();
+		int x;
+		do {
+			x = rand.nextInt(super.board.width);
+		} while (super.board.getPlayerAt(x, 0) != null);
+
+		move(player, x);
 	}
 }
