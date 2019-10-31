@@ -21,6 +21,7 @@ public class CFGame extends Game {
 		this.move(m);
 	}
 
+	// the move made by the computer
 	public void move(Player player) {
 		Random rand = new Random();
 		int x;

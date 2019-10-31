@@ -18,4 +18,21 @@ public class ChGame extends Game {
 		Move m = new Move(player, x, y);
 		this.move(m);
 	}
+
+	// the move made by the computer
+	public void move(Player player) {
+		int x = 0;
+		int y = 0;
+
+		for (int i = 0; i < super.board.width; i++) {
+			for (int j = 0; j < super.board.height; j++) {
+				if (super.board.getPlayerAt(i,j) == null) {
+					x = i;
+					y = j;
+				}
+			}
+		}
+
+		move(player, x, y);
+	}
 }

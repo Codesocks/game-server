@@ -9,28 +9,37 @@ public class chomp {
 		Player p1 = new Player();
 		Player p2 = new Player();
 		ChGame mygame = new ChGame(p1, p2, 8, 4);
-		boolean player = false;
+		Player currentPlayer = p1;
 
 		while (!mygame.isWon()) {
-			Scanner bf = new Scanner(System.in);
-			System.out.println("x:...");
-			int x = bf.nextInt();
-			System.out.println("y:...");
-			int y = bf.nextInt();
+			if (!currentPlayer.isComputer()) {
+				Scanner bf = new Scanner(System.in);
+				System.out.println("x:...");
+				int x = bf.nextInt();
+				System.out.println("y:...");
+				int y = bf.nextInt();
 
-			if (x >= 0) {
-				if (player == false)
-					mygame.move(p1, x, y);
+				if (x >= 0)
+					mygame.move(currentPlayer, x, y);
 				else
-					mygame.move(p2, x, y);
-			} else {
-				mygame.undoLastMove();
+					mygame.undoLastMove();
 			}
-			player = !player;
+
+			if (mygame.isWon()) {
+				if (mygame.getWinner().equals(mygame.getPlayer1()))
+					System.out.println("Winner is Player 1");
+				else
+					System.out.println("Winner is Player 2");
+				break;
+			}
+
+			if (currentPlayer.equals(p1))
+				currentPlayer = p2;
+			else
+				currentPlayer = p1;
 
 			System.out.println(mygame.toString());
 		}
-		System.out.println("Spiel wurde gewonnen!");
 	}
 
 }

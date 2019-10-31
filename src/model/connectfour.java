@@ -31,6 +31,7 @@ public class connectfour {
                     System.out.println("Winner is Player 1");
                 else
                     System.out.println("Winner is Player 2");
+                break;
             }
 
             if (currentPlayer.equals(p1))
