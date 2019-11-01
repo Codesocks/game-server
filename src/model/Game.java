@@ -2,7 +2,7 @@ package model;
 
 import org.json.simple.JSONObject;
 
-public abstract class Game {
+abstract class Game {
 	protected Protocol protocol = new Protocol();
 	protected Board board;
 	protected Player[] player = new Player[2];
@@ -44,7 +44,7 @@ public abstract class Game {
 	 * 
 	 * @param m JSONObject containing the instructions for the move.
 	 */
-	public void move(JSONObject m) {
+	void move(JSONObject m) {
 		move(new Move(m));
 	}
 

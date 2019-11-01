@@ -1,6 +1,6 @@
 package model;
 
-public class CFBoard extends Board {
+class CFBoard extends Board {
 	/**
 	 * Creates a new connect four board with the given width and height. The board
 	 * must have at least 8 fields (otherwise it cannot be won).

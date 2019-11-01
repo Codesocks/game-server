@@ -49,15 +49,15 @@ abstract class Board {
 	}
 
 	/**
-	 * prints the current board
+	 * Returns a String-representation of the board.
 	 *
-	 * @return board as String
+	 * @return String-representation of the board.
 	 */
 	@Override
 	public String toString() {
 		StringBuilder s = new StringBuilder();
 
-		// Ablaufen des Spielfeldes
+		// Ablaufen des Spielfeldes.
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
 				if (board[j][i] == null) {

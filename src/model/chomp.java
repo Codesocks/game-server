@@ -23,7 +23,7 @@ public class chomp {
 				mygame.move(currentPlayer, x, y);
 			}
 			else
-				mygame.move(currentPlayer);
+				mygame.moveComputerPlayer(currentPlayer);
 
 			System.out.println(mygame.toString());
 

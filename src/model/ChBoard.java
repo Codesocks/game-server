@@ -1,6 +1,6 @@
 package model;
 
-public class ChBoard extends Board {
+class ChBoard extends Board {
 	/**
 	 * Creates a new chomp board with the given width and height. The board must
 	 * have at least 2 fields (otherwise it cannot be played).
