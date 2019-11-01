@@ -2,7 +2,9 @@ package server;
 
 import java.io.IOException;
 
-public class Testing {
+import org.json.simple.JSONObject;
+
+public class Testing {	
 	public static void main(String[] args) {
 		// Starte den Server.
 		Server s = new Server();
@@ -11,9 +13,17 @@ public class Testing {
 		
 		// Verbinde den Client.
 		try {
+			// Create message.
+			JSONObject jo = new JSONObject();
+			jo.put("username", "user1");
+			jo.put("pwd", "abc");
+			jo.put("mode", "game");
+			
+			
+			// Send message.
 			Client c = new Client();
-			c.connect();
-			c.send("String2");
+			c.connect();			
+			c.send(jo.toString());
 			System.out.println(c.read());
 			c.disconnect();
 		} catch (IOException e) {

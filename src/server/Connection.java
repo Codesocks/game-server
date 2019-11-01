@@ -6,6 +6,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 final class Connection {
 	static void send(java.net.Socket socket, String msg) throws IOException {
 		PrintWriter printWriter =
@@ -26,5 +30,15 @@ final class Connection {
 		int characterCount = bufferedReader.read(buffer, 0, 200);
 		String msg = new String(buffer, 0, characterCount);
 		return msg;
+	}
+	
+	static JSONObject stringToJSONObject(String string) {
+		try {
+			JSONParser parser = new JSONParser();
+			return (JSONObject) parser.parse(string);
+		} catch (ParseException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 }

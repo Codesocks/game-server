@@ -1,20 +1,20 @@
 package management;
 
-public class User {
+class User {
 	private String username;
 	// NOT save! Add propper HASHING here!!!!.
 	private String pseudopassword;
 	
-	public User(String username, String pwd) {
+	User(String username, String pwd) {
 		this.username = username;
 		this.pseudopassword = pwd;
 	}
 	
-	public String getUsername() {
+	String getUsername() {
 		return username;
 	}
 	
-	public boolean checkPWD(String pwd) {
+	boolean verifyPWD(String pwd) {
 		if(pwd.equals(pseudopassword)) {
 			return true;
 		} else {

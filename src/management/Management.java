@@ -13,8 +13,21 @@ public class Management {
 			return true;
 		}
 	}
-	public void verifyUser() {
+	
+	public boolean verifyUser(String username, String pwd) throws UserNotFoundException {
+		if(pwd == null || username == null) {
+			return false;
 		
+		// If user does not exist, a new user is added.
+		} else if(!users.containsKey(username)) {
+			// throw new UserNotFoundException("There is no user with this name registered!");
+			addUser(username, pwd);
+			return true;
+		} else if(users.get(username).verifyPWD(pwd)){
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 }

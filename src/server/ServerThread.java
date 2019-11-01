@@ -1,16 +1,16 @@
 package server;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.net.Socket;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.ParseException;
+
+import management.Management;
 
 public class ServerThread extends Thread {
 	Socket client;
+	Management management;
 
 	ServerThread(Socket client) {
 		this.client = client;
@@ -20,10 +20,22 @@ public class ServerThread extends Thread {
 		// Bearbeitung einer aufgebauten Verbindung
 		try {
 			String msg = Connection.read(client);
+			
+			// Handle msg of client.
+			/*JSONObject jo = Connection.stringToJSONObject(msg);
+			if(jo != null) {
+				if(management.verifyUser(jo.get("username").toString(), jo.get("pwd").toString())) {
+					System.out.println("Valid user.");
+				}*/
+			
+			
+			
+			// Send reply.
 			Connection.send(client, msg);
 
+			
 			// Fehler bei Ein- und Ausgabe
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
