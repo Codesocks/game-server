@@ -2,36 +2,36 @@ package model;
 
 import org.json.simple.JSONObject;
 
-public class Move {
+class Move {
     private int x;
     private int y;
 	private Player player;
     
 	// Constructor.
-    public Move(Player player, int x, int y) {
+    Move(Player player, int x, int y) {
         this.x = x;
         this.y = y;
         this.player = player;
     }
     
-    public Move(JSONObject o) {
+    Move(JSONObject o) {
     	
     }
 
     // Getter and Setter.
-    public JSONObject getJSONObject() {
+    JSONObject getJSONObject() {
     	return null;
     }
     
-    public int getX() {
+    int getX() {
 		return x;
 	}
 
-	public int getY() {
+	int getY() {
 		return y;
 	}
 
-	public Player getPlayer() {
+	Player getPlayer() {
 		return player;
 	}
 }

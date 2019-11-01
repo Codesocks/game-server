@@ -3,9 +3,9 @@ package model;
 import org.json.simple.JSONObject;
 
 abstract class Game {
-	protected Protocol protocol = new Protocol();
-	protected Board board;
-	protected Player[] player = new Player[2];
+	Protocol protocol = new Protocol();
+	Board board;
+	Player[] player = new Player[2];
 
 	/**
 	 * Creates a new game with the two given players as players.
@@ -13,12 +13,12 @@ abstract class Game {
 	 * @param player1 First player of the game.
 	 * @param player2 Second player of the game.
 	 */
-	protected Game(Player player1, Player player2) {
+	Game(Player player1, Player player2) {
 		player[0] = player1;
 		player[1] = player2;
 	}
 
-	protected void move(Move m) {
+	void move(Move m) {
 		if (!board.isWon()) {
 			boolean validMove = board.move(m);
 
