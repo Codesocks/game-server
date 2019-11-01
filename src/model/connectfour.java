@@ -18,13 +18,12 @@ public class connectfour {
                 System.out.println("x:...");
                 int x = bf.nextInt();
 
-                if (x >= 0)
-                    mygame.move(currentPlayer, x);
-                else
-                    mygame.undoLastMove();
+                mygame.move(currentPlayer, x);
             }
             else
                 mygame.move(currentPlayer);
+
+            System.out.println(mygame.toString());
 
             if (mygame.isWon()) {
                 if (mygame.getWinner().equals(mygame.getPlayer1()))
@@ -38,8 +37,6 @@ public class connectfour {
                 currentPlayer = p2;
             else
                 currentPlayer = p1;
-
-            System.out.println(mygame.toString());
         }
     }
 

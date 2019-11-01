@@ -16,12 +16,23 @@ public class CFGame extends Game {
 		super.board = new CFBoard(this, width, height);
 	}
 
+	/**
+	 * Generates new Move object with the given params
+	 *
+	 * @param player Player who makes the given move
+	 * @param x X-Coordinate of the given move
+	 */
 	public void move(Player player, int x) {
 		Move m = new Move(player, x, -1);
 		this.move(m);
 	}
 
-	// the move made by the computer
+	/**
+	 * the move made by the computer (random)
+	 * at larger boards very inefficient
+	 *
+	 * @param player Computer player
+	 */
 	public void move(Player player) {
 		Random rand = new Random();
 		int x;

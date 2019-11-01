@@ -87,16 +87,6 @@ public abstract class Game {
 		return board.getWinner();
 	}
 	
-	/**
-	 * Attempts to undo the last move. If no move can be undone, nothing happens.
-	 */
-	public void undoLastMove() {
-		if(!protocol.isEmpty()) {
-			Move m = protocol.pop();
-			board.undoLastMove(m);
-		}
-	}
-	
 	@Override
 	public String toString() {
 		return board.toString();

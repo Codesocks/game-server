@@ -26,25 +26,13 @@ public class ChBoard extends Board {
 			return false;
 		}
 
-		// Validate move.
-		// (x,y) is lower right corner of the move.
-		int x, y;
-		for (x = m.getX(); x < width; x++)
-			if (board[x][m.getY()] != null)
-				break;
-		for (y = m.getY(); y < height; y++)
-			if (board[m.getX()][y] != null)
-				break;
-		System.out.println(x + " " + y);
-		for (int i = m.getX(); i < x; i++)
-			for (int j = m.getY(); j < y; j++)
-				if(board[i][j] != null) return false;
-
 		// Move is valid, save it.
-		for (int i = m.getX(); i < x; i++)
-			for (int j = m.getY(); j < y; j++)
+		for (int i = m.getX(); i < super.width; i++) {
+			for (int j = m.getY(); j < super.height; j++) {
 				if (board[i][j] == null)
-					board[i][j] = m.getPlayer();
+					super.board[i][j] = m.getPlayer();
+			}
+		}
 
 		// Check whether game is won with this move.
 		isWon = moveIsWinningMove(m.getX(), m.getY(), m.getPlayer());
@@ -59,26 +47,5 @@ public class ChBoard extends Board {
 
 	private boolean moveIsWinningMove(int x, int y, Player p) {
 		return x == 0 && y == 0;
-	}
-
-	@Override
-	void undoLastMove(Move m) {
-		winner = null;
-		isWon = false;
-
-		// Calculation of lower right border is NOT possible this way!
-		// (x,y) is lower right corner of the move.
-		int x, y;
-		for (x = m.getX(); x < width; x++)
-			if (board[x][m.getY()] != m.getPlayer())
-				break;
-		for (y = m.getY(); y < height; y++)
-			if (board[m.getX()][y] != m.getPlayer())
-				break;
-
-		// Remove last move.
-		for (int i = m.getX(); i < x; i++)
-			for (int j = m.getY(); j < y; j++)
-				board[i][j] = null;
 	}
 }

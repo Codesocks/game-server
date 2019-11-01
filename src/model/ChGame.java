@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Random;
+
 public class ChGame extends Game {
 	/**
 	 * Creates a new game of chomp with the two given players as players.
@@ -13,24 +15,40 @@ public class ChGame extends Game {
 		super(player1, player2);
 		super.board = new ChBoard(this, width, height);
 	}
-	
+
+	/**
+	 * Generates new Move object with the given params
+	 *
+	 * @param player Player who makes the given move
+	 * @param x X-Coordinate of the given move
+	 * @param y Y-Coordinate of the given move
+	 */
 	public void move(Player player, int x, int y) {
 		Move m = new Move(player, x, y);
 		this.move(m);
 	}
 
-	// the move made by the computer
+	/**
+	 * the move made by the computer (random)
+	 * at larger boards very inefficient
+	 *
+	 * @param player Computer player
+	 */
 	public void move(Player player) {
-		int x = 0;
-		int y = 0;
+		int x;
+		int y;
+		if (super.board.getPlayerAt(0, 1) != null && super.board.getPlayerAt(1, 0) != null) {
+			x = 0;
+			y = 0;
+		}
 
-		for (int i = 0; i < super.board.width; i++) {
-			for (int j = 0; j < super.board.height; j++) {
-				if (super.board.getPlayerAt(i,j) == null) {
-					x = i;
-					y = j;
-				}
-			}
+		else {
+			Random rand = new Random();
+
+			do {
+				x = rand.nextInt(super.board.width);
+				y = rand.nextInt(super.board.height);
+			} while (super.board.getPlayerAt(x, y) != null && !(x == 0 && y == 0));
 		}
 
 		move(player, x, y);

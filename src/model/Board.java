@@ -19,6 +19,13 @@ abstract class Board {
 		this.height = height;
 	}
 
+	/**
+	 * Move is checked, if m is valid the move is made
+	 * check if game is won with this move
+	 *
+	 * @param m
+	 * @return true if move is valid, else false
+	 */
 	abstract boolean move(Move m);
 
 	Player getWinner() {
@@ -40,7 +47,12 @@ abstract class Board {
 	Player getPlayerAt(int x, int y) {
 		return board[x][y];
 	}
-	
+
+	/**
+	 * prints the current board
+	 *
+	 * @return board as String
+	 */
 	@Override
 	public String toString() {
 		StringBuilder s = new StringBuilder();
@@ -61,10 +73,4 @@ abstract class Board {
 		}
 		return s.toString();
 	}
-
-	abstract void undoLastMove(Move m);
-		// Subclasses overrride this method and use this method:
-//		winner = null;
-//		isWon = false;
-	
 }
