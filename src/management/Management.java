@@ -1,52 +1,88 @@
 package management;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.junit.rules.Verifier;
 
 public class Management {
 	private HashMap<String, User> users = new HashMap<String, User>();
-	
-	public boolean addUser(String username, String pwd) {
-		if(pwd == null || username == null || users.containsKey(username)) {
+	private long latestUpdateTime = 0;
+
+	boolean addUser(JSONArray credentials) {
+		// Extract username and password from JSON-Data.
+		String username = (String) credentials.get(0);
+		String pwd = (String) credentials.get(1);
+
+		if (pwd == null || username == null || users.containsKey(username)) {
 			return false;
 		} else {
 			users.put(username, new User(username, pwd));
+			users.get(username).setOnline(true);
 			return true;
 		}
 	}
-	
-	public boolean verifyUser(String username, String pwd) throws UserNotFoundException {
-		if(pwd == null || username == null) {
-			return false;
-		
-		// If user does not exist, a new user is added.
-		} else if(!users.containsKey(username)) {
-			// throw new UserNotFoundException("There is no user with this name registered!");
-			addUser(username, pwd);
+
+	public boolean verifyCredentials(JSONArray credentials) {
+		// Extract username and password from JSON-Data.
+		String username = (String) credentials.get(0);
+		String pwd = (String) credentials.get(1);
+
+		// Check credentials and set user to online if necessary.
+		if (users.containsKey(username) && users.get(username).verifyPWD(pwd)) {
 			return true;
-		} else if(users.get(username).verifyPWD(pwd)){
-			return true;
+		}
+		return false;
+	}
+
+	@SuppressWarnings("unchecked")
+	public JSONArray getOnlinePlayers() {
+		JSONArray onlinePlayers = new JSONArray();
+
+		for (Map.Entry<String, User> entry : users.entrySet()) {
+			User user = entry.getValue();
+			if (user.isOnline())
+				onlinePlayers.add(user.getUsername());
+		}
+
+		return onlinePlayers;
+	}
+
+	public boolean signIn(JSONArray credentials) {
+		// Extract username and password from JSON-Data.
+		String username = (String) credentials.get(0);
+
+		// Add user if not already existing.
+		if (users.containsKey(username)) {
+			if (!verifyCredentials(credentials))
+				return false;
 		} else {
-			return false;
+			boolean b = addUser(credentials);
+			if (b == false)
+				return false;
 		}
+
+		users.get(username).setOnline(true);
+		isUpdate();
+		return true;
 	}
-	
-	public boolean verifyCredentials(JSONArray jsonArray) {
-		String username = (String) jsonArray.get(0);
-		String pwd = (String) jsonArray.get(0);
-		
-		if(pwd == null || username == null) {
-			return false;
-		} else if(!users.containsKey(username)) {
-			addUser(username, pwd);
-			return true;
-		} else if(users.get(username).verifyPWD(pwd)){
-			return true;
-		} else {
-			return false;
-		}
+
+	public void signOut(JSONArray credentials) {
+		// Extract username and password from JSON-Data.
+		String username = (String) credentials.get(0);
+
+		users.get(username).setOnline(false);
+		isUpdate();
 	}
-	
+
+	public long getLatestUpdateTime() {
+		return latestUpdateTime;
+	}
+
+	private void isUpdate() {
+		latestUpdateTime = System.currentTimeMillis();
+	}
 }

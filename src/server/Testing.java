@@ -5,35 +5,52 @@ import java.io.IOException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-public class Testing {	
+public class Testing {
 	public static void main(String[] args) {
 		// Starte den Server.
 		Server s = new Server();
 		Thread server = new Thread(s);
 		s.start();
+
+		// Create message.
+		JSONObject jo = new JSONObject();
+		jo.put("latestUpdateTime", "0");
+		jo.put("credentials", getLoginCredentials());
+
+		JSONObject jsMode0 = (JSONObject) jo.clone();
+		JSONObject jsMode2 = (JSONObject) jo.clone();
+		jsMode0.put("mode", "0");
+		jsMode2.put("mode", "2");
+
+		// Send login-message.
+		sendRequest(jsMode0);
 		
-		// Verbinde den Client.
+		// Send update-Request.
+		sendRequest(jsMode2);
+	}
+
+	static JSONArray getLoginCredentials() {
+		JSONArray credentials = new JSONArray();
+		credentials.add("username");
+		credentials.add("pwd2");
+
+		return credentials;
+	}
+
+	static String sendRequest(JSONObject jo) {
+		String reply = "";
+
 		try {
-			// Create message.
-			JSONObject jo = new JSONObject();
-			/*jo.put("username", "user1");
-			jo.put("pwd", "abc");*/
-			jo.put("mode", "0");
-			
-			JSONArray credentials = new JSONArray();
-			credentials.add("username");
-			credentials.add("pwd2");
-			jo.put("credentials", credentials);
-			
-			
-			// Send message.
 			Client c = new Client();
-			c.connect();			
+			c.connect();
 			c.send(jo.toString());
-			System.out.println(c.read());
+			reply = c.read();
 			c.disconnect();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
+		System.out.println("[CLIENT] Reply:			" + reply);
+		return reply;
 	}
 }

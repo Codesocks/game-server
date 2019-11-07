@@ -9,32 +9,28 @@ import org.json.simple.parser.ParseException;
 
 import management.Management;
 
-public class ServerThread extends Thread {
+class ServerThread extends Thread {
 	Socket client;
-	Management management = new Management();
+	Server server;
 
-	ServerThread(Socket client) {
+	ServerThread(Socket client, Server server) {
 		this.client = client;
+		this.server = server;
 	}
 
 	public void run() {
 		// Bearbeitung einer aufgebauten Verbindung
 		try {
 			String msg = Connection.read(client);
-			
+
 			// Handle msg of client.
-			/*if(jo != null) {
-				if(management.verifyUser(jo.get("username").toString(), jo.get("pwd").toString())) {
-					System.out.println("Valid user.");
-				}*/
-			
 			JSONObject jo = Connection.stringToJSONObject(msg);
+			System.out.println("[SERVER] Incoming request:	" + msg);
 			String reply = processData(jo);
-			
-			
+
 			// Send reply.
 			Connection.send(client, reply);
-			
+
 			// Fehler bei Ein- und Ausgabe
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -50,15 +46,46 @@ public class ServerThread extends Thread {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private String processData(JSONObject jo) {
-		// Verify credentials.
+		JSONObject output = new JSONObject();
 		JSONArray credentials = (JSONArray) jo.get("credentials");
-		boolean login = management.verifyCredentials(credentials);
-		
-		String mode = (String) jo.get("mode");
-		
-		return mode + " " + login;
+		int mode = Integer.valueOf((String) jo.get("mode"));
+
+		// Verify credentials if already signed in.
+		if (mode != 0) {
+			boolean login = server.getManagement().verifyCredentials(credentials);
+			output.put("SUCCESS", login);
+			if (!login)
+				return output.toString();
+		}
+
+		// Deal with modes.
+
+		switch (mode) {
+		case 0: // Sign-in.
+			boolean b = server.getManagement().signIn(credentials);
+			output.put("SUCCESS", b);
+			return output.toString();
+
+		case 1: // Sign-out.
+			server.getManagement().signOut(credentials);
+
+		case 2: // Update client's information.
+			int clientUpdateTime = Integer.valueOf((String) jo.get("latestUpdateTime"));
+			if (clientUpdateTime < server.getManagement().getLatestUpdateTime()) {
+				output.put("onlinePlayers", server.getManagement().getOnlinePlayers());
+				output.put("playerUpdateAvailable", true);
+			}
+			return output.toString();
+			
+		case 3: // Get currently online players.
+			output.put("onlinePlayers", server.getManagement().getOnlinePlayers());
+			return output.toString();
+			
+		default: // Not a valid mode.
+			return "{\"SUCCESS\":false}";
+		}
 	}
 
-	
 }
