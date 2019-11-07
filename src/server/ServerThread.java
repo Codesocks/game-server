@@ -3,6 +3,7 @@ package server;
 import java.io.IOException;
 import java.net.Socket;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
@@ -10,7 +11,7 @@ import management.Management;
 
 public class ServerThread extends Thread {
 	Socket client;
-	Management management;
+	Management management = new Management();
 
 	ServerThread(Socket client) {
 		this.client = client;
@@ -22,17 +23,17 @@ public class ServerThread extends Thread {
 			String msg = Connection.read(client);
 			
 			// Handle msg of client.
-			/*JSONObject jo = Connection.stringToJSONObject(msg);
-			if(jo != null) {
+			/*if(jo != null) {
 				if(management.verifyUser(jo.get("username").toString(), jo.get("pwd").toString())) {
 					System.out.println("Valid user.");
 				}*/
 			
+			JSONObject jo = Connection.stringToJSONObject(msg);
+			String reply = processData(jo);
 			
 			
 			// Send reply.
-			Connection.send(client, msg);
-
+			Connection.send(client, reply);
 			
 			// Fehler bei Ein- und Ausgabe
 		} catch (Exception e) {
@@ -49,4 +50,15 @@ public class ServerThread extends Thread {
 		}
 	}
 
+	private String processData(JSONObject jo) {
+		// Verify credentials.
+		JSONArray credentials = (JSONArray) jo.get("credentials");
+		boolean login = management.verifyCredentials(credentials);
+		
+		String mode = (String) jo.get("mode");
+		
+		return mode + " " + login;
+	}
+
+	
 }

@@ -13,17 +13,14 @@ public class chomp {
 		Player currentPlayer = p1;
 
 		while (!mygame.isWon()) {
-			if (!currentPlayer.isComputer()) {
-				Scanner bf = new Scanner(System.in);
-				System.out.println("x:...");
-				int x = bf.nextInt();
-				System.out.println("y:...");
-				int y = bf.nextInt();
+			currentPlayer = mygame.getCurrentPlayer();
+			Scanner bf = new Scanner(System.in);
+			System.out.println("x:...");
+			int x = bf.nextInt();
+			System.out.println("y:...");
+			int y = bf.nextInt();
 
-				mygame.move(currentPlayer, x, y);
-			}
-			else
-				mygame.moveComputerPlayer(currentPlayer);
+			mygame.move(currentPlayer, x, y);
 
 			System.out.println(mygame.toString());
 
@@ -34,11 +31,6 @@ public class chomp {
 					System.out.println("Winner is Player 2");
 				break;
 			}
-
-			if (currentPlayer.equals(p1))
-				currentPlayer = p2;
-			else
-				currentPlayer = p1;
 		}
 	}
 

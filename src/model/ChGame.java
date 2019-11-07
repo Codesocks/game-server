@@ -36,13 +36,8 @@ public class ChGame extends Game {
 		this.move(m);
 	}
 
-	/**
-	 * Makes a random move for the given player. This player should be a computer
-	 * player. Those moves are very inefficient on larger boards.
-	 *
-	 * @param player Computer player.
-	 */
-	public void moveComputerPlayer(Player player) {
+	@Override
+	void moveComputerPlayer(Player player) {
 		int x;
 		int y;
 		if (board.getPlayerAt(0, 1) != null && board.getPlayerAt(1, 0) != null) {

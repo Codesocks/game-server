@@ -35,13 +35,8 @@ public class CFGame extends Game {
 		this.move(m);
 	}
 
-	/**
-	 * Makes a random move for the given player. This player should be a computer
-	 * player. Those moves are very inefficient on larger boards.
-	 *
-	 * @param player Computer player.
-	 */
-	public void move(Player player) {
+	@Override
+	void moveComputerPlayer(Player player) {
 		Random rand = new Random();
 		int x;
 		do {

@@ -6,6 +6,7 @@ abstract class Game {
 	Protocol protocol = new Protocol();
 	Board board;
 	Player[] player = new Player[2];
+	Player currentPlayer;
 
 	/**
 	 * Creates a new game with the two given players as players.
@@ -16,18 +17,38 @@ abstract class Game {
 	Game(Player player1, Player player2) {
 		player[0] = player1;
 		player[1] = player2;
+		currentPlayer = player1;
 	}
 
 	void move(Move m) {
 		if (!board.isWon()) {
 			boolean validMove = board.move(m);
 
+			// Protocol last move.
 			System.out.println("Winning: " + board.isWon());
 			if (validMove) {
 				protocol.push(m);
 			}
+
+			// Update who's turn it is.
+			if (m.getPlayer().equals(getPlayer1()))
+				currentPlayer = getPlayer2();
+			else
+				currentPlayer = getPlayer1();
+
+			// Move computer player.
+			if (currentPlayer.isComputer())
+				moveComputerPlayer(currentPlayer);
 		}
 	}
+
+	/**
+	 * Makes a random move for the given player. This player should be a computer
+	 * player. Those moves are very inefficient on larger boards.
+	 *
+	 * @param player Computer player.
+	 */
+	abstract void moveComputerPlayer(Player player);
 
 	/**
 	 * Returns whether the game is won.
@@ -86,7 +107,16 @@ abstract class Game {
 	public Player getWinner() {
 		return board.getWinner();
 	}
-	
+
+	/**
+	 * Returns player who is supposed to move the next Move.
+	 * 
+	 * @return Player who shall move the next Move.
+	 */
+	public Player getCurrentPlayer() {
+		return currentPlayer;
+	}
+
 	@Override
 	public String toString() {
 		return board.toString();

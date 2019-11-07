@@ -2,6 +2,9 @@ package management;
 
 import java.util.HashMap;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
 public class Management {
 	private HashMap<String, User> users = new HashMap<String, User>();
 	
@@ -21,6 +24,22 @@ public class Management {
 		// If user does not exist, a new user is added.
 		} else if(!users.containsKey(username)) {
 			// throw new UserNotFoundException("There is no user with this name registered!");
+			addUser(username, pwd);
+			return true;
+		} else if(users.get(username).verifyPWD(pwd)){
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public boolean verifyCredentials(JSONArray jsonArray) {
+		String username = (String) jsonArray.get(0);
+		String pwd = (String) jsonArray.get(0);
+		
+		if(pwd == null || username == null) {
+			return false;
+		} else if(!users.containsKey(username)) {
 			addUser(username, pwd);
 			return true;
 		} else if(users.get(username).verifyPWD(pwd)){

@@ -2,6 +2,7 @@ package server;
 
 import java.io.IOException;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 public class Testing {	
@@ -15,9 +16,14 @@ public class Testing {
 		try {
 			// Create message.
 			JSONObject jo = new JSONObject();
-			jo.put("username", "user1");
-			jo.put("pwd", "abc");
-			jo.put("mode", "game");
+			/*jo.put("username", "user1");
+			jo.put("pwd", "abc");*/
+			jo.put("mode", "0");
+			
+			JSONArray credentials = new JSONArray();
+			credentials.add("username");
+			credentials.add("pwd2");
+			jo.put("credentials", credentials);
 			
 			
 			// Send message.
