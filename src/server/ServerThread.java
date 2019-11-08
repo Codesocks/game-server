@@ -77,7 +77,7 @@ class ServerThread extends Thread {
 		case 0: // Sign-in.
 			boolean b = server.getManagement().signIn(credentials);
 			if (!b)
-				output.put("SUCCESS", 1);
+				output.put("errorCode", 1);
 			break;
 
 		case 1: // Sign-out.
@@ -85,8 +85,8 @@ class ServerThread extends Thread {
 			break;
 
 		case 2: // Update client's information.
-			int clientUpdateTime = Integer.valueOf((String) jo
-					.get("latestUpdateTime"));
+			long clientUpdateTime = (long) jo
+					.get("latestUpdateTime");
 			
 			output.put("playerUpdateAvailable", false);
 			if (clientUpdateTime < server.getManagement().getLatestUpdateTime()) {

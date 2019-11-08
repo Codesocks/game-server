@@ -18,9 +18,16 @@ public class Client {
 		this.management = management;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public String request(JSONObject o) {
 		String reply = "";
+		
+		// Add managements information.
+		o.put("credentials", management.getCredentials());
+		o.put("latestUpdateTime", management.getLatestUpdateTime());
+		
 
+		// Try sending JSONData.
 		try {
 			this.connect();
 			this.send(o.toString());
