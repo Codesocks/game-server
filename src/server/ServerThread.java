@@ -5,9 +5,6 @@ import java.net.Socket;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.ParseException;
-
-import management.Management;
 
 class ServerThread extends Thread {
 	Socket client;
@@ -47,17 +44,31 @@ class ServerThread extends Thread {
 	}
 
 	@SuppressWarnings("unchecked")
+	/**
+	 * Error-Codes:
+	 * 	   -1:	Something unexpected went wrong
+	 * 		0:	Success
+	 * 		1:	Credentials failed
+	 * 		2:	
+	 * @param jo
+	 * @return
+	 */
 	private String processData(JSONObject jo) {
 		JSONObject output = new JSONObject();
+		output.put("errorCode", 0);
+
+		// Extract from JSONObject.
 		JSONArray credentials = (JSONArray) jo.get("credentials");
 		int mode = Integer.valueOf((String) jo.get("mode"));
 
-		// Verify credentials if already signed in.
+		// Verify credentials if not attempting to sign-in.
 		if (mode != 0) {
-			boolean login = server.getManagement().verifyCredentials(credentials);
-			output.put("SUCCESS", login);
-			if (!login)
+			boolean login = server.getManagement().verifyCredentials(
+					credentials);
+			if (!login) {
+				output.put("errorCode", 1);
 				return output.toString();
+			}
 		}
 
 		// Deal with modes.
@@ -65,27 +76,37 @@ class ServerThread extends Thread {
 		switch (mode) {
 		case 0: // Sign-in.
 			boolean b = server.getManagement().signIn(credentials);
-			output.put("SUCCESS", b);
-			return output.toString();
+			if (!b)
+				output.put("SUCCESS", 1);
+			break;
 
 		case 1: // Sign-out.
 			server.getManagement().signOut(credentials);
+			break;
 
 		case 2: // Update client's information.
-			int clientUpdateTime = Integer.valueOf((String) jo.get("latestUpdateTime"));
+			int clientUpdateTime = Integer.valueOf((String) jo
+					.get("latestUpdateTime"));
+			
+			output.put("playerUpdateAvailable", false);
 			if (clientUpdateTime < server.getManagement().getLatestUpdateTime()) {
-				output.put("onlinePlayers", server.getManagement().getOnlinePlayers());
+				output.put("onlinePlayers", server.getManagement()
+						.getOnlinePlayers());
 				output.put("playerUpdateAvailable", true);
 			}
-			return output.toString();
-			
+			break;
+
 		case 3: // Get currently online players.
-			output.put("onlinePlayers", server.getManagement().getOnlinePlayers());
-			return output.toString();
-			
+			output.put("onlinePlayers", server.getManagement()
+					.getOnlinePlayers());
+			break;
+
 		default: // Not a valid mode.
-			return "{\"SUCCESS\":false}";
+			output.put("SUCCESS", -1);
+			break;
 		}
+		
+		return output.toString();
 	}
 
 }

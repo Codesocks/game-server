@@ -2,11 +2,10 @@ package server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-
-import management.Management;
+import management.ServerManagement;
 
 public class Server extends Thread {
-	Management management = new Management();
+	ServerManagement management = new ServerManagement();
 	
 	@Override
 	public void run() {
@@ -25,7 +24,7 @@ public class Server extends Thread {
 		}
 	}
 
-	Management getManagement() {
+	ServerManagement getManagement() {
 		return management;
 	}
 }

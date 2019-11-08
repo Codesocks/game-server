@@ -4,31 +4,41 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import management.ClientManagement;
+import org.json.simple.JSONObject;
+
 public class Client {
 	private static final String HOSTNAME = "localhost";
 	private static final int PORT = 3141;
+	private ClientManagement management;
 	private Socket socket;
+	
+	
+	Client(ClientManagement management) {
+		this.management = management;
+	}
+	
+	public String request(JSONObject o) {
+		String reply = "";
 
-	/*
-	 * public static void main(String[] args) { Socket server = null; try { server =
-	 * new Socket("localhost", 3141); DataInputStream in = new
-	 * DataInputStream(server.getInputStream()); DataOutputStream out = new
-	 * DataOutputStream(server.getOutputStream()); out.writeInt(4); // sende 1.
-	 * Operanden out.writeInt(10000); // sende 2. Operanden int result =
-	 * in.readInt();// lese das Ergebnis System.out.println("Client: " + result); }
-	 * catch (UnknownHostException e) {
-	 * 
-	 * } catch (IOException e) { // Verbindungsfehler e.printStackTrace();
-	 * 
-	 * } finally { // Fehler bei Ein-und Ausgabe if (server != null) try {
-	 * server.close(); } catch (IOException e) { } } }
-	 */
+		try {
+			this.connect();
+			this.send(o.toString());
+			reply = this.read();
+			this.disconnect();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
-	public void connect() throws UnknownHostException, IOException {
+		System.out.println("[CLIENT] Reply:			" + reply);
+		return reply;
+	}
+	
+	private void connect() throws UnknownHostException, IOException {
 		socket = new Socket(HOSTNAME, PORT);
 	}
 
-	public void disconnect() throws IOException {
+	private void disconnect() throws IOException {
 		if (socket != null)
 			try {
 				socket.close();
@@ -37,11 +47,11 @@ public class Client {
 			}
 	}
 
-	public void send(String msg) throws IOException {
+	private void send(String msg) throws IOException {
 		Connection.send(socket, msg);
 	}
 
-	public String read() throws IOException {
+	private String read() throws IOException {
 		return Connection.read(socket);
 	}
 }

@@ -29,6 +29,7 @@ public class Testing {
 		sendRequest(jsMode2);
 	}
 
+	//  Ersetze durch non-static.
 	static JSONArray getLoginCredentials() {
 		JSONArray credentials = new JSONArray();
 		credentials.add("username");
@@ -37,7 +38,7 @@ public class Testing {
 		return credentials;
 	}
 
-	static String sendRequest(JSONObject jo) {
+	/*static String sendRequest(JSONObject jo) {
 		String reply = "";
 
 		try {
@@ -52,5 +53,5 @@ public class Testing {
 
 		System.out.println("[CLIENT] Reply:			" + reply);
 		return reply;
-	}
+	}*/
 }

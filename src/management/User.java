@@ -12,6 +12,11 @@ class User {
 		this.online = true;
 	}
 	
+	User(String username) {
+		this.username = username;
+		this.online = true;
+	}
+	
 	boolean verifyPWD(String pwd) {
 		if(pwd.equals(pseudopassword)) {
 			return true;
