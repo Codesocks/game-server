@@ -3,10 +3,10 @@ package model;
 import java.util.Random;
 
 /**
- * Game of Connect Four. It consists of two players, one of them can be a
- * computer player. The board of the game can be adjusted. The rules are
- * implemented like you know them from your general knowledge.
- * 
+ * Game of Chomp. It consists of two players, one of them can be a computer
+ * player. The board of the game can be adjusted. The rules are implemented
+ * according to https://de.wikipedia.org/wiki/Chomp.
+ *
  * @author j-bl (Jan), Codesocks (Christian)
  *
  */
