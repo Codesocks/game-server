@@ -5,13 +5,16 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.net.Socket;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-final class Connection {
-	static void send(java.net.Socket socket, String msg) throws IOException {
+abstract class Connection {
+	Socket socket;
+	
+	void send(String msg) throws IOException {
 		PrintWriter printWriter =
 		 	    new PrintWriter(
 		 	    new OutputStreamWriter(
@@ -20,7 +23,7 @@ final class Connection {
 		printWriter.flush();
 	}
 	
-	static String read(java.net.Socket socket) throws IOException {
+	String read() throws IOException {
 		BufferedReader bufferedReader = 
 				new BufferedReader(
 				new InputStreamReader(socket.getInputStream()));
@@ -32,7 +35,7 @@ final class Connection {
 		return msg;
 	}
 	
-	static JSONObject stringToJSONObject(String string) {
+	JSONObject stringToJSONObject(String string) {
 		try {
 			JSONParser parser = new JSONParser();
 			return (JSONObject) parser.parse(string);

@@ -6,27 +6,26 @@ import java.net.Socket;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-class ServerThread extends Thread {
-	Socket client;
+class ServerThread extends Connection implements Runnable {
 	Server server;
 
 	ServerThread(Socket client, Server server) {
-		this.client = client;
+		socket = client;
 		this.server = server;
 	}
 
 	public void run() {
 		// Bearbeitung einer aufgebauten Verbindung
 		try {
-			String msg = Connection.read(client);
+			String msg = read();
 
 			// Handle msg of client.
-			JSONObject jo = Connection.stringToJSONObject(msg);
+			JSONObject jo = stringToJSONObject(msg);
 			System.out.println("[RECEIVED] Incoming request:	    " + msg);
 			String reply = processData(jo);
 
 			// Send reply.
-			Connection.send(client, reply);
+			send(reply);
 			System.out.println("[SEND]     Reply to request:	    " + reply);
 
 			// Fehler bei Ein- und Ausgabe
@@ -35,9 +34,9 @@ class ServerThread extends Thread {
 		}
 
 		finally {
-			if (client != null)
+			if (socket != null)
 				try {
-					client.close();
+					socket.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -106,7 +105,7 @@ class ServerThread extends Thread {
 			break;
 
 		default: // Not a valid mode.
-			output.put("SUCCESS", -1);
+			output.put("errorCode", -1);
 			break;
 		}
 		

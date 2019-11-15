@@ -16,7 +16,7 @@ public class Server extends Thread {
 			
 			// einzelner Thread bearbeitet eine aufgebaute Verbindung
 			while (true) {
-				ServerThread mulThread = new ServerThread(server.accept(), this);
+				Thread mulThread = new Thread(new ServerThread(server.accept(), this));
 				mulThread.start();
 			}
 		} catch (IOException e) {
