@@ -22,11 +22,12 @@ class ServerThread extends Thread {
 
 			// Handle msg of client.
 			JSONObject jo = Connection.stringToJSONObject(msg);
-			System.out.println("[SERVER] Incoming request:	" + msg);
+			System.out.println("[RECEIVED] Incoming request:	    " + msg);
 			String reply = processData(jo);
 
 			// Send reply.
 			Connection.send(client, reply);
+			System.out.println("[SEND]     Reply to request:	    " + reply);
 
 			// Fehler bei Ein- und Ausgabe
 		} catch (Exception e) {
@@ -85,9 +86,12 @@ class ServerThread extends Thread {
 			break;
 
 		case 2: // Update client's information.
-			long clientUpdateTime = (long) jo
+			long clientUpdateTime = (Long) jo
 					.get("latestUpdateTime");
+			JSONArray messages = (JSONArray) jo.get("messages");
+			server.getManagement().addReceivedMessages(messages);
 			
+			output.put("messages", server.getManagement().getNewMessages(credentials, clientUpdateTime));
 			output.put("playerUpdateAvailable", false);
 			if (clientUpdateTime < server.getManagement().getLatestUpdateTime()) {
 				output.put("onlinePlayers", server.getManagement()

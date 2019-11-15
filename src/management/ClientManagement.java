@@ -1,5 +1,6 @@
 package management;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import org.json.simple.JSONArray;
@@ -12,6 +13,8 @@ import org.json.simple.JSONArray;
  * 
  */
 public class ClientManagement extends Management {
+	private ArrayList<Message> send = new ArrayList<Message>();
+
 	private String username;
 	private String pwd;
 
@@ -42,16 +45,49 @@ public class ClientManagement extends Management {
 		// Updated Management.
 		isUpdate();
 	}
+
+	public void sendMessage(String content, String username)
+			throws IllegalArgumentException {
+		if (content == null || content.equals("") || content.length() > 140
+				|| !users.containsKey(username) || !(users.get(username).isOnline()))
+			throw new IllegalArgumentException(
+					"The message you attempted to send was not a valid message. It was either too short / long or the receiving party is not online.");
+
+		send.add(new Message(content, users.get(username), System
+				.currentTimeMillis()));
+	}
+
+	@SuppressWarnings("unchecked")
+	public JSONArray getLatestMessages() {
+		JSONArray jsonArray = new JSONArray();
+		
+		for(Message m: send) {
+			System.out.println(m.getCreationTime() + " ?>= " + this.getLatestUpdateTime());
+			
+			if(m.getCreationTime() >= this.getLatestUpdateTime()) {
+				JSONArray jMessage = new JSONArray();
+				jMessage.add(m.getContent());
+				jMessage.add(m.getUser().getUsername());
+				jMessage.add(m.getCreationTime());
+				jsonArray.add(jMessage);
+			}
+		}
+		
+		return jsonArray;
+	}
 	
 	/**
 	 * Returns whether the player with the given name is currently online.
 	 * 
-	 * @param username Username of the player.
+	 * @param username
+	 *            Username of the player.
 	 * @return Whether the given player is online.
 	 */
 	public boolean isOnline(String username) {
-		if(!users.containsKey(username)) return false;
-		else return users.get(username).isOnline();
+		if (!users.containsKey(username))
+			return false;
+		else
+			return users.get(username).isOnline();
 	}
 
 	/**

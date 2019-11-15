@@ -1,5 +1,6 @@
 package management;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import org.json.simple.JSONArray;
@@ -11,7 +12,7 @@ import org.json.simple.JSONArray;
  * @author j-bl (Jan), Codesocks (Christian)
  * 
  */
-public class ServerManagement extends Management {
+public class ServerManagement extends Management {	
 	/**
 	 * Attempts to add the user with the given credentials to the management. If
 	 * the credentials are non-valid credentials, {@code false} is returned.
@@ -112,5 +113,24 @@ public class ServerManagement extends Management {
 		}
 
 		return onlinePlayers;
+	}
+	
+	public JSONArray getNewMessages(JSONArray credentials, long clientUpdateTime) {
+		// Extract username from JSON-Data.
+		String username = (String) credentials.get(0);
+		User user = users.get("username");
+		
+		JSONArray newMessages = new JSONArray();
+		for(Message m: received) {
+			if(m.getCreationTime() >= clientUpdateTime) {
+				JSONArray jMessage = new JSONArray();
+				jMessage.add(m.getContent());
+				jMessage.add(m.getUser().getUsername());
+				jMessage.add(m.getCreationTime());
+				newMessages.add(jMessage);
+			}
+		}
+		
+		return newMessages;
 	}
 }

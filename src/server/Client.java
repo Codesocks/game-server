@@ -24,7 +24,7 @@ public class Client {
 		
 		// Add managements information.
 		o.put("credentials", management.getCredentials());
-		o.put("latestUpdateTime", management.getLatestUpdateTime());
+		// o.put("latestUpdateTime", management.getLatestUpdateTime());
 		
 
 		// Try sending JSONData.
