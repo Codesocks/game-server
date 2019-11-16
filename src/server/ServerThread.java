@@ -18,7 +18,7 @@ class ServerThread extends Connection implements Runnable {
 		// Bearbeitung einer aufgebauten Verbindung
 		try {
 			String msg = read();
-
+			
 			// Handle msg of client.
 			JSONObject jo = stringToJSONObject(msg);
 			System.out.println("[RECEIVED] Incoming request:	    " + msg);

@@ -31,9 +31,9 @@ abstract class Management {
 		for (Object o : jsonArray) {
 			JSONArray j = (JSONArray) o;
 
-			String username = (String) j.get(0);
-			Long creationTime = (Long) j.get(1);
-			String content = (String) j.get(2);
+			String content = (String) j.get(0);
+			String username = (String) j.get(1);
+			Long creationTime = (Long) j.get(2);
 
 			User user = users.get(username);
 			received.add(new Message(content, user, creationTime));
