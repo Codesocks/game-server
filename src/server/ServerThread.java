@@ -88,7 +88,7 @@ class ServerThread extends Connection implements Runnable {
 			long clientUpdateTime = (Long) jo
 					.get("latestUpdateTime");
 			JSONArray messages = (JSONArray) jo.get("messages");
-			server.getManagement().addReceivedMessages(messages);
+			server.getManagement().addReceivedMessages(messages, credentials);
 			
 			output.put("messages", server.getManagement().getNewMessages(credentials, clientUpdateTime));
 			output.put("playerUpdateAvailable", false);

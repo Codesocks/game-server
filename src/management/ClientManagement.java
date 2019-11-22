@@ -67,13 +67,31 @@ public class ClientManagement extends Management {
 			if(m.getCreationTime() >= this.getLatestUpdateTime()) {
 				JSONArray jMessage = new JSONArray();
 				jMessage.add(m.getContent());
-				jMessage.add(m.getUser().getUsername());
+				jMessage.add(m.getToUser().getUsername());
 				jMessage.add(m.getCreationTime());
 				jsonArray.add(jMessage);
 			}
 		}
 		
 		return jsonArray;
+	}
+	
+	public void addReceivedMessages(JSONArray jsonArray) {
+		if(jsonArray.size() == 0) return;
+		
+		// jsonArray is JSONArray of JSONArrays.
+		for (Object o : jsonArray) {
+			JSONArray j = (JSONArray) o;
+
+			String content = (String) j.get(0);
+			String username = (String) j.get(1);
+			Long creationTime = (Long) j.get(2);
+
+			User user = users.get(username);
+			received.add(new Message(content, user, creationTime));
+		}
+
+		isUpdate();
 	}
 	
 	/**

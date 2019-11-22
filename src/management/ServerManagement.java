@@ -1,6 +1,5 @@
 package management;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 import org.json.simple.JSONArray;
@@ -115,6 +114,7 @@ public class ServerManagement extends Management {
 		return onlinePlayers;
 	}
 	
+	@SuppressWarnings("unused")
 	public JSONArray getNewMessages(JSONArray credentials, long clientUpdateTime) {
 		// Extract username from JSON-Data.
 		String username = (String) credentials.get(0);
@@ -122,15 +122,37 @@ public class ServerManagement extends Management {
 		
 		JSONArray newMessages = new JSONArray();
 		for(Message m: received) {
-			if(m.getCreationTime() >= clientUpdateTime) {
+			if(m.getCreationTime() >= clientUpdateTime && m.getToUser().getUsername().equals(username)) {
 				JSONArray jMessage = new JSONArray();
 				jMessage.add(m.getContent());
-				jMessage.add(m.getUser().getUsername());
+				jMessage.add(m.getFromUser().getUsername());
 				jMessage.add(m.getCreationTime());
 				newMessages.add(jMessage);
 			}
 		}
 		
 		return newMessages;
+	}
+	
+	public void addReceivedMessages(JSONArray jsonArray, JSONArray credentials) {
+		if(jsonArray.size() == 0) return;
+		
+		// Extract username from JSON-Data.
+		String fromUsername = (String) credentials.get(0);
+		User fromUser = users.get(fromUsername);
+		
+		// jsonArray is JSONArray of JSONArrays.
+		for (Object o : jsonArray) {
+			JSONArray j = (JSONArray) o;
+
+			String content = (String) j.get(0);
+			String username = (String) j.get(1);
+			Long creationTime = (Long) j.get(2);
+
+			User user = users.get(username);
+			received.add(new Message(content, user, fromUser, creationTime));
+		}
+
+		isUpdate();
 	}
 }

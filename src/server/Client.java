@@ -73,6 +73,11 @@ class Client extends Connection {
 			if (((JSONArray) reply.get("messages")).size() > 0) {
 				management.addReceivedMessages((JSONArray) reply.get("messages"));
 				System.out.println("[CLIENT] [INFO]	You have (" + ((JSONArray) reply.get("messages")).size() + ") new messages.");
+			
+				for(Object o: ((JSONArray) reply.get("messages"))) {
+					JSONArray jsonArray = (JSONArray) o;
+					System.out.println("@" + ((String) jsonArray.get(1)) + ": " + ((String) jsonArray.get(0)));
+				}
 			}
 
 		} else if (request.contains("sendmsg ")) {
