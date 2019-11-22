@@ -2,13 +2,12 @@ package management;
 
 class User {
 	private String username;
-	// NOT save! Add propper HASHING here!!!!.
-	private String pseudopassword;
+	private String pwd;
 	private boolean online;
 	
 	User(String username, String pwd) {
 		this.username = username;
-		this.pseudopassword = pwd;
+		this.pwd = pwd;
 		this.online = true;
 	}
 	
@@ -18,7 +17,7 @@ class User {
 	}
 	
 	boolean verifyPWD(String pwd) {
-		if(pwd.equals(pseudopassword)) {
+		if(pwd.equals(this.pwd)) {
 			return true;
 		} else {
 			return false;

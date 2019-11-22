@@ -12,6 +12,7 @@ public class connectfour {
 		CFGame mygame = new CFGame(p1, p2, 8, 4);
 
 		while (true) {
+			@SuppressWarnings("resource")
 			Scanner bf = new Scanner(System.in);
 			System.out.println("x:...");
 			int x = bf.nextInt();

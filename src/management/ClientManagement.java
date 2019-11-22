@@ -46,10 +46,23 @@ public class ClientManagement extends Management {
 		isUpdate();
 	}
 
+	/**
+	 * Add the given message to the messages that shall be send. The message is
+	 * send to the user with the given username. If that user is not currently
+	 * online, an exception is thrown.
+	 * 
+	 * @param content
+	 *            Content of the message.
+	 * @param username
+	 *            Username of the target.
+	 * @throws IllegalArgumentException
+	 *             Thrown if the message is invalid or the target not online.
+	 */
 	public void sendMessage(String content, String username)
 			throws IllegalArgumentException {
 		if (content == null || content.equals("") || content.length() > 140
-				|| !users.containsKey(username) || !(users.get(username).isOnline()))
+				|| !users.containsKey(username)
+				|| !(users.get(username).isOnline()))
 			throw new IllegalArgumentException(
 					"The message you attempted to send was not a valid message. It was either too short / long or the receiving party is not online.");
 
@@ -57,14 +70,22 @@ public class ClientManagement extends Management {
 				.currentTimeMillis()));
 	}
 
+	/**
+	 * Returns a JSONArray containing all messages that were added to the list
+	 * of messages to be send since the last update of this management's
+	 * information.
+	 * 
+	 * @return JSONArray of messages to be send.
+	 */
 	@SuppressWarnings("unchecked")
 	public JSONArray getLatestMessages() {
 		JSONArray jsonArray = new JSONArray();
-		
-		for(Message m: send) {
-			System.out.println(m.getCreationTime() + " ?>= " + this.getLatestUpdateTime());
-			
-			if(m.getCreationTime() >= this.getLatestUpdateTime()) {
+
+		for (Message m : send) {
+			System.out.println(m.getCreationTime() + " ?>= "
+					+ this.getLatestUpdateTime());
+
+			if (m.getCreationTime() >= this.getLatestUpdateTime()) {
 				JSONArray jMessage = new JSONArray();
 				jMessage.add(m.getContent());
 				jMessage.add(m.getToUser().getUsername());
@@ -72,13 +93,20 @@ public class ClientManagement extends Management {
 				jsonArray.add(jMessage);
 			}
 		}
-		
+
 		return jsonArray;
 	}
-	
+
+	/**
+	 * Add the given messages received by the client at the latest update to the management's
+	 * information.
+	 * 
+	 * @param jsonArray Received messages.
+	 */
 	public void addReceivedMessages(JSONArray jsonArray) {
-		if(jsonArray.size() == 0) return;
-		
+		if (jsonArray.size() == 0)
+			return;
+
 		// jsonArray is JSONArray of JSONArrays.
 		for (Object o : jsonArray) {
 			JSONArray j = (JSONArray) o;
@@ -93,7 +121,7 @@ public class ClientManagement extends Management {
 
 		isUpdate();
 	}
-	
+
 	/**
 	 * Returns whether the player with the given name is currently online.
 	 * 

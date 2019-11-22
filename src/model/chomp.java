@@ -14,6 +14,7 @@ public class chomp {
 
 		while (!mygame.isWon()) {
 			currentPlayer = mygame.getCurrentPlayer();
+			@SuppressWarnings("resource")
 			Scanner bf = new Scanner(System.in);
 			System.out.println("x:...");
 			int x = bf.nextInt();

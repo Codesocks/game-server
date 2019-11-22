@@ -12,6 +12,7 @@ public class ClientCLI {
 		System.out.println("Console (Client Command Line Interface):");
 		
 		while (true) {
+			@SuppressWarnings("resource")
 			Scanner bf = new Scanner(System.in);
 			String input = bf.nextLine();
 			

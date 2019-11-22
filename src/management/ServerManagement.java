@@ -1,7 +1,6 @@
 package management;
 
 import java.util.Map;
-
 import org.json.simple.JSONArray;
 
 /**
@@ -11,7 +10,7 @@ import org.json.simple.JSONArray;
  * @author j-bl (Jan), Codesocks (Christian)
  * 
  */
-public class ServerManagement extends Management {	
+public class ServerManagement extends Management {
 	/**
 	 * Attempts to add the user with the given credentials to the management. If
 	 * the credentials are non-valid credentials, {@code false} is returned.
@@ -113,16 +112,27 @@ public class ServerManagement extends Management {
 
 		return onlinePlayers;
 	}
-	
-	@SuppressWarnings("unused")
-	public JSONArray getNewMessages(JSONArray credentials, long clientUpdateTime) {
+
+	/**
+	 * Returns all new messages for the client that corresponds to the given
+	 * credentials since the given UNIX-timestamp.
+	 * 
+	 * @param credentials
+	 *            Credentials of the user.
+	 * @param clientUpdateTime
+	 *            Latest time the client's data was updated.
+	 * @return
+	 */
+	@SuppressWarnings({ "unused", "unchecked" })
+	public synchronized JSONArray getNewMessages(JSONArray credentials, long clientUpdateTime) {
 		// Extract username from JSON-Data.
 		String username = (String) credentials.get(0);
 		User user = users.get("username");
-		
+
 		JSONArray newMessages = new JSONArray();
-		for(Message m: received) {
-			if(m.getCreationTime() >= clientUpdateTime && m.getToUser().getUsername().equals(username)) {
+		for (Message m : received) {
+			if (m.getCreationTime() >= clientUpdateTime
+					&& m.getToUser().getUsername().equals(username)) {
 				JSONArray jMessage = new JSONArray();
 				jMessage.add(m.getContent());
 				jMessage.add(m.getFromUser().getUsername());
@@ -130,17 +140,25 @@ public class ServerManagement extends Management {
 				newMessages.add(jMessage);
 			}
 		}
-		
+
 		return newMessages;
 	}
-	
-	public void addReceivedMessages(JSONArray jsonArray, JSONArray credentials) {
-		if(jsonArray.size() == 0) return;
-		
+
+	/**
+	 * Add the given messages received by the server at the latest connection to the
+	 * management's information.
+	 * 
+	 * @param jsonArray
+	 * @param credentials
+	 */
+	public synchronized void addReceivedMessages(JSONArray jsonArray, JSONArray credentials) {
+		if (jsonArray.size() == 0)
+			return;
+
 		// Extract username from JSON-Data.
 		String fromUsername = (String) credentials.get(0);
 		User fromUser = users.get(fromUsername);
-		
+
 		// jsonArray is JSONArray of JSONArrays.
 		for (Object o : jsonArray) {
 			JSONArray j = (JSONArray) o;

@@ -3,8 +3,6 @@ package management;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.json.simple.JSONArray;
-
 abstract class Management {
 	HashMap<String, User> users = new HashMap<String, User>();
 	ArrayList<Message> received = new ArrayList<Message>();
