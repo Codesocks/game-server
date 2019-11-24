@@ -8,12 +8,12 @@ import management.ClientManagement;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-class Client extends Connection {
+public class Client extends Connection {
 	private static final String HOSTNAME = "localhost";
 	private static final int PORT = 3141;
 	private ClientManagement management;
 
-	Client(ClientManagement management) {
+	public Client(ClientManagement management) {
 		this.management = management;
 	}
 
@@ -48,7 +48,7 @@ class Client extends Connection {
 	}
 
 	@SuppressWarnings("unchecked")
-	long execute(String request) {
+	public long execute(String request) {
 		JSONObject j = new JSONObject();
 		JSONObject reply;
 		

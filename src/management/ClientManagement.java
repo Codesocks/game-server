@@ -148,6 +148,23 @@ public class ClientManagement extends Management {
 		this.username = username;
 		this.pwd = pwd;
 	}
+	
+	/**
+	 * Returns a List of all players currently online.
+	 * 
+	 * @return List of online players.
+	 */
+	public ArrayList<String> getUsersOnline() {
+		ArrayList<String> onlinePlayers = new ArrayList<String>();
+		
+		for (Map.Entry<String, User> entry : users.entrySet()) {
+			User user = entry.getValue();
+			if (user.isOnline())
+				onlinePlayers.add(user.getUsername());
+		}
+		
+		return onlinePlayers;
+	}
 
 	/**
 	 * Returns the credentials of this client as a JSONArray. Credentials
