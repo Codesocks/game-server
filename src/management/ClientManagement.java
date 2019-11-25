@@ -21,8 +21,7 @@ public class ClientManagement extends Management {
 	/**
 	 * Sets all given players to online and all others to off-line.
 	 * 
-	 * @param jsonArray
-	 *            Contains new online players.
+	 * @param jsonArray Contains new online players.
 	 */
 	public void setOnlinePlayers(JSONArray jsonArray) {
 		// Set all players to off-line.
@@ -47,33 +46,27 @@ public class ClientManagement extends Management {
 	}
 
 	/**
-	 * Add the given message to the messages that shall be send. The message is
-	 * send to the user with the given username. If that user is not currently
-	 * online, an exception is thrown.
+	 * Add the given message to the messages that shall be send. The message is send
+	 * to the user with the given username. If that user is not currently online, an
+	 * exception is thrown.
 	 * 
-	 * @param content
-	 *            Content of the message.
-	 * @param username
-	 *            Username of the target.
-	 * @throws IllegalArgumentException
-	 *             Thrown if the message is invalid or the target not online.
+	 * @param content  Content of the message.
+	 * @param username Username of the target.
+	 * @throws IllegalArgumentException Thrown if the message is invalid or the
+	 *                                  target not online.
 	 */
-	public void sendMessage(String content, String username)
-			throws IllegalArgumentException {
-		if (content == null || content.equals("") || content.length() > 140
-				|| !users.containsKey(username)
+	public void sendMessage(String content, String username) throws IllegalArgumentException {
+		if (content == null || content.equals("") || content.length() > 140 || !users.containsKey(username)
 				|| !(users.get(username).isOnline()))
 			throw new IllegalArgumentException(
 					"The message you attempted to send was not a valid message. It was either too short / long or the receiving party is not online.");
 
-		send.add(new Message(content, users.get(username), System
-				.currentTimeMillis()));
+		send.add(new Message(content, users.get(username), System.currentTimeMillis()));
 	}
 
 	/**
-	 * Returns a JSONArray containing all messages that were added to the list
-	 * of messages to be send since the last update of this management's
-	 * information.
+	 * Returns a JSONArray containing all messages that were added to the list of
+	 * messages to be send since the last update of this management's information.
 	 * 
 	 * @return JSONArray of messages to be send.
 	 */
@@ -82,8 +75,7 @@ public class ClientManagement extends Management {
 		JSONArray jsonArray = new JSONArray();
 
 		for (Message m : send) {
-			System.out.println(m.getCreationTime() + " ?>= "
-					+ this.getLatestUpdateTime());
+			System.out.println(m.getCreationTime() + " ?>= " + this.getLatestUpdateTime());
 
 			if (m.getCreationTime() >= this.getLatestUpdateTime()) {
 				JSONArray jMessage = new JSONArray();
@@ -98,8 +90,8 @@ public class ClientManagement extends Management {
 	}
 
 	/**
-	 * Add the given messages received by the client at the latest update to the management's
-	 * information.
+	 * Add the given messages received by the client at the latest update to the
+	 * management's information.
 	 * 
 	 * @param jsonArray Received messages.
 	 */
@@ -125,8 +117,7 @@ public class ClientManagement extends Management {
 	/**
 	 * Returns whether the player with the given name is currently online.
 	 * 
-	 * @param username
-	 *            Username of the player.
+	 * @param username Username of the player.
 	 * @return Whether the given player is online.
 	 */
 	public boolean isOnline(String username) {
@@ -139,16 +130,14 @@ public class ClientManagement extends Management {
 	/**
 	 * Updates the credentials of this client.
 	 * 
-	 * @param username
-	 *            Username.
-	 * @param pwd
-	 *            Password.
+	 * @param username Username.
+	 * @param pwd      Password.
 	 */
 	public void setCredentials(String username, String pwd) {
 		this.username = username;
 		this.pwd = pwd;
 	}
-	
+
 	/**
 	 * Returns a List of all players currently online.
 	 * 
@@ -156,19 +145,19 @@ public class ClientManagement extends Management {
 	 */
 	public ArrayList<String> getUsersOnline() {
 		ArrayList<String> onlinePlayers = new ArrayList<String>();
-		
+
 		for (Map.Entry<String, User> entry : users.entrySet()) {
 			User user = entry.getValue();
-			if (user.isOnline())
+			if (user.isOnline() && !user.getUsername().contentEquals(username))
 				onlinePlayers.add(user.getUsername());
 		}
-		
+
 		return onlinePlayers;
 	}
 
 	/**
-	 * Returns the credentials of this client as a JSONArray. Credentials
-	 * consist of a username and a password.
+	 * Returns the credentials of this client as a JSONArray. Credentials consist of
+	 * a username and a password.
 	 * 
 	 * @return Credentials.
 	 */
@@ -179,5 +168,62 @@ public class ClientManagement extends Management {
 		credentials.add(pwd);
 
 		return credentials;
+	}
+
+	/**
+	 * Returns all messages exchanged with the user with the given username.
+	 * String[0] is the username of the user that send the message and String[1] is
+	 * the content of that message.
+	 * 
+	 * @param username Username of the user the conversation was held with.
+	 * @return Content of the chat.
+	 */
+	public String[][] getMessages(String username) {		
+		// Messages to User.
+		ArrayList<Message> sendToUser = new ArrayList<Message>();
+		for (Message m : send) {
+			if (m.getToUser().getUsername().equals(username)) {
+				sendToUser.add(m);
+			}
+		}
+
+		// Messages from user.
+		ArrayList<Message> receivedFromUser = new ArrayList<Message>();
+		for (Message m : received) {
+			if (m.getToUser().getUsername().equals(username)) {
+				receivedFromUser.add(m);
+			}
+		}
+
+		// Total messages.
+		String[][] messages = new String[receivedFromUser.size() + sendToUser.size()][2];
+		int i = 0;
+		while (!(sendToUser.isEmpty() && receivedFromUser.isEmpty())) {
+			if (sendToUser.isEmpty()) {
+				messages[i][0] = username;
+				messages[i][1] = receivedFromUser.get(0).getContent();
+				System.out.println(username + " " + receivedFromUser.get(0).getContent());
+				receivedFromUser.remove(0);
+			} else if (receivedFromUser.isEmpty()) {
+				messages[i][0] = this.username;
+				messages[i][1] = sendToUser.get(0).getContent();
+				sendToUser.remove(0);
+			} else {
+				// Check which message is earlier.
+				if (send.get(0).getCreationTime() < received.get(0).getCreationTime()) {
+					messages[i][0] = this.username;
+					messages[i][1] = sendToUser.get(0).getContent();
+					sendToUser.remove(0);
+				} else {
+					messages[i][0] = username;
+					messages[i][1] = receivedFromUser.get(0).getContent();
+					receivedFromUser.remove(0);
+				}
+			}
+
+			i++;
+		}
+
+		return messages;
 	}
 }

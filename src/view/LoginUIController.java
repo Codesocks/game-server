@@ -36,7 +36,7 @@ public class LoginUIController implements Initializable {
 
 	@FXML
 	public void attemptLogin() {
-		if(checkCredentials()) {
+		if (checkCredentials()) {
 			switchToMain();
 		}
 	}
@@ -51,8 +51,14 @@ public class LoginUIController implements Initializable {
 		} else {
 			management.setCredentials(loginUsername.getText(), loginPwd.getText());
 
-			if (client.execute("signin") != 0) {
-				loginText.setText("Username or password invalid!");
+			try {
+				if (client.execute("signin") != 0) {
+					loginText.setText("Username or password invalid!");
+					return false;
+				}
+			} catch (Exception e) {
+				loginText.setText("Failed login. Check your internet connection!");
+				e.printStackTrace();
 				return false;
 			}
 		}
