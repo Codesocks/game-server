@@ -7,6 +7,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import management.ClientManagement;
+import server.Client;
 
 public class Main extends Application {
 	private Stage primaryStage;
@@ -21,6 +23,7 @@ public class Main extends Application {
 		
 		// Parent root = FXMLLoader.load(getClass().getResource("MainUI.fxml"));
 		Parent root = FXMLLoader.load(getClass().getResource("LoginUI.fxml"));
+		// Parent root = FXMLLoader.load(getClass().getResource("MainUI2.fxml"));
 		Scene scene = new Scene(root, 800, 450);
     
         primaryStage.setTitle("FXML Welcome");
