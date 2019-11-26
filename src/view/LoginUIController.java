@@ -12,6 +12,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import management.ClientManagement;
 import server.Client;
@@ -31,7 +32,17 @@ public class LoginUIController implements Initializable {
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
+		loginUsername.setOnKeyPressed(event -> {
+			if(event.getCode() == KeyCode.ENTER){
+				attemptLogin();
+			}
+		});
 
+		loginPwd.setOnKeyPressed(event -> {
+			if(event.getCode() == KeyCode.ENTER){
+				attemptLogin();
+			}
+		});
 	}
 
 	@FXML

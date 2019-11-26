@@ -8,12 +8,15 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
@@ -48,12 +51,16 @@ public class MainUI2Controller implements Initializable {
 		menueStackPane.setVisible(false);
 		menueStackPane.setPickOnBounds(false);
 		menueUserList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-			
 			public void changed(ObservableValue<? extends String> ov, final String oldvalue, final String newvalue) {
 				System.out.println("User selected: " + menueUserList.getSelectionModel().getSelectedItem());
-				openChat(menueUserList.getSelectionModel().getSelectedItem());
+				openSelectedChat();
 			}
-			
+		});
+
+		leftTextArea.setOnKeyPressed(event -> {
+			if(event.getCode() == KeyCode.ENTER){
+				sendMsg();
+			}
 		});
 
 		// Remove all below.
@@ -73,7 +80,7 @@ public class MainUI2Controller implements Initializable {
 	@FXML
 	public void showMenue() {
 		// Update the list of contacts.
-		ObservableList<String> userList = FXCollections.observableArrayList("First word", "Second word");
+		ObservableList<String> userList = FXCollections.observableArrayList();
 		for (String username : management.getUsersOnline()) {
 			userList.add(username);
 		}
@@ -97,7 +104,7 @@ public class MainUI2Controller implements Initializable {
 			if(!leftTextArea.getText().trim().isEmpty() && menueUserList.getSelectionModel().getSelectedItem() != null) {
 				client.execute("sendmsg " + leftTextArea.getText() + ";" + menueUserList.getSelectionModel().getSelectedItem());
 				
-				openChat(menueUserList.getSelectionModel().getSelectedItem()); // Update Chat.
+				openSelectedChat(); // Update Chat.
 				leftTextArea.setText("");
 			} else {
 				System.out.println("No receiving user selected or message empty. Therefore message will NOT be send.");
@@ -111,9 +118,22 @@ public class MainUI2Controller implements Initializable {
 		this.management = management;
 		client = new Client(this.management);
 		client.execute("update");
+
+		// Create Updater.
+		System.out.println(management.getCredentials().toString());
+		Thread updater = new Thread(new MainUIChatUpdater(this));
+		updater.start();
 	}
-	
-	private void openChat(String username) {
+
+	Client getClient() {
+		return client;
+	}
+
+	void openSelectedChat() {
+		// -fx-wrap-text
+		// https://stackoverflow.com/questions/12670137/how-to-hide-the-horizontal-scrollbar-of-a-listview-in-javafx
+		String username = menueUserList.getSelectionModel().getSelectedItem();
+
 		ObservableList<String> chatMessages = FXCollections.observableArrayList();
 		for (String[] message : management.getMessages(username)) {
 			chatMessages.add("@" + message[0] + ": " + message[1]);

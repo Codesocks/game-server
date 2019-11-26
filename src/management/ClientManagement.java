@@ -178,7 +178,7 @@ public class ClientManagement extends Management {
 	 * @param username Username of the user the conversation was held with.
 	 * @return Content of the chat.
 	 */
-	public String[][] getMessages(String username) {		
+	public String[][] getMessages(String username) {
 		// Messages to User.
 		ArrayList<Message> sendToUser = new ArrayList<Message>();
 		for (Message m : send) {
@@ -204,13 +204,15 @@ public class ClientManagement extends Management {
 				messages[i][1] = receivedFromUser.get(0).getContent();
 				System.out.println(username + " " + receivedFromUser.get(0).getContent());
 				receivedFromUser.remove(0);
+
 			} else if (receivedFromUser.isEmpty()) {
 				messages[i][0] = this.username;
 				messages[i][1] = sendToUser.get(0).getContent();
 				sendToUser.remove(0);
+
 			} else {
 				// Check which message is earlier.
-				if (send.get(0).getCreationTime() < received.get(0).getCreationTime()) {
+				if (sendToUser.get(0).getCreationTime() < receivedFromUser.get(0).getCreationTime()) {
 					messages[i][0] = this.username;
 					messages[i][1] = sendToUser.get(0).getContent();
 					sendToUser.remove(0);
