@@ -60,12 +60,10 @@ public class MainUI2Controller implements Initializable {
 		leftTextArea.setOnKeyPressed(event -> {
 			if(event.getCode() == KeyCode.ENTER){
 				sendMsg();
+				leftTextArea.setText("");
+				leftTextArea.clear();
 			}
 		});
-
-		// Remove all below.
-		// management.setCredentials("a", "b");
-		// client.execute("signin");
 	}
 
 	@FXML

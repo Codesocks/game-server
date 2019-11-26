@@ -1,15 +1,12 @@
 package view;
 
 import javafx.application.Platform;
-import server.Client;
 
-class MainUIChatUpdater implements Runnable {
-	MainUI2Controller controller;
-	Client client;
+class ServerUIUpdater implements Runnable {
+	private ServerUIController controller;
 
-	MainUIChatUpdater(MainUI2Controller controller) {
+	ServerUIUpdater(ServerUIController controller) {
 		this.controller = controller;
-		this.client = controller.getClient();
 	}
 
 	@Override
@@ -19,23 +16,22 @@ class MainUIChatUpdater implements Runnable {
 				@Override
 				public void run() {
 					try {
-						client.execute("update");
-						controller.openSelectedChat();
+						controller.loadLog();
+						controller.loadUser();
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}
 			};
-
+			
 			try {
-				Thread.sleep(10000);
+				Thread.sleep(2000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-
-			// The following prevents a loading of GUI-elements from a non-JavaFX-Thread.
-			// This would cause crashing.
+			
 			Platform.runLater(updater);
 		}
 	}
+
 }

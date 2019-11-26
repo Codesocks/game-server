@@ -75,8 +75,6 @@ public class ClientManagement extends Management {
 		JSONArray jsonArray = new JSONArray();
 
 		for (Message m : send) {
-			System.out.println(m.getCreationTime() + " ?>= " + this.getLatestUpdateTime());
-
 			if (m.getCreationTime() >= this.getLatestUpdateTime()) {
 				JSONArray jMessage = new JSONArray();
 				jMessage.add(m.getContent());
@@ -139,23 +137,6 @@ public class ClientManagement extends Management {
 	}
 
 	/**
-	 * Returns a List of all players currently online.
-	 * 
-	 * @return List of online players.
-	 */
-	public ArrayList<String> getUsersOnline() {
-		ArrayList<String> onlinePlayers = new ArrayList<String>();
-
-		for (Map.Entry<String, User> entry : users.entrySet()) {
-			User user = entry.getValue();
-			if (user.isOnline() && !user.getUsername().contentEquals(username))
-				onlinePlayers.add(user.getUsername());
-		}
-
-		return onlinePlayers;
-	}
-
-	/**
 	 * Returns the credentials of this client as a JSONArray. Credentials consist of
 	 * a username and a password.
 	 * 
@@ -202,7 +183,6 @@ public class ClientManagement extends Management {
 			if (sendToUser.isEmpty()) {
 				messages[i][0] = username;
 				messages[i][1] = receivedFromUser.get(0).getContent();
-				System.out.println(username + " " + receivedFromUser.get(0).getContent());
 				receivedFromUser.remove(0);
 
 			} else if (receivedFromUser.isEmpty()) {
@@ -227,5 +207,18 @@ public class ClientManagement extends Management {
 		}
 
 		return messages;
+	}
+	
+	@Override
+	public ArrayList<String> getUsersOnline() {
+		ArrayList<String> onlinePlayers = new ArrayList<String>();
+
+		for (Map.Entry<String, User> entry : users.entrySet()) {
+			User user = entry.getValue();
+			if (user.isOnline() && !user.getUsername().contentEquals(username))
+				onlinePlayers.add(user.getUsername());
+		}
+
+		return onlinePlayers;
 	}
 }

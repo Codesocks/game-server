@@ -31,10 +31,10 @@ public class Main extends Application {
         primaryStage.show();
 	}
 
-	public void changeScene(String fxml) throws IOException{
+	/*public void changeScene(String fxml) throws IOException{
 	    Parent pane = FXMLLoader.load(
 	           getClass().getResource(fxml));
 
 	   primaryStage.getScene().setRoot(pane);
-	}
+	}*/
 }

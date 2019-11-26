@@ -27,10 +27,10 @@ abstract class Connection {
 		BufferedReader bufferedReader = 
 				new BufferedReader(
 				new InputStreamReader(socket.getInputStream()));
-		char[] buffer = new char[10000];
+		char[] buffer = new char[40000];
 		
 		// Block until message received.
-		int characterCount = bufferedReader.read(buffer, 0, 10000);
+		int characterCount = bufferedReader.read(buffer, 0, 40000);
 		String msg = new String(buffer, 0, characterCount);
 		return msg;
 	}

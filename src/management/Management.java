@@ -2,6 +2,7 @@ package management;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 abstract class Management {
 	HashMap<String, User> users = new HashMap<String, User>();
@@ -21,4 +22,11 @@ abstract class Management {
 	void isUpdate() {
 		latestUpdateTime = System.currentTimeMillis();
 	}
+
+	/**
+	 * Returns a List of all players currently online.
+	 * 
+	 * @return List of online players.
+	 */
+	public abstract ArrayList<String> getUsersOnline();
 }

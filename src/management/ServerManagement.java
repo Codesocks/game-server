@@ -1,5 +1,6 @@
 package management;
 
+import java.util.ArrayList;
 import java.util.Map;
 import org.json.simple.JSONArray;
 
@@ -172,5 +173,18 @@ public class ServerManagement extends Management {
 		}
 
 		isUpdate();
+	}
+	
+	@Override
+	public ArrayList<String> getUsersOnline() {
+		ArrayList<String> onlinePlayers = new ArrayList<String>();
+
+		for (Map.Entry<String, User> entry : users.entrySet()) {
+			User user = entry.getValue();
+			if (user.isOnline())
+				onlinePlayers.add(user.getUsername());
+		}
+
+		return onlinePlayers;
 	}
 }

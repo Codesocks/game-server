@@ -21,11 +21,13 @@ class ServerThread extends Connection implements Runnable {
 			
 			// Handle msg of client.
 			JSONObject jo = stringToJSONObject(msg);
+			server.addLog("[RECEIVED] Incoming request:	    " + msg);
 			System.out.println("[RECEIVED] Incoming request:	    " + msg);
 			String reply = processData(jo);
 
 			// Send reply.
 			send(reply);
+			server.addLog("[SEND]     Reply to request:	    " + reply);
 			System.out.println("[SEND]     Reply to request:	    " + reply);
 
 			// Fehler bei Ein- und Ausgabe
@@ -66,6 +68,7 @@ class ServerThread extends Connection implements Runnable {
 			boolean login = server.getManagement().verifyCredentials(
 					credentials);
 			if (!login) {
+				server.addLog("Failed login from user with credentials:" + credentials.toString());
 				output.put("errorCode", 1);
 				return output.toString();
 			}
@@ -76,12 +79,15 @@ class ServerThread extends Connection implements Runnable {
 		switch (mode) {
 		case 0: // Sign-in.
 			boolean b = server.getManagement().signIn(credentials);
-			if (!b)
+			if (!b) {
 				output.put("errorCode", 1);
+				server.addLog("Successful login from user with credentials:" + credentials.toString());
+			}
 			break;
 
 		case 1: // Sign-out.
 			server.getManagement().signOut(credentials);
+			server.addLog("User signed out with credentials:" + credentials.toString());
 			break;
 
 		case 2: // Update client's information.
