@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import management.ServerManagement;
 
 public class Server extends Thread {
-	ServerManagement management = new ServerManagement();
+	volatile ServerManagement management = new ServerManagement();
 	volatile ArrayList<String> log = new ArrayList<String>();
 	
 	@Override
@@ -39,7 +39,11 @@ public class Server extends Thread {
 		return log;
 	}
 	
-	ServerManagement getManagement() {
+	/**
+	 * Returns the management of this server.
+	 * @return Server's management.
+	 */
+	public ServerManagement getManagement() {
 		return management;
 	}
 	

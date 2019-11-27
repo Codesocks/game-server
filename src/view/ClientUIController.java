@@ -24,14 +24,14 @@ import javafx.util.Duration;
 import management.ClientManagement;
 import server.Client;
 
-public class MainUI2Controller implements Initializable {
+public class ClientUIController implements Initializable {
 	private ClientManagement management = new ClientManagement();
 	private Client client = new Client(management);
 
 	@FXML
-	private Label leftLogoTxt; // Text des Logos.
+	private Label leftLogoTxt; // Text of logo.
 	@FXML
-	TextArea leftTextArea; // Texteingabe Nachrichten.
+	TextArea leftTextArea; // Text input for messages.
 	@FXML
 	ListView<String> leftChatList;
 	@FXML
@@ -58,6 +58,7 @@ public class MainUI2Controller implements Initializable {
 			}
 		});
 
+		// Send messages when key 'enter' is pressed.
 		leftTextArea.setOnKeyPressed(event -> {
 			if(event.getCode() == KeyCode.ENTER){
 				sendMsg();
@@ -120,7 +121,7 @@ public class MainUI2Controller implements Initializable {
 
 		// Create Updater.
 		System.out.println(management.getCredentials().toString());
-		Thread updater = new Thread(new MainUIChatUpdater(this));
+		Thread updater = new Thread(new ClientUIUpdater(this));
 		updater.start();
 	}
 
@@ -129,8 +130,6 @@ public class MainUI2Controller implements Initializable {
 	}
 
 	void openSelectedChat() {
-		// -fx-wrap-text
-		// https://stackoverflow.com/questions/12670137/how-to-hide-the-horizontal-scrollbar-of-a-listview-in-javafx
 		String username = menueUserList.getSelectionModel().getSelectedItem();
 
 		ObservableList<String> chatMessages = FXCollections.observableArrayList();

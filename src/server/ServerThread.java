@@ -21,13 +21,13 @@ class ServerThread extends Connection implements Runnable {
 			
 			// Handle msg of client.
 			JSONObject jo = stringToJSONObject(msg);
-			server.addLog("[RECEIVED] Incoming request:	    " + msg);
+			// server.addLog("[RECEIVED] Incoming request:	    " + msg);
 			System.out.println("[RECEIVED] Incoming request:	    " + msg);
 			String reply = processData(jo);
 
 			// Send reply.
 			send(reply);
-			server.addLog("[SEND]     Reply to request:	    " + reply);
+			// server.addLog("[SEND]     Reply to request:	    " + reply);
 			System.out.println("[SEND]     Reply to request:	    " + reply);
 
 			// Fehler bei Ein- und Ausgabe
@@ -68,7 +68,7 @@ class ServerThread extends Connection implements Runnable {
 			boolean login = server.getManagement().verifyCredentials(
 					credentials);
 			if (!login) {
-				server.addLog("Failed login from user with credentials:" + credentials.toString());
+				server.addLog("Failed credentials by user with credentials: " + credentials.toString());
 				output.put("errorCode", 1);
 				return output.toString();
 			}
@@ -81,19 +81,22 @@ class ServerThread extends Connection implements Runnable {
 			boolean b = server.getManagement().signIn(credentials);
 			if (!b) {
 				output.put("errorCode", 1);
-				server.addLog("Successful login from user with credentials:" + credentials.toString());
+				server.addLog("Failed login by user with credentials: " + credentials.toString());
+			} else {
+				server.addLog("Successful login by user with credentials: " + credentials.toString());
 			}
 			break;
 
 		case 1: // Sign-out.
 			server.getManagement().signOut(credentials);
-			server.addLog("User signed out with credentials:" + credentials.toString());
+			server.addLog("User signed out with credentials: " + credentials.toString());
 			break;
 
 		case 2: // Update client's information.
 			long clientUpdateTime = (Long) jo
 					.get("latestUpdateTime");
 			JSONArray messages = (JSONArray) jo.get("messages");
+			if(!jo.get("messages").toString().equals("[]")) server.addLog("Processing new messages send by user with credentials " + credentials.toString());
 			server.getManagement().addReceivedMessages(messages, credentials);
 			
 			output.put("messages", server.getManagement().getNewMessages(credentials, clientUpdateTime));
@@ -102,6 +105,7 @@ class ServerThread extends Connection implements Runnable {
 				output.put("onlinePlayers", server.getManagement()
 						.getOnlinePlayers());
 				output.put("playerUpdateAvailable", true);
+				server.addLog("Transmit updated online players to user with credentials " + credentials.toString());
 			}
 			break;
 

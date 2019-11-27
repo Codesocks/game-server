@@ -81,11 +81,11 @@ public class LoginUIController implements Initializable {
 		// Switch Scene.
 		try {
 			// Load second scene
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("MainUI2.fxml"));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("ClientUI.fxml"));
 			Parent root = loader.load();
 
 			// Get controller of scene2 and pass data.
-			MainUI2Controller controllerOfMainUI = loader.getController();
+			ClientUIController controllerOfMainUI = loader.getController();
 			controllerOfMainUI.setClientManagement(management);
 
 			// Show scene 2 in this window.

@@ -9,7 +9,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
-public class Main extends Application {
+public class MainClient extends Application {
 
 	public static void main(String[] args) {
 		launch(args);
@@ -20,7 +20,7 @@ public class Main extends Application {
 		Parent root = FXMLLoader.load(getClass().getResource("LoginUI.fxml"));
 		Scene scene = new Scene(root, 800, 450);
 
-		primaryStage.setTitle("FXML Welcome");
+		primaryStage.setTitle("GAMES - Login");
 		primaryStage.setScene(scene);
 		primaryStage.show();
 
