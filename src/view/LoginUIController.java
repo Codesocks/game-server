@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -14,6 +16,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import management.ClientManagement;
 import server.Client;
 
@@ -33,13 +36,13 @@ public class LoginUIController implements Initializable {
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		loginUsername.setOnKeyPressed(event -> {
-			if(event.getCode() == KeyCode.ENTER){
+			if (event.getCode() == KeyCode.ENTER) {
 				attemptLogin();
 			}
 		});
 
 		loginPwd.setOnKeyPressed(event -> {
-			if(event.getCode() == KeyCode.ENTER){
+			if (event.getCode() == KeyCode.ENTER) {
 				attemptLogin();
 			}
 		});
@@ -92,6 +95,19 @@ public class LoginUIController implements Initializable {
 			Stage stage = (Stage) loginText.getScene().getWindow();
 			stage.setScene(new Scene(root, 800, 450));
 			stage.setTitle("Games by Codesocks / j-bl");
+			stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+				@Override
+				public void handle(WindowEvent event) {
+					try {
+						client.execute("signout");
+					} catch (Exception e) {
+						System.out.println("Failed to sign out!");
+						e.printStackTrace();
+					}
+					Platform.exit();
+					System.exit(0);
+				}
+			});
 			stage.show();
 		} catch (IOException ex) {
 			System.err.println(ex);

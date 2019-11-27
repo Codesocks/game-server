@@ -6,6 +6,9 @@ import java.util.ArrayList;
 
 import management.ServerManagement;
 
+/**
+ * Server for the game. Listens on port 3141 and attempts to deal with all incoming connections.
+ */
 public class Server extends Thread {
 	volatile ServerManagement management = new ServerManagement();
 	volatile ArrayList<String> log = new ArrayList<String>();

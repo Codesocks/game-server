@@ -18,16 +18,16 @@ class ServerThread extends Connection implements Runnable {
 		// Bearbeitung einer aufgebauten Verbindung
 		try {
 			String msg = read();
-			
+
 			// Handle msg of client.
 			JSONObject jo = stringToJSONObject(msg);
-			// server.addLog("[RECEIVED] Incoming request:	    " + msg);
+			// server.addLog("[RECEIVED] Incoming request: " + msg);
 			System.out.println("[RECEIVED] Incoming request:	    " + msg);
 			String reply = processData(jo);
 
 			// Send reply.
 			send(reply);
-			// server.addLog("[SEND]     Reply to request:	    " + reply);
+			// server.addLog("[SEND] Reply to request: " + reply);
 			System.out.println("[SEND]     Reply to request:	    " + reply);
 
 			// Fehler bei Ein- und Ausgabe
@@ -47,11 +47,9 @@ class ServerThread extends Connection implements Runnable {
 
 	@SuppressWarnings("unchecked")
 	/**
-	 * Error-Codes:
-	 * 	   -1:	Something unexpected went wrong
-	 * 		0:	Success
-	 * 		1:	Credentials failed
-	 * 		2:	
+	 * Error-Codes: -1: Something unexpected went wrong 0: Success 1: Credentials
+	 * failed 2:
+	 * 
 	 * @param jo
 	 * @return
 	 */
@@ -65,8 +63,7 @@ class ServerThread extends Connection implements Runnable {
 
 		// Verify credentials if not attempting to sign-in.
 		if (mode != 0) {
-			boolean login = server.getManagement().verifyCredentials(
-					credentials);
+			boolean login = server.getManagement().verifyCredentials(credentials);
 			if (!login) {
 				server.addLog("Failed credentials by user with credentials: " + credentials.toString());
 				output.put("errorCode", 1);
@@ -83,42 +80,45 @@ class ServerThread extends Connection implements Runnable {
 				output.put("errorCode", 1);
 				server.addLog("Failed login by user with credentials: " + credentials.toString());
 			} else {
-				server.addLog("Successful login by user with credentials: " + credentials.toString());
+				server.addLog("Successful login by @" + credentials.get(0));
 			}
 			break;
 
 		case 1: // Sign-out.
 			server.getManagement().signOut(credentials);
-			server.addLog("User signed out with credentials: " + credentials.toString());
+			server.addLog("User @" + credentials.get(0) + " signed out");
 			break;
 
 		case 2: // Update client's information.
-			long clientUpdateTime = (Long) jo
-					.get("latestUpdateTime");
+			long clientUpdateTime = (Long) jo.get("latestUpdateTime");
 			JSONArray messages = (JSONArray) jo.get("messages");
-			if(!jo.get("messages").toString().equals("[]")) server.addLog("Processing new messages send by user with credentials " + credentials.toString());
 			server.getManagement().addReceivedMessages(messages, credentials);
-			
+
+			if (!jo.get("messages").toString().equals("[]")) {
+				server.addLog("Processing new messages send by @" + credentials.get(0) + ":");
+				for (Object message : messages)
+					server.addLog("...to @" + (String) ((JSONArray) message).get(1) + ": "
+							+ (String) ((JSONArray) message).get(0));
+			}
+
 			output.put("messages", server.getManagement().getNewMessages(credentials, clientUpdateTime));
 			output.put("playerUpdateAvailable", false);
 			if (clientUpdateTime < server.getManagement().getLatestUpdateTime()) {
-				output.put("onlinePlayers", server.getManagement()
-						.getOnlinePlayers());
+				output.put("onlinePlayers", server.getManagement().getOnlinePlayers());
 				output.put("playerUpdateAvailable", true);
-				server.addLog("Transmit updated online players to user with credentials " + credentials.toString());
+				server.addLog("Transmit updated online players to @" + credentials.get(0));
 			}
 			break;
 
 		case 3: // Get currently online players.
-			output.put("onlinePlayers", server.getManagement()
-					.getOnlinePlayers());
+			output.put("onlinePlayers", server.getManagement().getOnlinePlayers());
 			break;
 
 		default: // Not a valid mode.
 			output.put("errorCode", -1);
 			break;
 		}
-		
+
 		return output.toString();
 	}
 

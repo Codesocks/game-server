@@ -8,11 +8,21 @@ import management.ClientManagement;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+/**
+ * Client of the game. Can connect to the server and execute commands. You need
+ * to remember to sign-in before you can execute other functions.
+ */
 public class Client extends Connection {
 	private static final String HOSTNAME = "localhost";
 	private static final int PORT = 3141;
 	private ClientManagement management;
 
+	/**
+	 * Creates a new Client with the credentials of the given management. All
+	 * replies are contained in the management.
+	 * 
+	 * @param management Management containing credentials.
+	 */
 	public Client(ClientManagement management) {
 		this.management = management;
 	}
@@ -23,16 +33,16 @@ public class Client extends Connection {
 
 		// Add management's information.
 		o.put("credentials", management.getCredentials());
-		
+
 		// Try sending JSONData.
 		try {
 			socket = new Socket(HOSTNAME, PORT);
 			send(o.toString());
 			System.out.println("Send:  " + o.toString());
-			
+
 			reply = read();
 			System.out.println("Reply: " + reply);
-			
+
 			if (socket != null) {
 				try {
 					socket.close();
@@ -47,11 +57,16 @@ public class Client extends Connection {
 		return reply;
 	}
 
+	/**
+	 * Executes the given command and returns the error-code returned.
+	 * @param request Command to execute.
+	 * @return Error code.
+	 */
 	@SuppressWarnings("unchecked")
 	public long execute(String request) {
 		JSONObject j = new JSONObject();
 		JSONObject reply;
-		
+
 		if (request.equals("signin")) {
 			j.put("mode", "0");
 			reply = stringToJSONObject(request(j));
@@ -72,9 +87,10 @@ public class Client extends Connection {
 			}
 			if (((JSONArray) reply.get("messages")).size() > 0) {
 				management.addReceivedMessages((JSONArray) reply.get("messages"));
-				System.out.println("[CLIENT] [INFO]	You have (" + ((JSONArray) reply.get("messages")).size() + ") new messages.");
-			
-				for(Object o: ((JSONArray) reply.get("messages"))) {
+				System.out.println("[CLIENT] [INFO]	You have (" + ((JSONArray) reply.get("messages")).size()
+						+ ") new messages.");
+
+				for (Object o : ((JSONArray) reply.get("messages"))) {
 					JSONArray jsonArray = (JSONArray) o;
 					System.out.println("@" + ((String) jsonArray.get(1)) + ": " + ((String) jsonArray.get(0)));
 				}
@@ -84,7 +100,8 @@ public class Client extends Connection {
 			request = request.substring(8);
 			String[] message = request.split(";");
 			management.sendMessage(message[0], message[1]);
-			System.out.println("[CLIENT] [INFO] The following message will be send to @" + message[1] + ": '" + message[0] + "'");
+			System.out.println(
+					"[CLIENT] [INFO] The following message will be send to @" + message[1] + ": '" + message[0] + "'");
 			return execute("update");
 
 		} else if (request.contains("setusername ")) {
