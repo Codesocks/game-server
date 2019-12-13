@@ -10,6 +10,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.text.Text;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -30,7 +31,7 @@ public class ClientUIController implements Initializable {
 	@FXML
 	TextArea leftTextArea; // Text input for messages.
 	@FXML
-	ListView<String> leftChatList;
+	ListView<Text> leftChatList;
 	@FXML
 	Button leftButtonContacts;
 
@@ -129,9 +130,12 @@ public class ClientUIController implements Initializable {
 	void openSelectedChat() {
 		String username = menueUserList.getSelectionModel().getSelectedItem();
 
-		ObservableList<String> chatMessages = FXCollections.observableArrayList();
+		ObservableList<Text> chatMessages = FXCollections.observableArrayList();
 		for (String[] message : management.getMessages(username)) {
-			chatMessages.add("@" + message[0] + ": " + message[1]);
+			Text text = new Text();
+			text.wrappingWidthProperty().bind(leftChatList.widthProperty().subtract(15));
+			text.setText("@" + message[0] + ": " + message[1]);
+			chatMessages.add(text);
 		}
 		leftChatList.setItems(chatMessages);
 		leftChatList.refresh();
