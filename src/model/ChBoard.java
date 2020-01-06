@@ -1,5 +1,7 @@
 package model;
 
+import management.User;
+
 class ChBoard extends Board {
 	/**
 	 * Creates a new chomp board with the given width and height. The board must
@@ -45,7 +47,7 @@ class ChBoard extends Board {
 		return true;
 	}
 
-	private boolean moveIsWinningMove(int x, int y, Player p) {
+	private boolean moveIsWinningMove(int x, int y, User p) {
 		return x == 0 && y == 0;
 	}
 }

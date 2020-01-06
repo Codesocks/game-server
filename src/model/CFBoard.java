@@ -1,5 +1,7 @@
 package model;
 
+import management.User;
+
 class CFBoard extends Board {
 	/**
 	 * Creates a new connect four board with the given width and height. The board
@@ -43,7 +45,7 @@ class CFBoard extends Board {
 		return true;
 	}
 
-	private boolean moveIsWinningMove(int x, int y, Player p) {
+	private boolean moveIsWinningMove(int x, int y, User p) {
 		int connected = 1;
 		// vertical
 		for (int j = y + 1; j < height && board[x][j].equals(p); j++) {

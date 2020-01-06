@@ -5,6 +5,7 @@ import java.net.Socket;
 
 import management.ClientManagement;
 
+import model.Game;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -79,6 +80,7 @@ public class Client extends Connection {
 			j.put("mode", "2");
 			j.put("latestUpdateTime", management.getLatestUpdateTime());
 			j.put("messages", management.getLatestMessages());
+			// j.put("invitations", management.getLatestInvitations());
 
 			reply = stringToJSONObject(request(j));
 			if ((Boolean) reply.get("playerUpdateAvailable")) {
@@ -92,17 +94,54 @@ public class Client extends Connection {
 
 				for (Object o : ((JSONArray) reply.get("messages"))) {
 					JSONArray jsonArray = (JSONArray) o;
-					System.out.println("@" + ((String) jsonArray.get(1)) + ": " + ((String) jsonArray.get(0)));
+					if(!((String) jsonArray.get(0)).substring(0,2).equals("$$")) System.out.println("@" + ((String) jsonArray.get(1)) + ": " + ((String) jsonArray.get(0)));
 				}
 			}
+			/*if (((JSONArray) reply.get("invitations")).size() > 0) {
+				management.addReceivedInvitations((JSONArray) reply.get("invitations"));
+				System.out.println("[CLIENT] [INFO]	You have (" + ((JSONArray) reply.get("invitations")).size()
+						+ ") new invitations.");
+
+				for (Object o : ((JSONArray) reply.get("invitations"))) {
+					JSONArray jsonArray = (JSONArray) o;
+					System.out.println("@" + ((String) jsonArray.get(1)) + ": Game number " + ((Long) jsonArray.get(0)));
+				}
+			}*/
 
 		} else if (request.contains("sendmsg ")) {
 			request = request.substring(8);
 			String[] message = request.split(";");
 			management.sendMessage(message[0], message[1]);
-			System.out.println(
-					"[CLIENT] [INFO] The following message will be send to @" + message[1] + ": '" + message[0] + "'");
+			// Check whether internal control sequence present.
+			if(request.toCharArray()[0] == '$' && request.toCharArray()[1] == '$') {
+				// Stay silent, internal message.
+			} else {
+				System.out.println(
+						"[CLIENT] [INFO] The following message will be send to @" + message[1] + ": '" + message[0] + "'");
+			}
 			return execute("update");
+
+		/*} else if(request.contains("sendinvite ")) {
+			request = request.substring(11);
+			String[] invitation = request.split(";");
+			management.invitePlayer(Long.valueOf(invitation[0]), invitation[1]);
+			System.out.println(
+					"[CLIENT] [INFO] An invitation for game number " + invitation[0] + " will be send to @" + invitation[1] + ".");
+			return execute("update");*/
+
+		} else if(request.contains("invite ")) {
+			request = request.substring(7);
+			String[] invitation = request.split(";");
+			System.out.println(
+					"[CLIENT] [INFO] An invitation for game number " + invitation[0] + " will be send to @" + invitation[1] + ".");
+			return execute("sendmsg $$00" + request);
+
+		} else if(request.contains("accept ")) {
+			request = request.substring(7);
+			String[] invitation = request.split(";");
+			System.out.println(
+					"[CLIENT] [INFO] Attempt to accept invitation for game number " + invitation[0] + " by @" + invitation[1] + ".");
+			return execute("sendmsg $$01" + request);
 
 		} else if (request.contains("setusername ")) {
 			request = request.substring(12);

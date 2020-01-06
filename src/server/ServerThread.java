@@ -47,8 +47,10 @@ class ServerThread extends Connection implements Runnable {
 
 	@SuppressWarnings("unchecked")
 	/**
-	 * Error-Codes: -1: Something unexpected went wrong 0: Success 1: Credentials
-	 * failed 2:
+	 * Error-Codes:
+	 * 	-1: Something unexpected went wrong
+	 * 	0: Success
+	 * 	1: Credentials failed 2:
 	 * 
 	 * @param jo
 	 * @return
@@ -90,18 +92,29 @@ class ServerThread extends Connection implements Runnable {
 			break;
 
 		case 2: // Update client's information.
+			// Extract given information and add included messages, invitations.
 			long clientUpdateTime = (Long) jo.get("latestUpdateTime");
 			JSONArray messages = (JSONArray) jo.get("messages");
+			JSONArray invitations = (JSONArray) jo.get("invitations");
 			server.getManagement().addReceivedMessages(messages, credentials);
+			// server.getManagement().addReceivedInvitations(invitations, credentials);
 
-			if (!jo.get("messages").toString().equals("[]")) {
+			// Log received Messages and Invitations.
+			if (!messages.toString().equals("[]")) {
 				server.addLog("Processing new messages send by @" + credentials.get(0) + ":");
 				for (Object message : messages)
 					server.addLog("...to @" + (String) ((JSONArray) message).get(1) + ": "
 							+ (String) ((JSONArray) message).get(0));
 			}
+			/*if (!invitations.toString().equals("[]")) {
+				server.addLog("Processing new invitations send by @" + credentials.get(0) + ":");
+				for (Object invitation: invitations)
+					server.addLog("...to @" + (String) ((JSONArray) invitation).get(1));
+			}*/
 
+			// Compute reply and send it.
 			output.put("messages", server.getManagement().getNewMessages(credentials, clientUpdateTime));
+			// output.put("invitations", server.getManagement().getNewInvitations(credentials, clientUpdateTime));
 			output.put("playerUpdateAvailable", false);
 			if (clientUpdateTime < server.getManagement().getLatestUpdateTime()) {
 				output.put("onlinePlayers", server.getManagement().getOnlinePlayers());

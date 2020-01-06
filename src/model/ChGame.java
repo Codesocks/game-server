@@ -1,5 +1,7 @@
 package model;
 
+import management.User;
+
 import java.util.Random;
 
 /**
@@ -19,7 +21,7 @@ public class ChGame extends Game {
 	 * @param width   Width of the board.
 	 * @param height  Height of the board.
 	 */
-	public ChGame(Player player1, Player player2, int width, int height) {
+	public ChGame(User player1, User player2, int width, int height) {
 		super(player1, player2);
 		board = new ChBoard(this, width, height);
 	}
@@ -31,13 +33,13 @@ public class ChGame extends Game {
 	 * @param x      X-Coordinate of the given move.
 	 * @param y      Y-Coordinate of the given move.
 	 */
-	public void move(Player player, int x, int y) {
+	public void move(User player, int x, int y) {
 		Move m = new Move(player, x, y);
 		this.move(m);
 	}
 
 	@Override
-	void moveComputerPlayer(Player player) {
+	void moveComputerPlayer(User player) {
 		int x;
 		int y;
 		if (board.getPlayerAt(0, 1) != null && board.getPlayerAt(1, 0) != null) {

@@ -6,7 +6,9 @@ import java.util.Map;
 
 abstract class Management {
 	HashMap<String, User> users = new HashMap<String, User>();
-	ArrayList<Message> received = new ArrayList<Message>();
+	ArrayList<Message> receivedMessages = new ArrayList<Message>();
+	ArrayList<GameInvitation> receivedInvitations = new ArrayList<GameInvitation>();
+
 	private long latestUpdateTime = 0;
 
 	/**

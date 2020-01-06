@@ -1,5 +1,7 @@
 package model;
 
+import management.User;
+
 import java.util.Random;
 
 /**
@@ -19,7 +21,7 @@ public class CFGame extends Game {
 	 * @param width   Width of the board.
 	 * @param height  Height of the board.
 	 */
-	public CFGame(Player player1, Player player2, int width, int height) {
+	public CFGame(User player1, User player2, int width, int height) {
 		super(player1, player2);
 		super.board = new CFBoard(this, width, height);
 	}
@@ -30,13 +32,13 @@ public class CFGame extends Game {
 	 * @param player Player who makes the given move.
 	 * @param x      X-Coordinate of the given move.
 	 */
-	public void move(Player player, int x) {
+	public void move(User player, int x) {
 		Move m = new Move(player, x, -1);
 		this.move(m);
 	}
 
 	@Override
-	void moveComputerPlayer(Player player) {
+	void moveComputerPlayer(User player) {
 		Random rand = new Random();
 		int x;
 		do {

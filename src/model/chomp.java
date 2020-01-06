@@ -1,16 +1,18 @@
 package model;
 
+import management.User;
+
 import java.io.IOException;
 import java.util.Scanner;
 
 public class chomp {
 
 	public static void main(String[] args) throws IOException {
-		Player p1 = new Player();
-		Player p2 = new Player();
+		User p1 = new User("User 1");
+		User p2 = new User("User 2");
 		p2.setComputer(true);
 		ChGame mygame = new ChGame(p1, p2, 8, 4);
-		Player currentPlayer = p1;
+		User currentPlayer = p1;
 
 		while (!mygame.isWon()) {
 			currentPlayer = mygame.getCurrentPlayer();

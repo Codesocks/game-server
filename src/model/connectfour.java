@@ -1,13 +1,15 @@
 package model;
 
+import management.User;
+
 import java.io.IOException;
 import java.util.Scanner;
 
 public class connectfour {
 
 	public static void main(String[] args) throws IOException {
-		Player p1 = new Player();
-		Player p2 = new Player();
+		User p1 = new User("User 1");
+		User p2 = new User("User 2");
 		p2.setComputer(true);
 		CFGame mygame = new CFGame(p1, p2, 8, 4);
 

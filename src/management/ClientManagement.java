@@ -3,6 +3,7 @@ package management;
 import java.util.ArrayList;
 import java.util.Map;
 
+import model.Game;
 import org.json.simple.JSONArray;
 
 /**
@@ -13,10 +14,15 @@ import org.json.simple.JSONArray;
  * 
  */
 public class ClientManagement extends Management {
-	private ArrayList<Message> send = new ArrayList<Message>();
+	private ArrayList<Message> sendMessages = new ArrayList<Message>();
+	private Game game = null;
+	// private ArrayList<GameInvitation> sendInvitations = new ArrayList<GameInvitation>();
 
 	private String username;
 	private String pwd;
+
+	public static final long GAME_CHOMP = GameInvitation.GAME_CHOMP;
+	public static final long GAME_CONNECTFOUR = GameInvitation.GAME_CONNECTFOUR;
 
 	/**
 	 * Sets all given players to online and all others to off-line.
@@ -48,7 +54,7 @@ public class ClientManagement extends Management {
 	/**
 	 * Add the given message to the messages that shall be send. The message is send
 	 * to the user with the given username. If that user is not currently online, an
-	 * exception is thrown.
+	 * IllegalArgumentException is thrown.
 	 * 
 	 * @param content  Content of the message.
 	 * @param username Username of the target.
@@ -61,8 +67,26 @@ public class ClientManagement extends Management {
 			throw new IllegalArgumentException(
 					"The message you attempted to send was not a valid message. It was either too short / long or the receiving party is not online.");
 
-		send.add(new Message(content, users.get(username), System.currentTimeMillis()));
+		sendMessages.add(new Message(content, users.get(username), System.currentTimeMillis()));
 	}
+
+	/**
+	 * 	Add the given invitation to the invitations that shall be send. The invitation is send
+	 * 	to the user with the given username. If that user is not currently online, an
+	 * 	IllegalArgumentException is thrown.
+	 *
+	 * @param game Game to play.
+	 * @param username Username of the player to invite.
+	 * @throws IllegalArgumentException Thrown if the invitation is invalid or the target not online.
+	 */
+	/*public void invitePlayer(long game, String username) throws IllegalArgumentException {
+		if (!(game == 0  || game == 1) || !users.containsKey(username)
+				|| !(users.get(username).isOnline()))
+			throw new IllegalArgumentException(
+					"The invitation you are trying to send is invalid. Either the game you chose to play does not exist or the player you are trying to challenge is not online.");
+
+		sendInvitations.add(new GameInvitation(game, users.get(username), System.currentTimeMillis()));
+	}*/
 
 	/**
 	 * Returns a JSONArray containing all messages that were added to the list of
@@ -74,7 +98,7 @@ public class ClientManagement extends Management {
 	public JSONArray getLatestMessages() {
 		JSONArray jsonArray = new JSONArray();
 
-		for (Message m : send) {
+		for (Message m : sendMessages) {
 			if (m.getCreationTime() >= this.getLatestUpdateTime()) {
 				JSONArray jMessage = new JSONArray();
 				jMessage.add(m.getContent());
@@ -86,6 +110,28 @@ public class ClientManagement extends Management {
 
 		return jsonArray;
 	}
+
+	/**
+	 * Returns a JSONArray containing all invitations that were added to the list of
+	 * invitations to be send since the last update of this management's information.
+	 *
+	 * @return JSONArray of invitations to be send.
+	 */
+	/*public JSONArray getLatestInvitations() {
+		JSONArray jsonArray = new JSONArray();
+
+		for (GameInvitation g : sendInvitations) {
+			if (g.getCreationTime() >= this.getLatestUpdateTime()) {
+				JSONArray jInvitation = new JSONArray();
+				jInvitation.add(g.getGame());
+				jInvitation.add(g.getToUser().getUsername());
+				jInvitation.add(g.getCreationTime());
+				jsonArray.add(jInvitation);
+			}
+		}
+
+		return jsonArray;
+	}*/
 
 	/**
 	 * Add the given messages received by the client at the latest update to the
@@ -105,12 +151,60 @@ public class ClientManagement extends Management {
 			String username = (String) j.get(1);
 			Long creationTime = (Long) j.get(2);
 
-			User user = users.get(username);
-			received.add(new Message(content, user, creationTime));
+			User fromUser = users.get(username);
+
+			// Check whether message is internal message and deal with invitations and so on.
+			if (content.substring(0, 2).equals("$$")) {
+				if (content.substring(2, 4).equals("00")) { // game invitation.
+					addReceivedInvitation(fromUser, Integer.valueOf(content.toCharArray()[4]));
+
+					System.out.println("Received a game invitation from @" + fromUser.getUsername() + " for " + (Integer.valueOf(content.toCharArray()[4]) == GameInvitation.GAME_CHOMP ? "Chomp" : "Connect Four"));
+				} else if (content.substring(2, 4).equals("01")) { // game invitation accept.
+
+				}
+			} else {
+				receivedMessages.add(new Message(content, fromUser, creationTime));
+			}
 		}
 
 		isUpdate();
 	}
+
+	private void addReceivedInvitation(User fromUser, int game) {
+		// Delete earlier invitations from the same player.
+		GameInvitation delete = null;
+		for(GameInvitation g: receivedInvitations) {
+			if(g.getFromUser().getUsername().equals(fromUser.getUsername())) {
+				delete = g;
+			}
+		}
+		if(delete != null) receivedInvitations.remove(delete);
+
+		receivedInvitations.add(new GameInvitation(game, fromUser, System.currentTimeMillis()));
+	}
+
+	/**
+	 * Add the given invitations received by the client at the latest update to the
+	 * management's information.
+	 */
+	/*public void addReceivedInvitations(JSONArray jsonArray) {
+		if (jsonArray.size() == 0)
+			return;
+
+		// jsonArray is JSONArray of JSONArrays.
+		for (Object o : jsonArray) {
+			JSONArray j = (JSONArray) o;
+
+			long game = (Long) j.get(0);
+			String username = (String) j.get(1);
+			Long creationTime = (Long) j.get(2);
+
+			User user = users.get(username);
+			receivedInvitations.add(new GameInvitation(game, user, creationTime));
+		}
+
+		isUpdate();
+	}*/
 
 	/**
 	 * Returns whether the player with the given name is currently online.
@@ -162,7 +256,7 @@ public class ClientManagement extends Management {
 	public String[][] getMessages(String username) {
 		// Messages to User.
 		ArrayList<Message> sendToUser = new ArrayList<Message>();
-		for (Message m : send) {
+		for (Message m : sendMessages) {
 			if (m.getToUser().getUsername().equals(username)) {
 				sendToUser.add(m);
 			}
@@ -170,7 +264,7 @@ public class ClientManagement extends Management {
 
 		// Messages from user.
 		ArrayList<Message> receivedFromUser = new ArrayList<Message>();
-		for (Message m : received) {
+		for (Message m : receivedMessages) {
 			if (m.getToUser().getUsername().equals(username)) {
 				receivedFromUser.add(m);
 			}

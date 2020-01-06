@@ -114,7 +114,7 @@ public class LoginUIController implements Initializable {
 		}
 	}
 
-	// USEFUL, KEEP THIS AS EXAMPLE!
+	// USEFULL, KEEP THIS AS EXAMPLE!
 	/*
 	 * @FXML public void loadMainAndSendMessage() {
 	 * System.out.println("Button pressed."); try { //Load second scene FXMLLoader

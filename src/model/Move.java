@@ -1,14 +1,15 @@
 package model;
 
+import management.User;
 import org.json.simple.JSONObject;
 
 class Move {
     private int x;
     private int y;
-	private Player player;
+	private User player;
     
 	// Constructor.
-    Move(Player player, int x, int y) {
+    Move(User player, int x, int y) {
         this.x = x;
         this.y = y;
         this.player = player;
@@ -31,7 +32,7 @@ class Move {
 		return y;
 	}
 
-	Player getPlayer() {
+	User getPlayer() {
 		return player;
 	}
 }

@@ -9,6 +9,9 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
+/**
+ * Starts a new Server listening on port 3141. This server can distribute send messages and handle the games chomp and connect four.
+ */
 public class MainServer extends Application {
 	public static void main(String[] args) {
 		launch(args);

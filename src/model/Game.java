@@ -1,12 +1,13 @@
 package model;
 
+import management.User;
 import org.json.simple.JSONObject;
 
-abstract class Game {
+public abstract class Game {
 	Protocol protocol = new Protocol();
 	Board board;
-	Player[] player = new Player[2];
-	Player currentPlayer;
+	User[] player = new User[2];
+	User currentPlayer;
 
 	/**
 	 * Creates a new game with the two given players as players.
@@ -14,7 +15,7 @@ abstract class Game {
 	 * @param player1 First player of the game.
 	 * @param player2 Second player of the game.
 	 */
-	Game(Player player1, Player player2) {
+	Game(User player1, User player2) {
 		player[0] = player1;
 		player[1] = player2;
 		currentPlayer = player1;
@@ -48,7 +49,7 @@ abstract class Game {
 	 *
 	 * @param player Computer player.
 	 */
-	abstract void moveComputerPlayer(Player player);
+	abstract void moveComputerPlayer(User player);
 
 	/**
 	 * Returns whether the game is won.
@@ -77,7 +78,7 @@ abstract class Game {
 	 * @param y Y-Coordinate of the given move.
 	 * @return Player who has made a move at the given position.
 	 */
-	public Player getPlayerAt(int x, int y) {
+	public User getPlayerAt(int x, int y) {
 		return board.getPlayerAt(x, y);
 	}
 
@@ -86,7 +87,7 @@ abstract class Game {
 	 * 
 	 * @return First player of the game.
 	 */
-	public Player getPlayer1() {
+	public User getPlayer1() {
 		return player[0];
 	}
 
@@ -95,7 +96,7 @@ abstract class Game {
 	 * 
 	 * @return Second player of the game.
 	 */
-	public Player getPlayer2() {
+	public User getPlayer2() {
 		return player[1];
 	}
 
@@ -104,7 +105,7 @@ abstract class Game {
 	 * 
 	 * @return Winner of the game.
 	 */
-	public Player getWinner() {
+	public User getWinner() {
 		return board.getWinner();
 	}
 
@@ -113,7 +114,7 @@ abstract class Game {
 	 * 
 	 * @return Player who shall move the next Move.
 	 */
-	public Player getCurrentPlayer() {
+	public User getCurrentPlayer() {
 		return currentPlayer;
 	}
 

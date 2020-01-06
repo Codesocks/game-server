@@ -1,17 +1,26 @@
 package management;
 
-class User {
+public class User {
 	private String username;
 	private String pwd;
 	private boolean online;
-	
+	private boolean isComputer;
+
+	public boolean isComputer() {
+		return isComputer;
+	}
+
+	public void setComputer(boolean computer) {
+		isComputer = computer;
+	}
+
 	User(String username, String pwd) {
 		this.username = username;
 		this.pwd = pwd;
 		this.online = true;
 	}
 	
-	User(String username) {
+	public User(String username) {
 		this.username = username;
 		this.online = true;
 	}

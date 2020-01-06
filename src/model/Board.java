@@ -1,12 +1,14 @@
 package model;
 
+import management.User;
+
 abstract class Board {
-	Player[][] board;
+	User[][] board;
 	Game game;
 	int width;
 	int height;
 	boolean isWon;
-	Player winner;
+	User winner;
 
 
 	Board(Game game, int width, int height) {
@@ -14,7 +16,7 @@ abstract class Board {
 			throw new IllegalArgumentException("A board cannot have negative fields!");
 
 		this.game = game;
-		board = new Player[width][height];
+		board = new User[width][height];
 		this.width = width;
 		this.height = height;
 	}
@@ -28,7 +30,7 @@ abstract class Board {
 	 */
 	abstract boolean move(Move m);
 
-	Player getWinner() {
+	User getWinner() {
 		return winner;
 	}
 	
@@ -44,7 +46,7 @@ abstract class Board {
 	 * @param y Y-Coordinate of the given move.
 	 * @return Player who has made a move at the given position.
 	 */
-	Player getPlayerAt(int x, int y) {
+	User getPlayerAt(int x, int y) {
 		return board[x][y];
 	}
 

@@ -9,6 +9,9 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
+/**
+ * Starts a new client. This client is able to play chomp and connect four.
+ */
 public class MainClient extends Application {
 
 	public static void main(String[] args) {
