@@ -18,6 +18,10 @@ public class Client extends Connection {
 	private static final int PORT = 3141;
 	private ClientManagement management;
 
+	public ClientManagement getManagement() {
+		return management;
+	}
+
 	/**
 	 * Creates a new Client with the credentials of the given management. All
 	 * replies are contained in the management.

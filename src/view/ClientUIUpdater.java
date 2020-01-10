@@ -1,6 +1,9 @@
 package view;
 
+import java.util.ArrayList;
+
 import javafx.application.Platform;
+import management.GameInvitation;
 import server.Client;
 
 class ClientUIUpdater implements Runnable {
@@ -21,6 +24,11 @@ class ClientUIUpdater implements Runnable {
 					try {
 						client.execute("update");
 						controller.openSelectedChat();
+						
+						ArrayList<GameInvitation> invitations = client.getManagement().getReceivedInvitations();
+						if(invitations != null && invitations.size() > 0 && invitations.get(invitations.size() - 1).getCreationTime() > System.currentTimeMillis() - 20000) {
+								controller.openGameDialogue();
+						}
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -37,5 +45,4 @@ class ClientUIUpdater implements Runnable {
 			// This would cause crashing.
 			Platform.runLater(updater);
 		}
-	}
-}
+}}

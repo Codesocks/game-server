@@ -154,7 +154,7 @@ public class ClientManagement extends Management {
 			User fromUser = users.get(username);
 
 			// Check whether message is internal message and deal with invitations and so on.
-			if (content.substring(0, 2).equals("$$")) {
+			if (content.length() >= 2 && content.substring(0, 2).equals("$$")) {
 				if (content.substring(2, 4).equals("00")) { // game invitation.
 					addReceivedInvitation(fromUser, Integer.valueOf(content.toCharArray()[4]));
 

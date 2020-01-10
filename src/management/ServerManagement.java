@@ -208,7 +208,7 @@ public class ServerManagement extends Management {
 
 
 			// Check whether message is internal message and deal with invitations and so on.
-			if(content.substring(0,2).equals("$$")) {
+			if(content.length() >= 2 && content.substring(0,2).equals("$$")) {
 				if(content.substring(2,4).equals("00")) { // game invitation.
 					// Is player already in game?
 					for(Game g: games) {
@@ -223,6 +223,7 @@ public class ServerManagement extends Management {
 					// Valid invite -> add it.
 					addReceivedInvitation(fromUser, toUser, Integer.valueOf(content.toCharArray()[4]));
 					receivedMessages.add(new Message(content, toUser, fromUser, creationTime));
+					
 					System.out.println("Received a game invitation from @" + fromUser.getUsername() + " for @" + toUser.getUsername() + " to play " + (Integer.valueOf(content.toCharArray()[4]) == GameInvitation.GAME_CHOMP ? "Chomp" : "Connect Four"));
 				} else if(content.substring(2,4).equals("01")) { // game invitation accept.
 					// Does invite exist?

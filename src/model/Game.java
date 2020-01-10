@@ -8,6 +8,9 @@ public abstract class Game {
 	Board board;
 	User[] player = new User[2];
 	User currentPlayer;
+	
+	public static final long GAME_CHOMP = 0;
+    public static final long GAME_CONNECTFOUR = 1;
 
 	/**
 	 * Creates a new game with the two given players as players.

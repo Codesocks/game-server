@@ -2,7 +2,7 @@ package management;
 
 import org.json.simple.JSONArray;
 
-class GameInvitation extends CommunicationObject {
+public class GameInvitation extends CommunicationObject {
     private long game;
 
     static final long GAME_CHOMP = 0;
@@ -23,6 +23,10 @@ class GameInvitation extends CommunicationObject {
 
     long getGame() {
         return game;
+    }
+    
+    public long getCreationTime() {
+    	return creationTime;
     }
 
     @SuppressWarnings("unchecked")

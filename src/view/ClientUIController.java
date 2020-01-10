@@ -1,16 +1,24 @@
 package view;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 import javafx.animation.FadeTransition;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -20,6 +28,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import management.ClientManagement;
+import model.Game;
 import server.Client;
 
 public class ClientUIController implements Initializable {
@@ -58,14 +67,14 @@ public class ClientUIController implements Initializable {
 
 		// Send messages when key 'enter' is pressed.
 		leftTextArea.setOnKeyPressed(event -> {
-			if(event.getCode() == KeyCode.ENTER){
+			if (event.getCode() == KeyCode.ENTER) {
 				sendMsg();
 				leftTextArea.setText("");
 				leftTextArea.clear();
 			}
 		});
 	}
-	 
+
 	@FXML
 	public void collapseMenue() {
 		FadeTransition hideFileRootTransition = new FadeTransition(Duration.millis(500), menueVBox);
@@ -99,15 +108,46 @@ public class ClientUIController implements Initializable {
 	@FXML
 	public void sendMsg() {
 		try {
-			if(!leftTextArea.getText().trim().isEmpty() && menueUserList.getSelectionModel().getSelectedItem() != null) {
-				client.execute("sendmsg " + leftTextArea.getText() + ";" + menueUserList.getSelectionModel().getSelectedItem());
-				
+			if (!leftTextArea.getText().trim().isEmpty()
+					&& menueUserList.getSelectionModel().getSelectedItem() != null) {
+				client.execute("sendmsg " + leftTextArea.getText() + ";"
+						+ menueUserList.getSelectionModel().getSelectedItem());
+
 				openSelectedChat(); // Update Chat.
 				leftTextArea.setText("");
 			} else {
 				System.out.println("No receiving user selected or message empty. Therefore message will NOT be send.");
 			}
-		} catch(Exception e) {
+		} catch (Exception e) {
+			System.out.println("Failed to send message!");
+		}
+	}
+
+	@FXML
+	public void playChomp() {
+		try {
+			if (menueUserList.getSelectionModel().getSelectedItem() != null) {
+				client.execute("invite " + Game.GAME_CHOMP + ";" + menueUserList.getSelectionModel().getSelectedItem());
+			} else {
+				System.out.println(
+						"No receiving user selected or message empty. Therefore game invitation for chomp will NOT be send.");
+			}
+		} catch (Exception e) {
+			System.out.println("Failed to send message!");
+		}
+	}
+
+	@FXML
+	public void playConnectFour() {
+		try {
+			if (menueUserList.getSelectionModel().getSelectedItem() != null) {
+				client.execute(
+						"invite " + Game.GAME_CONNECTFOUR + ";" + menueUserList.getSelectionModel().getSelectedItem());
+			} else {
+				System.out.println(
+						"No receiving user selected or message empty. Therefore game invitation for CF will NOT be send.");
+			}
+		} catch (Exception e) {
 			System.out.println("Failed to send message!");
 		}
 	}
@@ -125,6 +165,44 @@ public class ClientUIController implements Initializable {
 
 	Client getClient() {
 		return client;
+	}
+
+	void openGameDialogue() {
+		// Load second scene
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("LoginUI.fxml"));
+		Parent root;
+		try {
+			root = loader.load();
+
+			// Get controller of scene2
+			LoginUIController scene2Controller = loader.getController();
+			// Pass whatever data you want. You can have multiple method calls here
+
+			// scene2Controller.transferMessage("t");
+
+			Stage stage = (Stage) new Stage();
+			stage.setScene(new Scene(root, 800, 450));
+			stage.setTitle("Games by Codesocks / j-bl");
+			stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+				@Override
+				public void handle(WindowEvent event) {
+					try {
+						client.execute("signout");
+					} catch (Exception e) {
+						System.out.println("Failed to sign out!");
+						e.printStackTrace();
+					}
+					Platform.exit();
+					System.exit(0);
+				}
+			});
+			stage.show();
+
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
 	}
 
 	void openSelectedChat() {

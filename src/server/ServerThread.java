@@ -95,7 +95,7 @@ class ServerThread extends Connection implements Runnable {
 			// Extract given information and add included messages, invitations.
 			long clientUpdateTime = (Long) jo.get("latestUpdateTime");
 			JSONArray messages = (JSONArray) jo.get("messages");
-			JSONArray invitations = (JSONArray) jo.get("invitations");
+			// JSONArray invitations = (JSONArray) jo.get("invitations");
 			server.getManagement().addReceivedMessages(messages, credentials);
 			// server.getManagement().addReceivedInvitations(invitations, credentials);
 

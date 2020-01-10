@@ -4,10 +4,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-abstract class Management {
+abstract class Management {    
 	HashMap<String, User> users = new HashMap<String, User>();
 	ArrayList<Message> receivedMessages = new ArrayList<Message>();
 	ArrayList<GameInvitation> receivedInvitations = new ArrayList<GameInvitation>();
+
+	public ArrayList<GameInvitation> getReceivedInvitations() {
+		return receivedInvitations;
+	}
 
 	private long latestUpdateTime = 0;
 
