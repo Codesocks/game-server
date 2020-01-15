@@ -152,36 +152,6 @@ public class ServerManagement extends Management {
 	}
 
 	/**
-	 * Returns all new invitations for the client that corresponds to the given
-	 * credentials since the given UNIX-timestamp.
-	 *
-	 * @param credentials
-	 *            Credentials of the user.
-	 * @param clientUpdateTime
-	 *            Latest time the client's data was updated.
-	 * @return JSONArray of new invitations for the specified user.
-	 */
-	/*public synchronized JSONArray getNewInvitations(JSONArray credentials, long clientUpdateTime) {
-		// Extract username from JSON-Data.
-		String username = (String) credentials.get(0);
-		User user = users.get("username");
-
-		JSONArray newInvitations = new JSONArray();
-		for (GameInvitation g: receivedInvitations) {
-			if (g.getCreationTime() >= clientUpdateTime
-					&& g.getToUser().getUsername().equals(username)) {
-				JSONArray jInvitation = new JSONArray();
-				jInvitation.add(g.getGame());
-				jInvitation.add(g.getFromUser().getUsername());
-				jInvitation.add(g.getCreationTime());
-				newInvitations.add(jInvitation);
-			}
-		}
-
-		return newInvitations;
-	}*/
-
-	/**
 	 * Add the given messages received by the server at the latest connection to the
 	 * management's information.
 	 * 
@@ -223,8 +193,8 @@ public class ServerManagement extends Management {
 					// Valid invite -> add it.
 					addReceivedInvitation(fromUser, toUser, Integer.valueOf(content.toCharArray()[4]));
 					receivedMessages.add(new Message(content, toUser, fromUser, creationTime));
-					
 					System.out.println("Received a game invitation from @" + fromUser.getUsername() + " for @" + toUser.getUsername() + " to play " + (Integer.valueOf(content.toCharArray()[4]) == GameInvitation.GAME_CHOMP ? "Chomp" : "Connect Four"));
+
 				} else if(content.substring(2,4).equals("01")) { // game invitation accept.
 					// Does invite exist?
 					GameInvitation invite = null;
@@ -244,13 +214,18 @@ public class ServerManagement extends Management {
 
 					// Deal with accepted invitation.
 					receivedInvitations.remove(invite);
+					receivedMessages.add(new Message(content,toUser, fromUser, System.currentTimeMillis()));
 					if(Integer.valueOf(content.toCharArray()[4]) == GameInvitation.GAME_CHOMP) {
 						games.add(new ChGame(fromUser, toUser, 8, 4));
 					} else {
 						games.add(new CFGame(fromUser, toUser, 8, 4));
 					}
 					System.out.println("@" + fromUser.getUsername() + " accepted the challenge by @" + toUser.getUsername() + " to play a game of " + (Integer.valueOf(content.toCharArray()[4]) == GameInvitation.GAME_CHOMP ? "Chomp" : "Connect Four"));
+
+				} else if(content.substring(2,4).equals("10")) { // Game played.
+
 				}
+
 			} else {
 				receivedMessages.add(new Message(content, toUser, fromUser, creationTime));
 			}
@@ -271,45 +246,6 @@ public class ServerManagement extends Management {
 
 		receivedInvitations.add(new GameInvitation(game, toUser, fromUser, System.currentTimeMillis()));
 	}
-
-	/**
-	 * Add the given messages received by the server at the latest connection to the
-	 * management's information.
-	 *
-	 * @param jsonArray JSONArray to parse.
-	 * @param credentials Credentials of the user.
-	 */
-	/*public synchronized void addReceivedInvitations(JSONArray jsonArray, JSONArray credentials) {
-		if (jsonArray.size() == 0)
-			return;
-
-		// Extract username from JSON-Data.
-		String fromUsername = (String) credentials.get(0);
-		User fromUser = users.get(fromUsername);
-
-		// jsonArray is JSONArray of JSONArrays.
-		for (Object o : jsonArray) {
-			JSONArray j = (JSONArray) o;
-
-			long game = (long) j.get(0);
-			String username = (String) j.get(1);
-			Long creationTime = (Long) j.get(2);
-			User user = users.get(username);
-
-			// Delete earlier invitations to the same player.
-			GameInvitation delete = null;
-			for(GameInvitation g: receivedInvitations) {
-				if(g.getToUser().getUsername().equals(user.getUsername()) && g.getFromUser().getUsername().equals(fromUser.getUsername())) {
-					delete = g;
-				}
-			}
-			if(delete != null) receivedInvitations.remove(delete);
-
-			receivedInvitations.add(new GameInvitation(game, user, fromUser, creationTime));
-		}
-
-		isUpdate();
-	}*/
 	
 	@Override
 	public ArrayList<String> getUsersOnline() {

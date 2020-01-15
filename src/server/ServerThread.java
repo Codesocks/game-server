@@ -50,7 +50,8 @@ class ServerThread extends Connection implements Runnable {
 	 * Error-Codes:
 	 * 	-1: Something unexpected went wrong
 	 * 	0: Success
-	 * 	1: Credentials failed 2:
+	 * 	1: Credentials failed
+	 * 	2: There is no such invitation to accept or one of the players is already in a game.
 	 * 
 	 * @param jo
 	 * @return
@@ -95,10 +96,12 @@ class ServerThread extends Connection implements Runnable {
 			// Extract given information and add included messages, invitations.
 			long clientUpdateTime = (Long) jo.get("latestUpdateTime");
 			JSONArray messages = (JSONArray) jo.get("messages");
-			// JSONArray invitations = (JSONArray) jo.get("invitations");
-			server.getManagement().addReceivedMessages(messages, credentials);
-			// server.getManagement().addReceivedInvitations(invitations, credentials);
-
+			try {
+				server.getManagement().addReceivedMessages(messages, credentials);
+			} catch (IllegalArgumentException e) {
+				output.put("errorCode", -2);
+				e.printStackTrace();
+			}
 			// Log received Messages and Invitations.
 			if (!messages.toString().equals("[]")) {
 				server.addLog("Processing new messages send by @" + credentials.get(0) + ":");
@@ -106,11 +109,6 @@ class ServerThread extends Connection implements Runnable {
 					server.addLog("...to @" + (String) ((JSONArray) message).get(1) + ": "
 							+ (String) ((JSONArray) message).get(0));
 			}
-			/*if (!invitations.toString().equals("[]")) {
-				server.addLog("Processing new invitations send by @" + credentials.get(0) + ":");
-				for (Object invitation: invitations)
-					server.addLog("...to @" + (String) ((JSONArray) invitation).get(1));
-			}*/
 
 			// Compute reply and send it.
 			output.put("messages", server.getManagement().getNewMessages(credentials, clientUpdateTime));

@@ -4,16 +4,22 @@ import org.json.simple.JSONArray;
 
 public class GameInvitation extends CommunicationObject {
     private long game;
+    private long width;
+    private long height;
 
     static final long GAME_CHOMP = 0;
     static final long GAME_CONNECTFOUR = 1;
 
-    GameInvitation(long game, User toUser, long creationTime) {
+    // Client.
+    GameInvitation(long game, User toUser, int width, int height, long creationTime) {
         this.game = game;
         this.toUser = toUser;
+        this.width = width;
+        this.height = height;
         this.creationTime = creationTime;
     }
 
+    // Server.
     GameInvitation(long game, User toUser, User fromUser, long creationTime) {
         this.game = game;
         this.toUser = toUser;

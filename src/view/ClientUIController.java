@@ -2,6 +2,8 @@ package view;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLOutput;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import javafx.animation.FadeTransition;
@@ -14,15 +16,14 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -125,7 +126,7 @@ public class ClientUIController implements Initializable {
 
 	@FXML
 	public void playChomp() {
-		try {
+		/*try {
 			if (menueUserList.getSelectionModel().getSelectedItem() != null) {
 				client.execute("invite " + Game.GAME_CHOMP + ";" + menueUserList.getSelectionModel().getSelectedItem());
 			} else {
@@ -134,6 +135,44 @@ public class ClientUIController implements Initializable {
 			}
 		} catch (Exception e) {
 			System.out.println("Failed to send message!");
+		}*/
+
+		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+		alert.setTitle("Choose your opponent!");
+		alert.setHeight(800);
+		alert.setHeaderText("Do you want to play against a computer or the currently selected player?");
+		alert.setContentText("If you choose to play against a human player you will have to wait for them to accept your challenge. This invitation is only valid for 60 seconds. If you choose to play against the computer, you will soon be devastated!");
+
+		ButtonType buttonTypeHuman = new ButtonType("Human");
+		ButtonType buttonTypeComputer = new ButtonType("Computer");
+		ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+		alert.getButtonTypes().setAll(buttonTypeHuman, buttonTypeComputer, buttonTypeCancel);
+
+		GridPane grid = new GridPane();
+		grid.setHgap(10);
+		grid.setVgap(10);
+		grid.setPadding(new Insets(20, 150, 10, 10));
+
+		TextField username = new TextField();
+		username.setPromptText("Username");
+		PasswordField password = new PasswordField();
+		password.setPromptText("Password");
+
+		grid.add(new Label("Username:"), 0, 0);
+		grid.add(username, 1, 0);
+		grid.add(new Label("Password:"), 0, 1);
+		grid.add(password, 1, 1);
+
+		alert.getDialogPane().setContent(grid);
+
+		Optional<ButtonType> result = alert.showAndWait();
+		if (result.get() == buttonTypeHuman){
+			System.out.println("HUMAN");
+		} else if (result.get() == buttonTypeComputer) {
+			System.out.println("COMPUTER");
+		} else {
+			System.out.println("Cancel or closed");
+			// ... user chose CANCEL or closed the dialog
 		}
 	}
 
