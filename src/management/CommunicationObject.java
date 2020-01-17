@@ -15,7 +15,11 @@ abstract class CommunicationObject {
         return fromUser;
     }
 
-    long getCreationTime() {
+    public String getFromUsername() {
+        return fromUser.getUsername();
+    }
+
+    public long getCreationTime() {
         return creationTime;
     }
 

@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.ClientUIController">
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" fx:controller="view.ClientUIController">
    <children>
       <SplitPane dividerPositions="0.36789297658862874" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
@@ -58,42 +58,42 @@
                                     </VBox>
                                  </children>
                               </GridPane>
-                              <GridPane prefHeight="118.0" prefWidth="208.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
-                                 <columnConstraints>
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="216.66666412353516" minWidth="10.0" prefWidth="178.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="202.0" minWidth="4.0" prefWidth="4.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="89.0" minWidth="10.0" prefWidth="28.0" />
-                                 </columnConstraints>
-                                 <rowConstraints>
-                                    <RowConstraints maxHeight="29.0" minHeight="0.0" prefHeight="4.666656494140625" vgrow="SOMETIMES" />
-                                    <RowConstraints maxHeight="113.0" minHeight="10.0" prefHeight="110.33334350585938" vgrow="SOMETIMES" />
-                                    <RowConstraints maxHeight="34.0" minHeight="1.0" prefHeight="2.666656494140625" vgrow="SOMETIMES" />
-                                 </rowConstraints>
-                                 <children>
-                                    <TextArea fx:id="leftTextArea" prefHeight="200.0" prefWidth="200.0" wrapText="true" GridPane.rowIndex="1" />
-                                    <GridPane GridPane.columnIndex="2" GridPane.rowIndex="1">
-                                       <columnConstraints>
-                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                       </columnConstraints>
-                                       <rowConstraints>
-                                          <RowConstraints maxHeight="46.66668701171875" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                                          <RowConstraints maxHeight="59.0" minHeight="10.0" prefHeight="59.0" vgrow="SOMETIMES" />
-                                       </rowConstraints>
-                                       <children>
-                                          <Button fx:id="leftButtonSendMsg" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#sendMsg" style="-fx-background-color: #0000FF;" text="&gt;" textFill="WHITE">
-                                             <font>
-                                                <Font name="System Bold" size="12.0" />
-                                             </font>
-                                          </Button>
-                                       </children>
-                                    </GridPane>
-                                 </children>
-                              </GridPane>
-                              <ScrollPane fitToWidth="true" prefHeight="220.0" prefWidth="108.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                                 <content>
-                                    <ListView fx:id="leftChatList" prefHeight="223.0" prefWidth="212.0" style="-fx-control-inner-background: #FFFFFF; -fx-control-inner-background-alt: #FFFFFF; -fx-background-color: #FFFFFF; -fx-selection-bar: #FFFFFF; -fx-selection-bar-alt: #FFFFFF;" />
-                                 </content>
-                              </ScrollPane>
+                               <GridPane fx:id="chatArea" visible="false" prefHeight="118.0" prefWidth="208.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                   <columnConstraints>
+                                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="216.66666412353516" minWidth="10.0" prefWidth="178.0" />
+                                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="202.0" minWidth="4.0" prefWidth="4.0" />
+                                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="89.0" minWidth="10.0" prefWidth="28.0" />
+                                   </columnConstraints>
+                                   <rowConstraints>
+                                       <RowConstraints maxHeight="29.0" minHeight="0.0" prefHeight="4.666656494140625" vgrow="SOMETIMES" />
+                                       <RowConstraints maxHeight="113.0" minHeight="10.0" prefHeight="110.33334350585938" vgrow="SOMETIMES" />
+                                       <RowConstraints maxHeight="34.0" minHeight="1.0" prefHeight="2.666656494140625" vgrow="SOMETIMES" />
+                                   </rowConstraints>
+                                   <children>
+                                       <TextArea fx:id="leftTextArea" prefHeight="200.0" prefWidth="200.0" wrapText="true" GridPane.rowIndex="1" />
+                                       <GridPane GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                           <columnConstraints>
+                                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                           </columnConstraints>
+                                           <rowConstraints>
+                                               <RowConstraints maxHeight="46.66668701171875" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                                               <RowConstraints maxHeight="59.0" minHeight="10.0" prefHeight="59.0" vgrow="SOMETIMES" />
+                                           </rowConstraints>
+                                           <children>
+                                               <Button fx:id="leftButtonSendMsg" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#sendMsg" style="-fx-background-color: #0000FF;" text="&gt;" textFill="WHITE">
+                                                   <font>
+                                                       <Font name="System Bold" size="12.0" />
+                                                   </font>
+                                               </Button>
+                                           </children>
+                                       </GridPane>
+                                   </children>
+                               </GridPane>
+                               <ScrollPane fx:id="chatView" visible="false" fitToWidth="true" prefHeight="220.0" prefWidth="108.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                   <content>
+                                       <ListView fx:id="leftChatList" prefHeight="223.0" prefWidth="212.0" style="-fx-control-inner-background: #FFFFFF; -fx-control-inner-background-alt: #FFFFFF; -fx-background-color: #FFFFFF; -fx-selection-bar: #FFFFFF; -fx-selection-bar-alt: #FFFFFF;" />
+                                   </content>
+                               </ScrollPane>
                            </children>
                         </GridPane>
                      </children>
@@ -135,7 +135,7 @@
                                                 <RowConstraints maxHeight="351.0" minHeight="10.0" prefHeight="336.0" vgrow="SOMETIMES" />
                                             </rowConstraints>
                                              <children>
-                                                <Button fx:id="menueButtonCollapse" mnemonicParsing="false" onAction="#collapseMenue" style="-fx-background-color: #0000FF;" text="🡸" textFill="WHITE" GridPane.rowIndex="1">
+                                                <Button fx:id="menueButtonCollapse" mnemonicParsing="false" onAction="#collapseMenue" style="-fx-background-color: #0000FF;" text="-" textFill="WHITE" GridPane.rowIndex="1">
                                                    <font>
                                                       <Font name="System Bold" size="15.0" />
                                                    </font>

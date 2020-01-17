@@ -7,13 +7,10 @@ public class GameInvitation extends CommunicationObject {
     private long width;
     private long height;
 
-    static final long GAME_CHOMP = 0;
-    static final long GAME_CONNECTFOUR = 1;
-
     // Client.
-    GameInvitation(long game, User toUser, int width, int height, long creationTime) {
+    GameInvitation(long game, User fromUser, int width, int height, long creationTime) {
         this.game = game;
-        this.toUser = toUser;
+        this.fromUser = fromUser;
         this.width = width;
         this.height = height;
         this.creationTime = creationTime;
@@ -27,12 +24,8 @@ public class GameInvitation extends CommunicationObject {
         this.creationTime = creationTime;
     }
 
-    long getGame() {
+    public long getGame() {
         return game;
-    }
-    
-    public long getCreationTime() {
-    	return creationTime;
     }
 
     @SuppressWarnings("unchecked")
