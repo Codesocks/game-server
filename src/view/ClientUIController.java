@@ -158,7 +158,7 @@ public class ClientUIController implements Initializable {
 		// If board sizes invalid do something to display error.
 		// Wait for user to choose a player to play against.
 		Optional<ButtonType> result = alert.showAndWait();
-		if (result.get() == buttonTypeHuman || result.get() == buttonTypeComputer) {
+		if(result.get() == buttonTypeHuman || result.get() == buttonTypeComputer) {
 			// Check inputs for validity.
 			int width = 7;
 			int height = 6;
@@ -166,7 +166,7 @@ public class ClientUIController implements Initializable {
 				width = Integer.valueOf(widthBoard.getText());
 				height = Integer.valueOf(heightBoard.getText());
 
-				if (width < 1 || width >= 999 || height < 1 || height > 999) {
+				if(width < 1 || width >= 999 || height < 1 || height > 999) {
 					System.out.println("Width and height of the board may not exceed 999 or 1.");
 					return;
 				}
@@ -188,70 +188,29 @@ public class ClientUIController implements Initializable {
 
 	@FXML
 	public void playConnectFour() {
-		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-		alert.setTitle("Connect Four - Choose your opponent!");
-		alert.setHeight(800);
-		alert.setHeaderText("Do you want to play against a computer or the currently selected player?");
-
-		ButtonType buttonTypeHuman = new ButtonType("Human");
-		ButtonType buttonTypeComputer = new ButtonType("Computer");
-		ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-		alert.getButtonTypes().setAll(buttonTypeHuman, buttonTypeComputer, buttonTypeCancel);
-
-		GridPane grid = new GridPane();
-		grid.setHgap(10);
-		grid.setVgap(10);
-		grid.setPadding(new Insets(20, 150, 10, 10));
-
-		TextField widthBoard = new TextField("9");
-		TextField heightBoard = new TextField("5");
-
-		grid.add(new Label("Width:"), 0, 0);
-		grid.add(widthBoard, 1, 0);
-		grid.add(new Label("Height:"), 0, 1);
-		grid.add(heightBoard, 1, 1);
-		alert.getDialogPane().setContent(grid);
-
-		// If board sizes invalid do something to display error.
-		// Wait for user to choose a player to play against.
-		Optional<ButtonType> result = alert.showAndWait();
-		if (result.get() == buttonTypeHuman || result.get() == buttonTypeComputer) {
-			// Check inputs for validity.
-			int width = 7;
-			int height = 6;
-			try {
-				width = Integer.valueOf(widthBoard.getText());
-				height = Integer.valueOf(heightBoard.getText());
-
-				if (width < 1 || width >= 999 || height < 1 || height > 999) {
-					System.out.println("Width and height of the board may not exceed 999 or 1.");
-					return;
-				}
-			} catch (Exception e) {
-				System.out.println("Invalid parameters for width or height of the board!");
-				return;
-			}
-
-			// Choose a player to play against.
-			if (result.get() == buttonTypeHuman) {
-				invitePlayer(Game.GAME_CONNECTFOUR, width, height);
+		try {
+			if (menueUserList.getSelectionModel().getSelectedItem() != null) {
+				client.execute(
+						"invite " + Game.GAME_CONNECTFOUR + ";" + menueUserList.getSelectionModel().getSelectedItem());
 			} else {
-				System.out.println("COMPUTER");
+				System.out.println(
+						"No receiving user selected or message empty. Therefore game invitation for CF will NOT be send.");
 			}
-		} else {
-			// User pressed cancel or closed dialogue...
+		} catch (Exception e) {
+			System.out.println("Failed to send message!");
 		}
 	}
 
 	private void invitePlayer(long game, int width, int height) {
 		try {
 			if (menueUserList.getSelectionModel().getSelectedItem() != null) {
-				System.out.println("Attempting to invite @" + menueUserList.getSelectionModel().getSelectedItem()
-						+ " to a new game.");
-				client.execute("invite " + game + "-4-7" + ";" + menueUserList.getSelectionModel().getSelectedItem());
+				System.out.println("Attempting to invite @" + menueUserList.getSelectionModel().getSelectedItem() + " to a new game.");
+				client.execute(
+						"invite " + game + "-4-7" +  ";" + menueUserList.getSelectionModel().getSelectedItem());
 			} else {
 				// Play against a computer player
-				System.out.println("try to play against computer. not yet implemented.");
+				System.out.println(
+						"try to play against computer. not yet implemented.");
 			}
 		} catch (Exception e) {
 			System.out.println("Failed to send message!");
@@ -274,16 +233,13 @@ public class ClientUIController implements Initializable {
 	}
 
 	void openGameDialogue() {
-		GameInvitation invitation = client.getManagement().getReceivedInvitations()
-				.get(client.getManagement().getReceivedInvitations().size() - 1);
+		GameInvitation invitation = client.getManagement().getReceivedInvitations().get(client.getManagement().getReceivedInvitations().size() - 1);
 		System.out.println("Long. " + invitation.getGame());
 
 		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 		alert.setTitle("CHALLENGE!");
 		alert.setHeight(800);
-		alert.setHeaderText("You received a challenge by @" + invitation.getFromUsername() + " to a game of "
-				+ (invitation.getGame() == Game.GAME_CHOMP ? "Chomp" : "Connect Four")
-				+ "! Do you dare to accept that challenge?");
+		alert.setHeaderText("You received a challenge by @" + invitation.getFromUsername() + " to a game of " + (invitation.getGame() == Game.GAME_CHOMP ? "Chomp" : "Connect Four") + "! Do you dare to accept that challenge?");
 
 		ButtonType buttonTypeAccept = new ButtonType("ACCEPT");
 		ButtonType buttonTypeDecline = new ButtonType("DECLINE", ButtonBar.ButtonData.CANCEL_CLOSE);
@@ -293,7 +249,7 @@ public class ClientUIController implements Initializable {
 		// Choose a player to play against.
 		if (result.get() == buttonTypeAccept) {
 			openMainGame(invitation.getGame());
-		} else if (result.get() == buttonTypeDecline) {
+		} else  if (result.get() == buttonTypeDecline){
 			System.out.println("DECLINE");
 		} else {
 			// User pressed cancel or closed dialogue...
@@ -305,7 +261,7 @@ public class ClientUIController implements Initializable {
 		String username = menueUserList.getSelectionModel().getSelectedItem();
 
 		// Show empty plane if no user is selected.
-		if (username == null) {
+		if(username == null) {
 			chatArea.setVisible(false);
 			chatView.setVisible(false);
 			return;
@@ -326,15 +282,13 @@ public class ClientUIController implements Initializable {
 		leftChatList.refresh();
 	}
 
-	private void openMainGame(long game) {
+	private void openMainGame (long game) {
 		// Load second scene
 		FXMLLoader loader;
 		Parent root;
-		if (game == Game.GAME_CHOMP) {
-			loader = new FXMLLoader(getClass().getResource("ClientUICh.fxml"));
-		} else {
-			loader = new FXMLLoader(getClass().getResource("ClientUICF.fxml"));
-		}
+		if(game == Game.GAME_CHOMP) {
+			loader = new FXMLLoader(getClass().getResource("ClientChomp.fxml"));
+		} else { loader = new FXMLLoader(getClass().getResource("LoginUI.fxml"));}
 
 		try {
 			root = loader.load();
@@ -346,18 +300,18 @@ public class ClientUIController implements Initializable {
 
 			Stage stage = (Stage) new Stage();
 			stage.setScene(new Scene(root, 800, 450));
-			stage.setTitle(game == Game.GAME_CHOMP ? "CHOMP CHOMP CHOMP" : "Connect Four");
+			stage.setTitle("Games by Codesocks / j-bl");
 			stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 				@Override
 				public void handle(WindowEvent event) {
 					try {
-						// client.execute("signout");
-						// add aufgeben
+						client.execute("signout");
 					} catch (Exception e) {
-						// System.out.println("Failed to sign out!");
+						System.out.println("Failed to sign out!");
 						e.printStackTrace();
 					}
 					Platform.exit();
+					System.exit(0);
 				}
 			});
 			stage.show();

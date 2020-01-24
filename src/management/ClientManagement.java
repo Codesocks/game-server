@@ -116,13 +116,12 @@ public class ClientManagement extends Management {
 			// Check whether message is internal message and deal with invitations and so on.
 			if (content.length() >= 2 && content.substring(0, 2).equals("$$")) {
 				if (content.substring(2, 4).equals("00")) { // game invitation received.
-					addReceivedInvitation(fromUser, Integer.valueOf(content.split("-")[1]), Integer.valueOf(content.split("-")[2]), Character.getNumericValue(content.toCharArray()[4]));
-					
-					System.out.println("Received a game invitation from @" + fromUser.getUsername() + " for " + (Character.getNumericValue(content.toCharArray()[4]) == Game.GAME_CHOMP ? "Chomp" : "Connect Four") + " on a " + content.split("-")[1]  + "x" + content.split("-")[2] + " board.");
-						
+					addReceivedInvitation(fromUser, Integer.valueOf(content.split("-")[1]), Integer.valueOf(content.split("-")[2]), (int) content.toCharArray()[4]);
+					System.out.println("Received a game invitation from @" + fromUser.getUsername() + " for " + ((int) content.toCharArray()[4] == GameInvitation.GAME_CHOMP ? "Chomp" : "Connect Four") + " on a " + content.split("-")[1]  + "x" + content.split("-")[2] + " board");
+
 				} else if (content.substring(2, 4).equals("01")) { // game invitation accept.
-					System.out.println("@" + fromUser.getUsername() + " accepted your game invitation for a game of " + (Character.getNumericValue(content.toCharArray()[4]) == Game.GAME_CHOMP ? "Chomp" : "Connect Four") + " on a " + content.split("-")[1]  + "x" + content.split("-")[2] + " board.");
-					if(Character.getNumericValue(content.toCharArray()[4]) == Game.GAME_CHOMP) {
+					System.out.println("@" + fromUser.getUsername() + " accepted your game invitation for a game of " + ((int) content.toCharArray()[4] == GameInvitation.GAME_CHOMP ? "Chomp" : "Connect Four") + " on a " + content.split("-")[1]  + "x" + content.split("-")[2] + " board");
+					if((int) content.toCharArray()[4] == GameInvitation.GAME_CHOMP) {
 						game = new ChGame(thisUser, fromUser, Integer.valueOf(content.split("-")[1]), Integer.valueOf(content.split("-")[2]));
 					} else {
 						game = new CFGame(thisUser, fromUser, Integer.valueOf(content.split("-")[1]), Integer.valueOf(content.split("-")[2]));

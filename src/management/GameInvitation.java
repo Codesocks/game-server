@@ -7,6 +7,9 @@ public class GameInvitation extends CommunicationObject {
     private long width;
     private long height;
 
+    static final long GAME_CHOMP = 0;
+    static final long GAME_CONNECTFOUR = 1;
+
     // Client.
     GameInvitation(long game, User fromUser, int width, int height, long creationTime) {
         this.game = game;

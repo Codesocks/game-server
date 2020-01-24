@@ -193,7 +193,7 @@ public class ServerManagement extends Management {
 					// Valid invite -> add it.
 					addReceivedInvitation(fromUser, toUser, Integer.valueOf(content.toCharArray()[4]));
 					receivedMessages.add(new Message(content, toUser, fromUser, creationTime));
-					System.out.println("Received a game invitation from @" + fromUser.getUsername() + " for @" + toUser.getUsername() + " to play " + (Character.getNumericValue(content.toCharArray()[4]) == Game.GAME_CHOMP ? "Chomp" : "Connect Four"));
+					System.out.println("Received a game invitation from @" + fromUser.getUsername() + " for @" + toUser.getUsername() + " to play " + (Integer.valueOf(content.toCharArray()[4]) == GameInvitation.GAME_CHOMP ? "Chomp" : "Connect Four"));
 
 				} else if(content.substring(2,4).equals("01")) { // game invitation accept.
 					// Does invite exist?
@@ -215,12 +215,12 @@ public class ServerManagement extends Management {
 					// Deal with accepted invitation.
 					receivedInvitations.remove(invite);
 					receivedMessages.add(new Message(content,toUser, fromUser, System.currentTimeMillis()));
-					if(Character.getNumericValue(content.toCharArray()[4]) == Game.GAME_CHOMP) {
+					if(Integer.valueOf(content.toCharArray()[4]) == GameInvitation.GAME_CHOMP) {
 						games.add(new ChGame(fromUser, toUser, 8, 4));
 					} else {
 						games.add(new CFGame(fromUser, toUser, 8, 4));
 					}
-					System.out.println("@" + fromUser.getUsername() + " accepted the challenge by @" + toUser.getUsername() + " to play a game of " + (Character.getNumericValue(content.toCharArray()[4]) == Game.GAME_CHOMP ? "Chomp" : "Connect Four"));
+					System.out.println("@" + fromUser.getUsername() + " accepted the challenge by @" + toUser.getUsername() + " to play a game of " + (Integer.valueOf(content.toCharArray()[4]) == GameInvitation.GAME_CHOMP ? "Chomp" : "Connect Four"));
 
 				} else if(content.substring(2,4).equals("10")) { // Game played.
 
