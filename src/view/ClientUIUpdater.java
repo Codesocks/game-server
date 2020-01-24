@@ -27,7 +27,7 @@ class ClientUIUpdater implements Runnable {
 						
 						ArrayList<GameInvitation> invitations = client.getManagement().getReceivedInvitations();
 						if(invitations != null && invitations.size() > 0 && invitations.get(invitations.size() - 1).getCreationTime() > System.currentTimeMillis() - 20000) {
-								controller.openGameDialogue();
+								controller.openGameAcceptationDialogue();
 						}
 					} catch (Exception e) {
 						e.printStackTrace();

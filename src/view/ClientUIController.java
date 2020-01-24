@@ -131,8 +131,17 @@ public class ClientUIController implements Initializable {
 
 	@FXML
 	public void playChomp() {
+		openGameInvitationDialogue(Game.GAME_CHOMP);
+	}
+
+	@FXML
+	public void playConnectFour() {
+		openGameInvitationDialogue(Game.GAME_CONNECTFOUR);
+	}
+
+	private void openGameInvitationDialogue(long game) {
 		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-		alert.setTitle("CHOMP - Choose your opponent!");
+		alert.setTitle((game == Game.GAME_CHOMP ? "CHOMP" : "CONNECT FOUR") + " - Choose your opponent!");
 		alert.setHeight(800);
 		alert.setHeaderText("Do you want to play against a computer or the currently selected player?");
 
@@ -158,7 +167,7 @@ public class ClientUIController implements Initializable {
 		// If board sizes invalid do something to display error.
 		// Wait for user to choose a player to play against.
 		Optional<ButtonType> result = alert.showAndWait();
-		if(result.get() == buttonTypeHuman || result.get() == buttonTypeComputer) {
+		if (result.get() == buttonTypeHuman || result.get() == buttonTypeComputer) {
 			// Check inputs for validity.
 			int width = 7;
 			int height = 6;
@@ -166,7 +175,7 @@ public class ClientUIController implements Initializable {
 				width = Integer.valueOf(widthBoard.getText());
 				height = Integer.valueOf(heightBoard.getText());
 
-				if(width < 1 || width >= 999 || height < 1 || height > 999) {
+				if (width < 1 || width >= 999 || height < 1 || height > 999) {
 					System.out.println("Width and height of the board may not exceed 999 or 1.");
 					return;
 				}
@@ -177,7 +186,7 @@ public class ClientUIController implements Initializable {
 
 			// Choose a player to play against.
 			if (result.get() == buttonTypeHuman) {
-				invitePlayer(Game.GAME_CHOMP, width, height);
+				invitePlayer(game, width, height);
 			} else {
 				System.out.println("COMPUTER");
 			}
@@ -186,31 +195,15 @@ public class ClientUIController implements Initializable {
 		}
 	}
 
-	@FXML
-	public void playConnectFour() {
-		try {
-			if (menueUserList.getSelectionModel().getSelectedItem() != null) {
-				client.execute(
-						"invite " + Game.GAME_CONNECTFOUR + ";" + menueUserList.getSelectionModel().getSelectedItem());
-			} else {
-				System.out.println(
-						"No receiving user selected or message empty. Therefore game invitation for CF will NOT be send.");
-			}
-		} catch (Exception e) {
-			System.out.println("Failed to send message!");
-		}
-	}
-
 	private void invitePlayer(long game, int width, int height) {
 		try {
 			if (menueUserList.getSelectionModel().getSelectedItem() != null) {
-				System.out.println("Attempting to invite @" + menueUserList.getSelectionModel().getSelectedItem() + " to a new game.");
-				client.execute(
-						"invite " + game + "-4-7" +  ";" + menueUserList.getSelectionModel().getSelectedItem());
+				System.out.println("Attempting to invite @" + menueUserList.getSelectionModel().getSelectedItem()
+						+ " to a new game.");
+				client.execute("invite " + game + "-4-7" + ";" + menueUserList.getSelectionModel().getSelectedItem());
 			} else {
 				// Play against a computer player
-				System.out.println(
-						"try to play against computer. not yet implemented.");
+				System.out.println("try to play against computer. not yet implemented.");
 			}
 		} catch (Exception e) {
 			System.out.println("Failed to send message!");
@@ -232,14 +225,17 @@ public class ClientUIController implements Initializable {
 		return client;
 	}
 
-	void openGameDialogue() {
-		GameInvitation invitation = client.getManagement().getReceivedInvitations().get(client.getManagement().getReceivedInvitations().size() - 1);
+	void openGameAcceptationDialogue() {
+		GameInvitation invitation = client.getManagement().getReceivedInvitations()
+				.get(client.getManagement().getReceivedInvitations().size() - 1);
 		System.out.println("Long. " + invitation.getGame());
 
 		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 		alert.setTitle("CHALLENGE!");
 		alert.setHeight(800);
-		alert.setHeaderText("You received a challenge by @" + invitation.getFromUsername() + " to a game of " + (invitation.getGame() == Game.GAME_CHOMP ? "Chomp" : "Connect Four") + "! Do you dare to accept that challenge?");
+		alert.setHeaderText("You received a challenge by @" + invitation.getFromUsername() + " to a game of "
+				+ (invitation.getGame() == Game.GAME_CHOMP ? "Chomp" : "Connect Four")
+				+ "! Do you dare to accept that challenge?");
 
 		ButtonType buttonTypeAccept = new ButtonType("ACCEPT");
 		ButtonType buttonTypeDecline = new ButtonType("DECLINE", ButtonBar.ButtonData.CANCEL_CLOSE);
@@ -249,7 +245,7 @@ public class ClientUIController implements Initializable {
 		// Choose a player to play against.
 		if (result.get() == buttonTypeAccept) {
 			openMainGame(invitation.getGame());
-		} else  if (result.get() == buttonTypeDecline){
+		} else if (result.get() == buttonTypeDecline) {
 			System.out.println("DECLINE");
 		} else {
 			// User pressed cancel or closed dialogue...
@@ -261,7 +257,7 @@ public class ClientUIController implements Initializable {
 		String username = menueUserList.getSelectionModel().getSelectedItem();
 
 		// Show empty plane if no user is selected.
-		if(username == null) {
+		if (username == null) {
 			chatArea.setVisible(false);
 			chatView.setVisible(false);
 			return;
@@ -282,13 +278,15 @@ public class ClientUIController implements Initializable {
 		leftChatList.refresh();
 	}
 
-	private void openMainGame (long game) {
+	private void openMainGame(long game) {
 		// Load second scene
 		FXMLLoader loader;
 		Parent root;
-		if(game == Game.GAME_CHOMP) {
+		if (game == Game.GAME_CHOMP) {
 			loader = new FXMLLoader(getClass().getResource("ClientChomp.fxml"));
-		} else { loader = new FXMLLoader(getClass().getResource("LoginUI.fxml"));}
+		} else {
+			loader = new FXMLLoader(getClass().getResource("ClientConnectfour.fxml"));
+		}
 
 		try {
 			root = loader.load();
@@ -300,7 +298,7 @@ public class ClientUIController implements Initializable {
 
 			Stage stage = (Stage) new Stage();
 			stage.setScene(new Scene(root, 800, 450));
-			stage.setTitle("Games by Codesocks / j-bl");
+			stage.setTitle((game == Game.GAME_CHOMP ? "CHOMP" : "CONNECT FOUR") + " - Games by Codesocks / j-bl");
 			stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 				@Override
 				public void handle(WindowEvent event) {
