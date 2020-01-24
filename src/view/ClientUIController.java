@@ -34,8 +34,8 @@ import model.Game;
 import server.Client;
 
 public class ClientUIController implements Initializable {
-	private ClientManagement management = new ClientManagement();
-	private Client client = new Client(management);
+	private ClientManagement management;
+	private Client client;
 
 	@FXML
 	private Label leftLogoTxt; // Text of logo.
@@ -210,14 +210,14 @@ public class ClientUIController implements Initializable {
 		}
 	}
 
-	public void setClientManagement(ClientManagement management) {
+	void setClientManagement(ClientManagement management) {
 		this.management = management;
 		client = new Client(this.management);
 		client.execute("update");
 
 		// Create Updater.
 		System.out.println(management.getCredentials().toString());
-		Thread updater = new Thread(new ClientUIUpdater(this));
+		Thread updater = new Thread(new ClientUIUpdater(this, management));
 		updater.start();
 	}
 
@@ -226,8 +226,8 @@ public class ClientUIController implements Initializable {
 	}
 
 	void openGameAcceptationDialogue() {
-		GameInvitation invitation = client.getManagement().getReceivedInvitations()
-				.get(client.getManagement().getReceivedInvitations().size() - 1);
+		GameInvitation invitation = management.getReceivedInvitations()
+				.get(management.getReceivedInvitations().size() - 1);
 		System.out.println("Long. " + invitation.getGame());
 
 		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -235,7 +235,7 @@ public class ClientUIController implements Initializable {
 		alert.setHeight(800);
 		alert.setHeaderText("You received a challenge by @" + invitation.getFromUsername() + " to a game of "
 				+ (invitation.getGame() == Game.GAME_CHOMP ? "Chomp" : "Connect Four")
-				+ "! Do you dare to accept that challenge?");
+				+ " on a " + invitation.getWidth() + "x" + invitation.getHeight() + "-board! Do you dare to accept that challenge?");
 
 		ButtonType buttonTypeAccept = new ButtonType("ACCEPT");
 		ButtonType buttonTypeDecline = new ButtonType("DECLINE", ButtonBar.ButtonData.CANCEL_CLOSE);
@@ -244,13 +244,17 @@ public class ClientUIController implements Initializable {
 		Optional<ButtonType> result = alert.showAndWait();
 		// Choose a player to play against.
 		if (result.get() == buttonTypeAccept) {
-			openMainGame(invitation.getGame());
+			long errorCode = client.execute("accept " + invitation.getGame() + "-" + invitation.getWidth() + "-" + invitation.getHeight() + ";" + invitation.getFromUsername());
+			if(errorCode==0) {
+				management.setGame(invitation.getGame(), invitation.getWidth(), invitation.getHeight(), invitation.getFromUsername(), true);
+				openMainGame(invitation.getGame());
+			}
 		} else if (result.get() == buttonTypeDecline) {
 			System.out.println("DECLINE");
 		} else {
 			// User pressed cancel or closed dialogue...
 		}
-
+		management.closeInvitation(invitation);
 	}
 
 	void openSelectedChat() {
@@ -278,7 +282,7 @@ public class ClientUIController implements Initializable {
 		leftChatList.refresh();
 	}
 
-	private void openMainGame(long game) {
+	public void openMainGame(long game) {
 		// Load second scene
 		FXMLLoader loader;
 		Parent root;
@@ -303,13 +307,12 @@ public class ClientUIController implements Initializable {
 				@Override
 				public void handle(WindowEvent event) {
 					try {
-						client.execute("signout");
+						client.execute("surrender");
 					} catch (Exception e) {
 						System.out.println("Failed to sign out!");
 						e.printStackTrace();
 					}
 					Platform.exit();
-					System.exit(0);
 				}
 			});
 			stage.show();

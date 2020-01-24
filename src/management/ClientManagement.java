@@ -7,6 +7,9 @@ import model.CFGame;
 import model.ChGame;
 import model.Game;
 import org.json.simple.JSONArray;
+import view.ClientUIController;
+
+import static java.lang.Math.toIntExact;
 
 /**
  * Management of a Client. It contains the list of the currently online players,
@@ -19,10 +22,20 @@ public class ClientManagement extends Management {
 	private ArrayList<Message> sendMessages = new ArrayList<Message>();
 	private Game game = null;
 	private final User thisUser = new User("_thisUser");
-	// private ArrayList<GameInvitation> sendInvitations = new ArrayList<GameInvitation>();
 
 	private String username;
 	private String pwd;
+
+	private ClientUIController uiController;
+
+	public ClientManagement (ClientUIController uiController) {
+		this.uiController = uiController;
+	}
+
+	// Only for LoginUI, ClientClI and debug-purposes.
+	public ClientManagement () {
+
+	}
 
 	/**
 	 * Sets all given players to online and all others to off-line.
@@ -121,11 +134,19 @@ public class ClientManagement extends Management {
 
 				} else if (content.substring(2, 4).equals("01")) { // game invitation accept.
 					System.out.println("@" + fromUser.getUsername() + " accepted your game invitation for a game of " + ((int) content.toCharArray()[4] == GameInvitation.GAME_CHOMP ? "Chomp" : "Connect Four") + " on a " + content.split("-")[1]  + "x" + content.split("-")[2] + " board");
-					if((int) content.toCharArray()[4] == GameInvitation.GAME_CHOMP) {
-						game = new ChGame(thisUser, fromUser, Integer.valueOf(content.split("-")[1]), Integer.valueOf(content.split("-")[2]));
+					setGame((int) content.toCharArray()[4], Integer.valueOf(content.split("-")[1]), Integer.valueOf(content.split("-")[2]), fromUser.getUsername(), false);
+					uiController.openMainGame((int) content.toCharArray()[4]);
+
+				} else if(content.substring(2, 4).equals("01")) { // game move.
+					System.out.println("Your opponent attempted to move. It is now your turn.");
+					if(game instanceof ChGame) {
+						((ChGame) game).move(fromUser, Integer.valueOf(content.split("-")[1]), Integer.valueOf(content.split("-")[2]));
 					} else {
-						game = new CFGame(thisUser, fromUser, Integer.valueOf(content.split("-")[1]), Integer.valueOf(content.split("-")[2]));
+						((CFGame) game).move(fromUser, Integer.valueOf(content.split("-")[1]));
 					}
+				} else if(content.substring(2, 4).equals("11")) {
+					System.out.println("Your opponent surrendered!");
+					// Left to implement.
 				}
 			} else {
 				receivedMessages.add(new Message(content, fromUser, creationTime));
@@ -244,7 +265,31 @@ public class ClientManagement extends Management {
 
 		return messages;
 	}
-	
+
+	public void closeInvitation(GameInvitation invitation) {
+		receivedInvitations.remove(invitation);
+	}
+
+	public void setUiController(ClientUIController uiController) {
+		this.uiController = uiController;
+	}
+
+	/**
+	 * Sets the current game to a game with the given parameters.
+	 * @param gametype Determines which game is played.
+	 * @param width Width of the board.
+	 * @param height Height of the board.
+	 * @param opponentUser Username of player to play against.
+	 * @param firstMove If {@code true} this player is the one to move first.
+	 */
+	public void setGame(long gametype, long width, long height, String opponentUser, boolean firstMove) {
+		if(gametype == Game.GAME_CHOMP) {
+			game = new ChGame(thisUser, users.get(opponentUser), toIntExact(width), toIntExact(height), firstMove);
+		} else {
+			game = new CFGame(thisUser, users.get(opponentUser), toIntExact(width), toIntExact(height), firstMove);
+		}
+	}
+
 	@Override
 	public ArrayList<String> getUsersOnline() {
 		ArrayList<String> onlinePlayers = new ArrayList<String>();

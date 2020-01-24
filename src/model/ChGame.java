@@ -20,9 +20,10 @@ public class ChGame extends Game {
 	 * @param player2 Second player of the game.
 	 * @param width   Width of the board.
 	 * @param height  Height of the board.
+	 * @param firstMove If {@code true} the first player is the first one to move.
 	 */
-	public ChGame(User player1, User player2, int width, int height) {
-		super(player1, player2);
+	public ChGame(User player1, User player2, int width, int height, boolean firstMove) {
+		super(player1, player2, firstMove);
 		board = new ChBoard(this, width, height);
 	}
 

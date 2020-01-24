@@ -3,15 +3,18 @@ package view;
 import java.util.ArrayList;
 
 import javafx.application.Platform;
+import management.ClientManagement;
 import management.GameInvitation;
 import server.Client;
 
 class ClientUIUpdater implements Runnable {
-	ClientUIController controller;
-	Client client;
+	private ClientUIController controller;
+	private ClientManagement management;
+	private Client client;
 
-	ClientUIUpdater(ClientUIController controller) {
+	ClientUIUpdater(ClientUIController controller, ClientManagement management) {
 		this.controller = controller;
+		this.management = management;
 		this.client = controller.getClient();
 	}
 
@@ -25,7 +28,7 @@ class ClientUIUpdater implements Runnable {
 						client.execute("update");
 						controller.openSelectedChat();
 						
-						ArrayList<GameInvitation> invitations = client.getManagement().getReceivedInvitations();
+						ArrayList<GameInvitation> invitations = management.getReceivedInvitations();
 						if(invitations != null && invitations.size() > 0 && invitations.get(invitations.size() - 1).getCreationTime() > System.currentTimeMillis() - 20000) {
 								controller.openGameAcceptationDialogue();
 						}

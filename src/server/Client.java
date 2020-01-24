@@ -18,10 +18,6 @@ public class Client extends Connection {
 	private static final int PORT = 3141;
 	private ClientManagement management;
 
-	public ClientManagement getManagement() {
-		return management;
-	}
-
 	/**
 	 * Creates a new Client with the credentials of the given management. All
 	 * replies are contained in the management.
@@ -131,13 +127,14 @@ public class Client extends Connection {
 			if(returnValue == 2) System.out.println("[CLIENT] There is no such invitation present at the server. Please remember that invitations expire after 60 seconds!");
 			return returnValue;
 
-		} else if (request.contains("makemove")) {
-			// still left to implement.
-			return 0;
+		} else if (request.contains("makemv ")) {
+			request = request.substring(7);
+			System.out.println("[CLIENT] [INFO] Attempt to make a move in the current game.");
+			return execute("sendmsg $$01" + request);
 
-		} else if (request.contains("cancelgame")) {
-			// still left to implement.
-			return 0;
+		} else if (request.contains("surrender ")) {
+			request = request.substring(10);
+			return execute("sendmsg $$11" + request);
 
 		} else if (request.contains("setusername ")) {
 			request = request.substring(12);

@@ -31,6 +31,13 @@ public class GameInvitation extends CommunicationObject {
         return game;
     }
 
+    public long getWidth() {
+        return width;
+    }
+
+    public long getHeight() {
+        return height;
+    }
     @SuppressWarnings("unchecked")
     JSONArray getJSONObject() {
         JSONArray o = new JSONArray();

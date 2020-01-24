@@ -20,9 +20,10 @@ public class CFGame extends Game {
 	 * @param player2 Second player of the game.
 	 * @param width   Width of the board.
 	 * @param height  Height of the board.
+	 * @param firstMove If {@code true} the first player is the first one to move.
 	 */
-	public CFGame(User player1, User player2, int width, int height) {
-		super(player1, player2);
+	public CFGame(User player1, User player2, int width, int height, boolean firstMove) {
+		super(player1, player2, firstMove);
 		super.board = new CFBoard(this, width, height);
 	}
 

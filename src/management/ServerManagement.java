@@ -77,8 +77,35 @@ public class ServerManagement extends Management {
 	public void signOut(JSONArray credentials) {
 		// Extract username and password from JSON-Data.
 		String username = (String) credentials.get(0);
-
 		users.get(username).setOnline(false);
+
+		// Delete all current invitations for this player and by this player.
+		ArrayList<GameInvitation> deletedInvitations = new ArrayList<GameInvitation>();
+		for(GameInvitation g: receivedInvitations) {
+			if(g.getToUser().getUsername().equals(username) || g.getFromUser().getUsername().equals(username)) {
+				deletedInvitations.add(g);
+			}
+		}
+		for(GameInvitation g: deletedInvitations) {
+			receivedInvitations.remove(g);
+		}
+
+		// Delete the game the player is currently in and send a message that he surrendered..
+		Game surrenderedGame = null;
+		for(Game g: games) {
+			if(g.getPlayer1().getUsername().equals(username) || g.getPlayer2().getUsername().equals(username)) {
+				surrenderedGame = g;
+			}
+		}
+		if(surrenderedGame != null) {
+			if(surrenderedGame.getPlayer1().getUsername().equals(username)) {
+				receivedMessages.add(new Message("$$11", surrenderedGame.getPlayer2(), users.get(username), System.currentTimeMillis()));
+			} else {
+				receivedMessages.add(new Message("$$11", surrenderedGame.getPlayer1(), users.get(username), System.currentTimeMillis()));
+			}
+			games.remove(surrenderedGame);
+		}
+
 		isUpdate();
 	}
 
@@ -192,7 +219,6 @@ public class ServerManagement extends Management {
 
 					// Valid invite -> add it.
 					addReceivedInvitation(fromUser, toUser, Integer.valueOf(content.toCharArray()[4]));
-					receivedMessages.add(new Message(content, toUser, fromUser, creationTime));
 					System.out.println("Received a game invitation from @" + fromUser.getUsername() + " for @" + toUser.getUsername() + " to play " + (Integer.valueOf(content.toCharArray()[4]) == GameInvitation.GAME_CHOMP ? "Chomp" : "Connect Four"));
 
 				} else if(content.substring(2,4).equals("01")) { // game invitation accept.
@@ -214,21 +240,27 @@ public class ServerManagement extends Management {
 
 					// Deal with accepted invitation.
 					receivedInvitations.remove(invite);
-					receivedMessages.add(new Message(content,toUser, fromUser, System.currentTimeMillis()));
 					if(Integer.valueOf(content.toCharArray()[4]) == GameInvitation.GAME_CHOMP) {
-						games.add(new ChGame(fromUser, toUser, 8, 4));
+						games.add(new ChGame(fromUser, toUser, Integer.valueOf(content.split("-")[1]), Integer.valueOf(content.split("-")[2]), true));
 					} else {
-						games.add(new CFGame(fromUser, toUser, 8, 4));
+						games.add(new CFGame(fromUser, toUser, Integer.valueOf(content.split("-")[1]), Integer.valueOf(content.split("-")[2]), true));
 					}
 					System.out.println("@" + fromUser.getUsername() + " accepted the challenge by @" + toUser.getUsername() + " to play a game of " + (Integer.valueOf(content.toCharArray()[4]) == GameInvitation.GAME_CHOMP ? "Chomp" : "Connect Four"));
 
 				} else if(content.substring(2,4).equals("10")) { // Game played.
-
+					// Just forward the message - no check of validity at this point. Should be done at client's site.
+				} else if(content.substring(2,4).equals("10")) { // surrender.
+					Game surrenderedGame = null;
+					for(Game g: games) {
+						if(g.getPlayer1().getUsername().equals(fromUser.getUsername()) || g.getPlayer2().getUsername().equals(fromUser.getUsername())) {
+							surrenderedGame = g;
+						}
+					}
+					if(surrenderedGame != null) games.remove(surrenderedGame);
 				}
 
-			} else {
-				receivedMessages.add(new Message(content, toUser, fromUser, creationTime));
 			}
+			receivedMessages.add(new Message(content, toUser, fromUser, creationTime));
 		}
 
 		isUpdate();

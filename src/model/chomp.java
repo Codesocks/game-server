@@ -11,7 +11,7 @@ public class chomp {
 		User p1 = new User("User 1");
 		User p2 = new User("User 2");
 		p2.setComputer(true);
-		ChGame mygame = new ChGame(p1, p2, 8, 4);
+		ChGame mygame = new ChGame(p1, p2, 8, 4, true);
 		User currentPlayer = p1;
 
 		while (!mygame.isWon()) {

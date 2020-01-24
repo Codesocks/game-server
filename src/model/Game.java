@@ -17,11 +17,13 @@ public abstract class Game {
 	 * 
 	 * @param player1 First player of the game.
 	 * @param player2 Second player of the game.
+	 * @param firstMove If {@code true} the first player is the first one to move.
 	 */
-	Game(User player1, User player2) {
+	Game(User player1, User player2, boolean firstMove) {
 		player[0] = player1;
 		player[1] = player2;
-		currentPlayer = player1;
+		if(firstMove) currentPlayer = player1;
+		else currentPlayer = player2;
 	}
 
 	void move(Move m) {

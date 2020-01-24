@@ -89,6 +89,7 @@ public class LoginUIController implements Initializable {
 
 			// Get controller of scene2 and pass data.
 			ClientUIController controllerOfMainUI = loader.getController();
+			management.setUiController(controllerOfMainUI);
 			controllerOfMainUI.setClientManagement(management);
 
 			// Show scene 2 in this window.
@@ -113,20 +114,4 @@ public class LoginUIController implements Initializable {
 			System.err.println(ex);
 		}
 	}
-
-	// USEFULL, KEEP THIS AS EXAMPLE!
-	/*
-	 * @FXML public void loadMainAndSendMessage() {
-	 * System.out.println("Button pressed."); try { //Load second scene FXMLLoader
-	 * loader = new FXMLLoader(getClass().getResource("MainUI.fxml")); Parent root =
-	 * loader.load();
-	 * 
-	 * //Get controller of scene2 MainUIController scene2Controller =
-	 * loader.getController(); //Pass whatever data you want. You can have multiple
-	 * method calls here scene2Controller.transferMessage("t");
-	 * 
-	 * //Show scene 2 in new window Stage stage = new Stage(); stage.setScene(new
-	 * Scene(root)); stage.setTitle("Second Window"); stage.show(); } catch
-	 * (IOException ex) { System.err.println(ex); } }
-	 */
 }
