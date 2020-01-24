@@ -75,4 +75,12 @@ abstract class Board {
 		}
 		return s.toString();
 	}
+	
+	int getWidth() {
+		return width;
+	}
+	
+	int getHeight() {
+		return height;
+	}
 }

@@ -2,7 +2,6 @@ package view;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLOutput;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -30,13 +29,15 @@ import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import management.ClientManagement;
 import management.GameInvitation;
+import model.ChGame;
 import model.Game;
 import server.Client;
 
 public class ClientUIController implements Initializable {
 	private ClientManagement management;
 	private Client client;
-
+	private ClientGameController gameController;
+	
 	@FXML
 	private Label leftLogoTxt; // Text of logo.
 	@FXML
@@ -108,10 +109,6 @@ public class ClientUIController implements Initializable {
 	}
 
 	@FXML
-	public void displayTxt() {
-	}
-
-	@FXML
 	public void sendMsg() {
 		try {
 			if (!leftTextArea.getText().trim().isEmpty()
@@ -137,6 +134,125 @@ public class ClientUIController implements Initializable {
 	@FXML
 	public void playConnectFour() {
 		openGameInvitationDialogue(Game.GAME_CONNECTFOUR);
+	}
+
+	public void openMainGame() {
+		// Load second scene
+		FXMLLoader loader;
+		Parent root;
+		if (management.getGame() instanceof ChGame) {
+			loader = new FXMLLoader(getClass().getResource("ClientChomp.fxml"));
+		} else {
+			loader = new FXMLLoader(getClass().getResource("ClientConnectfour.fxml"));
+		}
+
+		try {
+			root = loader.load();
+			// Get controller for the stage of the game. Pass necessary data to the controller of the new stage.
+			gameController = loader.getController();
+			gameController.setClient(client);
+			gameController.setGame(management.getGame());
+
+			Stage stage = (Stage) new Stage();
+			stage.setScene(new Scene(root, 800, 450));
+			stage.setTitle((management.getGame() instanceof ChGame ? "CHOMP" : "CONNECT FOUR") + " - Games by Codesocks / j-bl");
+			stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+				@Override
+				public void handle(WindowEvent event) {
+					try {
+						client.execute("surrender");
+					} catch (Exception e) {
+						System.out.println("Failed to sign out!");
+						e.printStackTrace();
+					}
+					stage.close();
+				}
+			});
+			stage.show();
+
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+
+	public void updateGameView() {
+		gameController.updateView();
+	}
+	
+	void setClientManagement(ClientManagement management) {
+		this.management = management;
+		client = new Client(this.management);
+		client.execute("update");
+
+		// Create Updater.
+		System.out.println(management.getCredentials().toString());
+		Thread updater = new Thread(new ClientUIUpdater(this, management));
+		updater.start();
+	}
+
+	Client getClient() {
+		return client;
+	}
+
+	void openGameAcceptationDialogue() {
+		GameInvitation invitation = management.getReceivedInvitations()
+				.get(management.getReceivedInvitations().size() - 1);
+		System.out.println("Long. " + invitation.getGame());
+
+		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+		alert.setTitle("CHALLENGE!");
+		alert.setHeight(800);
+		alert.setHeaderText("You received a challenge by @" + invitation.getFromUsername() + " to a game of "
+				+ (invitation.getGame() == Game.GAME_CHOMP ? "Chomp" : "Connect Four") + " on a "
+				+ invitation.getWidth() + "x" + invitation.getHeight()
+				+ "-board! Do you dare to accept that challenge?");
+
+		ButtonType buttonTypeAccept = new ButtonType("ACCEPT");
+		ButtonType buttonTypeDecline = new ButtonType("DECLINE", ButtonBar.ButtonData.CANCEL_CLOSE);
+		alert.getButtonTypes().setAll(buttonTypeAccept, buttonTypeDecline);
+
+		Optional<ButtonType> result = alert.showAndWait();
+		// Choose a player to play against.
+		if (result.get() == buttonTypeAccept) {
+			long errorCode = client.execute("accept " + invitation.getGame() + "-" + invitation.getWidth() + "-"
+					+ invitation.getHeight() + ";" + invitation.getFromUsername());
+			if (errorCode == 0) {
+				management.setGame(invitation.getGame(), invitation.getWidth(), invitation.getHeight(),
+						invitation.getFromUsername(), true);
+				openMainGame();
+			}
+		} else if (result.get() == buttonTypeDecline) {
+			System.out.println("DECLINE");
+		} else {
+			// User pressed cancel or closed dialogue...
+		}
+		management.closeInvitation(invitation);
+	}
+
+	void openSelectedChat() {
+		String username = menueUserList.getSelectionModel().getSelectedItem();
+
+		// Show empty plane if no user is selected.
+		if (username == null) {
+			chatArea.setVisible(false);
+			chatView.setVisible(false);
+			return;
+		}
+
+		// Make the corresponding chat visible if user is selected.
+		chatArea.setVisible(true);
+		chatView.setVisible(true);
+
+		ObservableList<Text> chatMessages = FXCollections.observableArrayList();
+		for (String[] message : management.getMessages(username)) {
+			Text text = new Text();
+			text.wrappingWidthProperty().bind(leftChatList.widthProperty().subtract(15));
+			text.setText("@" + message[0] + ": " + message[1]);
+			chatMessages.add(text);
+		}
+		leftChatList.setItems(chatMessages);
+		leftChatList.refresh();
 	}
 
 	private void openGameInvitationDialogue(long game) {
@@ -208,119 +324,5 @@ public class ClientUIController implements Initializable {
 		} catch (Exception e) {
 			System.out.println("Failed to send message!");
 		}
-	}
-
-	void setClientManagement(ClientManagement management) {
-		this.management = management;
-		client = new Client(this.management);
-		client.execute("update");
-
-		// Create Updater.
-		System.out.println(management.getCredentials().toString());
-		Thread updater = new Thread(new ClientUIUpdater(this, management));
-		updater.start();
-	}
-
-	Client getClient() {
-		return client;
-	}
-
-	void openGameAcceptationDialogue() {
-		GameInvitation invitation = management.getReceivedInvitations()
-				.get(management.getReceivedInvitations().size() - 1);
-		System.out.println("Long. " + invitation.getGame());
-
-		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-		alert.setTitle("CHALLENGE!");
-		alert.setHeight(800);
-		alert.setHeaderText("You received a challenge by @" + invitation.getFromUsername() + " to a game of "
-				+ (invitation.getGame() == Game.GAME_CHOMP ? "Chomp" : "Connect Four")
-				+ " on a " + invitation.getWidth() + "x" + invitation.getHeight() + "-board! Do you dare to accept that challenge?");
-
-		ButtonType buttonTypeAccept = new ButtonType("ACCEPT");
-		ButtonType buttonTypeDecline = new ButtonType("DECLINE", ButtonBar.ButtonData.CANCEL_CLOSE);
-		alert.getButtonTypes().setAll(buttonTypeAccept, buttonTypeDecline);
-
-		Optional<ButtonType> result = alert.showAndWait();
-		// Choose a player to play against.
-		if (result.get() == buttonTypeAccept) {
-			long errorCode = client.execute("accept " + invitation.getGame() + "-" + invitation.getWidth() + "-" + invitation.getHeight() + ";" + invitation.getFromUsername());
-			if(errorCode==0) {
-				management.setGame(invitation.getGame(), invitation.getWidth(), invitation.getHeight(), invitation.getFromUsername(), true);
-				openMainGame(invitation.getGame());
-			}
-		} else if (result.get() == buttonTypeDecline) {
-			System.out.println("DECLINE");
-		} else {
-			// User pressed cancel or closed dialogue...
-		}
-		management.closeInvitation(invitation);
-	}
-
-	void openSelectedChat() {
-		String username = menueUserList.getSelectionModel().getSelectedItem();
-
-		// Show empty plane if no user is selected.
-		if (username == null) {
-			chatArea.setVisible(false);
-			chatView.setVisible(false);
-			return;
-		}
-
-		// Make the corresponding chat visible if user is selected.
-		chatArea.setVisible(true);
-		chatView.setVisible(true);
-
-		ObservableList<Text> chatMessages = FXCollections.observableArrayList();
-		for (String[] message : management.getMessages(username)) {
-			Text text = new Text();
-			text.wrappingWidthProperty().bind(leftChatList.widthProperty().subtract(15));
-			text.setText("@" + message[0] + ": " + message[1]);
-			chatMessages.add(text);
-		}
-		leftChatList.setItems(chatMessages);
-		leftChatList.refresh();
-	}
-
-	public void openMainGame(long game) {
-		// Load second scene
-		FXMLLoader loader;
-		Parent root;
-		if (game == Game.GAME_CHOMP) {
-			loader = new FXMLLoader(getClass().getResource("ClientChomp.fxml"));
-		} else {
-			loader = new FXMLLoader(getClass().getResource("ClientConnectfour.fxml"));
-		}
-
-		try {
-			root = loader.load();
-			// Get controller of the game scene.
-			ClientGameController gameController = loader.getController();
-
-			// Pass whatever data you want. You can have multiple method calls here
-			// scene2Controller.transferMessage("t");
-
-			Stage stage = (Stage) new Stage();
-			stage.setScene(new Scene(root, 800, 450));
-			stage.setTitle((game == Game.GAME_CHOMP ? "CHOMP" : "CONNECT FOUR") + " - Games by Codesocks / j-bl");
-			stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-				@Override
-				public void handle(WindowEvent event) {
-					try {
-						client.execute("surrender");
-					} catch (Exception e) {
-						System.out.println("Failed to sign out!");
-						e.printStackTrace();
-					}
-					Platform.exit();
-				}
-			});
-			stage.show();
-
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-
 	}
 }

@@ -123,6 +123,14 @@ public abstract class Game {
 		return currentPlayer;
 	}
 
+	public int getWidth() {
+		return board.getWidth();
+	}
+	
+	public int getHeight() {
+		return board.getHeight();
+	}
+	
 	@Override
 	public String toString() {
 		return board.toString();

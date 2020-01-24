@@ -22,10 +22,8 @@ public class ClientManagement extends Management {
 	private ArrayList<Message> sendMessages = new ArrayList<Message>();
 	private Game game = null;
 	private final User thisUser = new User("_thisUser");
-
 	private String username;
 	private String pwd;
-
 	private ClientUIController uiController;
 
 	public ClientManagement (ClientUIController uiController) {
@@ -135,15 +133,16 @@ public class ClientManagement extends Management {
 				} else if (content.substring(2, 4).equals("01")) { // game invitation accept.
 					System.out.println("@" + fromUser.getUsername() + " accepted your game invitation for a game of " + ((int) content.toCharArray()[4] == GameInvitation.GAME_CHOMP ? "Chomp" : "Connect Four") + " on a " + content.split("-")[1]  + "x" + content.split("-")[2] + " board");
 					setGame((int) content.toCharArray()[4], Integer.valueOf(content.split("-")[1]), Integer.valueOf(content.split("-")[2]), fromUser.getUsername(), false);
-					uiController.openMainGame((int) content.toCharArray()[4]);
+					uiController.openMainGame();
 
 				} else if(content.substring(2, 4).equals("01")) { // game move.
-					System.out.println("Your opponent attempted to move. It is now your turn.");
+					System.out.println("Your opponent attempted a move. It is now your turn.");
 					if(game instanceof ChGame) {
 						((ChGame) game).move(fromUser, Integer.valueOf(content.split("-")[1]), Integer.valueOf(content.split("-")[2]));
 					} else {
 						((CFGame) game).move(fromUser, Integer.valueOf(content.split("-")[1]));
 					}
+					uiController.updateGameView();
 				} else if(content.substring(2, 4).equals("11")) {
 					System.out.println("Your opponent surrendered!");
 					// Left to implement.
@@ -290,6 +289,10 @@ public class ClientManagement extends Management {
 		}
 	}
 
+	public Game getGame() {
+		return game;
+	}
+	
 	@Override
 	public ArrayList<String> getUsersOnline() {
 		ArrayList<String> onlinePlayers = new ArrayList<String>();
