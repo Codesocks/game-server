@@ -3,9 +3,13 @@ package view;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Optional;
+
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -39,7 +43,7 @@ public class ClientChompController extends ClientGameController {
 					ImageView fieldContent = null;
 					try {
 						if (i == 0 && j == 0) {
-							fieldContent = new ImageView(new Image(new FileInputStream("./assets/CF_LEER.png")));
+							fieldContent = new ImageView(new Image(new FileInputStream("./assets/CH_LEER.png")));
 						} else if (game.getPlayerAt(i, j) == null) {
 							fieldContent = new ImageView(new Image(new FileInputStream("./assets/CH_CHOCOLATE.png")));
 						} else if(game.getPlayerAt(i, j).equals(game.getPlayer1())){
@@ -100,6 +104,19 @@ public class ClientChompController extends ClientGameController {
 					}
 					updateView();
 				}
+				
+				if(game == null && game.isWon()) {
+					Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+					alert.setTitle("A WINNER WAS FOUND");
+					alert.setHeight(800);
+					if(game.getWinner().equals(game.getPlayer1())) {
+						alert.setHeaderText("Congratulations! You have just won a decisive victory!");
+					} else {
+						alert.setHeaderText("You lost this challenge. Now get home and practice!");
+					}
+					Optional<ButtonType> result = alert.showAndWait();
+				}
+				
 			}
 		});
 

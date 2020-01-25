@@ -3,9 +3,13 @@ package view;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Optional;
+
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -14,6 +18,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
 import model.CFGame;
+import model.Game;
+
 import static java.lang.Math.toIntExact;
 
 public class ClientConnectfourController extends ClientGameController {
@@ -84,7 +90,7 @@ public class ClientConnectfourController extends ClientGameController {
 			public void handle(MouseEvent e) {
 				if (game == null) {
 					updateView();
-				} else if (game.getCurrentPlayer().equals(game.getPlayer1())) {
+				} else if(game.getCurrentPlayer().equals(game.getPlayer1())) {
 					boolean validMove = ((CFGame) game).move(game.getPlayer1(),
 							(int) (e.getX() * ((double) game.getWidth() / width)));
 					if (validMove && !game.getPlayer2().isComputer()) {
@@ -93,10 +99,31 @@ public class ClientConnectfourController extends ClientGameController {
 					}
 					updateView();
 				}
+				
+				if(game == null && game.isWon()) {
+					Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+					alert.setTitle("A WINNER WAS FOUND");
+					alert.setHeight(800);
+					if(game.getWinner().equals(game.getPlayer1())) {
+						alert.setHeaderText("Congratulations! You have just won a decisive victory!");
+					} else {
+						alert.setHeaderText("You lost this challenge. Now get home and practice!");
+					}
+					Optional<ButtonType> result = alert.showAndWait();
+				}
 			}
 		});
 
-		mainVBox.getChildren().add(root);
-		updateView();
+	mainVBox.getChildren().add(root);
+	
+	try {
+		ImageView background = new ImageView(new Image(new FileInputStream("./assets/CF_UNIVERSE.jpg")));
+		background.setFitHeight(height);
+		background.setFitWidth(width);
+		mainVBox.getChildren().add(background);
+	} catch (FileNotFoundException e1) {
+		e1.printStackTrace();
 	}
-}
+
+	updateView();
+}}
