@@ -8,8 +8,10 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 abstract class ClientGameController implements Initializable {
-	private Game game;
-	private Client client;
+	Game game;
+	Client client;
+	int width;
+	int height;
 
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -20,13 +22,19 @@ abstract class ClientGameController implements Initializable {
 	 * current displayment of the game to the changed data of the game.
 	 */
 	abstract void updateView();
+	
+	abstract void initializeView();
 
 	void setGame(Game game) {
 		this.game = game;
-		updateView();
 	}
 
 	void setClient(Client client) {
 		this.client = client;
+	}
+
+	void setDimensions(int width, int height) {
+		this.width = width;
+		this.height = height;
 	}
 }

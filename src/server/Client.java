@@ -130,7 +130,7 @@ public class Client extends Connection {
 		} else if (request.contains("makemv ")) {
 			request = request.substring(7);
 			System.out.println("[CLIENT] [INFO] Attempt to make a move in the current game.");
-			return execute("sendmsg $$01" + request);
+			return execute("sendmsg $$10-" + request);
 
 		} else if (request.contains("surrender ")) {
 			request = request.substring(10);

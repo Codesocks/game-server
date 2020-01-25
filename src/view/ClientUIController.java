@@ -37,7 +37,7 @@ public class ClientUIController implements Initializable {
 	private ClientManagement management;
 	private Client client;
 	private ClientGameController gameController;
-	
+
 	@FXML
 	private Label leftLogoTxt; // Text of logo.
 	@FXML
@@ -147,15 +147,34 @@ public class ClientUIController implements Initializable {
 		}
 
 		try {
+			// Get controller for the stage of the game. Pass necessary data to the
+			// controller of the new stage.
 			root = loader.load();
-			// Get controller for the stage of the game. Pass necessary data to the controller of the new stage.
 			gameController = loader.getController();
 			gameController.setClient(client);
 			gameController.setGame(management.getGame());
 
+			// Compute size.
+			int width, height;
+			if (management.getGame().getHeight() < 11 && management.getGame().getWidth() < 15) {
+				height = 100 * management.getGame().getHeight();
+				width = 100 * management.getGame().getWidth();
+			} else {
+				if (management.getGame().getWidth() >= management.getGame().getHeight()) {
+					width = 1000;
+					height = (int) ((1000.0 / management.getGame().getWidth()) * management.getGame().getHeight());
+				} else {
+					height = 1000;
+					width = (int) ((1000.0 / management.getGame().getHeight()) * management.getGame().getWidth());
+				}
+			}
+			gameController.setDimensions(width, height);
+
+			// Create new stage for game.
 			Stage stage = (Stage) new Stage();
-			stage.setScene(new Scene(root, 800, 450));
-			stage.setTitle((management.getGame() instanceof ChGame ? "CHOMP" : "CONNECT FOUR") + " - Games by Codesocks / j-bl");
+			stage.setScene(new Scene(root, width, height));
+			stage.setTitle((management.getGame() instanceof ChGame ? "CHOMP" : "CONNECT FOUR")
+					+ " - Games by Codesocks / j-bl");
 			stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 				@Override
 				public void handle(WindowEvent event) {
@@ -169,6 +188,7 @@ public class ClientUIController implements Initializable {
 				}
 			});
 			stage.show();
+			gameController.initializeView();
 
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
@@ -179,7 +199,7 @@ public class ClientUIController implements Initializable {
 	public void updateGameView() {
 		gameController.updateView();
 	}
-	
+
 	void setClientManagement(ClientManagement management) {
 		this.management = management;
 		client = new Client(this.management);
@@ -302,6 +322,7 @@ public class ClientUIController implements Initializable {
 
 			// Choose a player to play against.
 			if (result.get() == buttonTypeHuman) {
+				System.out.println("Width+Height:" + width + " " + height);
 				invitePlayer(game, width, height);
 			} else {
 				System.out.println("COMPUTER");
@@ -316,7 +337,8 @@ public class ClientUIController implements Initializable {
 			if (menueUserList.getSelectionModel().getSelectedItem() != null) {
 				System.out.println("Attempting to invite @" + menueUserList.getSelectionModel().getSelectedItem()
 						+ " to a new game.");
-				client.execute("invite " + game + "-4-7" + ";" + menueUserList.getSelectionModel().getSelectedItem());
+				client.execute("invite " + game + "-" + width + "-" + height + ";"
+						+ menueUserList.getSelectionModel().getSelectedItem());
 			} else {
 				// Play against a computer player
 				System.out.println("try to play against computer. not yet implemented.");

@@ -8,25 +8,27 @@ public abstract class Game {
 	Board board;
 	User[] player = new User[2];
 	User currentPlayer;
-	
+
 	public static final long GAME_CHOMP = 0;
-    public static final long GAME_CONNECTFOUR = 1;
+	public static final long GAME_CONNECTFOUR = 1;
 
 	/**
 	 * Creates a new game with the two given players as players.
 	 * 
-	 * @param player1 First player of the game.
-	 * @param player2 Second player of the game.
+	 * @param player1   First player of the game.
+	 * @param player2   Second player of the game.
 	 * @param firstMove If {@code true} the first player is the first one to move.
 	 */
 	Game(User player1, User player2, boolean firstMove) {
 		player[0] = player1;
 		player[1] = player2;
-		if(firstMove) currentPlayer = player1;
-		else currentPlayer = player2;
+		if (firstMove)
+			currentPlayer = player1;
+		else
+			currentPlayer = player2;
 	}
 
-	void move(Move m) {
+	boolean move(Move m) {
 		if (!board.isWon()) {
 			boolean validMove = board.move(m);
 
@@ -34,18 +36,22 @@ public abstract class Game {
 			System.out.println("Winning: " + board.isWon());
 			if (validMove) {
 				protocol.push(m);
+
+				// Update who's turn it is.
+				if (m.getPlayer().equals(getPlayer1()))
+					currentPlayer = getPlayer2();
+				else
+					currentPlayer = getPlayer1();
+
+				// Move computer player.
+				if (currentPlayer.isComputer())
+					moveComputerPlayer(currentPlayer);
+
+				return true;
 			}
-
-			// Update who's turn it is.
-			if (m.getPlayer().equals(getPlayer1()))
-				currentPlayer = getPlayer2();
-			else
-				currentPlayer = getPlayer1();
-
-			// Move computer player.
-			if (currentPlayer.isComputer())
-				moveComputerPlayer(currentPlayer);
 		}
+		
+		return false;
 	}
 
 	/**
@@ -126,11 +132,11 @@ public abstract class Game {
 	public int getWidth() {
 		return board.getWidth();
 	}
-	
+
 	public int getHeight() {
 		return board.getHeight();
 	}
-	
+
 	@Override
 	public String toString() {
 		return board.toString();

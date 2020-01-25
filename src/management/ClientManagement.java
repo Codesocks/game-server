@@ -135,7 +135,7 @@ public class ClientManagement extends Management {
 					setGame((int) content.toCharArray()[4], Integer.valueOf(content.split("-")[1]), Integer.valueOf(content.split("-")[2]), fromUser.getUsername(), false);
 					uiController.openMainGame();
 
-				} else if(content.substring(2, 4).equals("01")) { // game move.
+				} else if(content.substring(2, 4).equals("10")) { // game move.
 					System.out.println("Your opponent attempted a move. It is now your turn.");
 					if(game instanceof ChGame) {
 						((ChGame) game).move(fromUser, Integer.valueOf(content.split("-")[1]), Integer.valueOf(content.split("-")[2]));
@@ -143,6 +143,7 @@ public class ClientManagement extends Management {
 						((CFGame) game).move(fromUser, Integer.valueOf(content.split("-")[1]));
 					}
 					uiController.updateGameView();
+					
 				} else if(content.substring(2, 4).equals("11")) {
 					System.out.println("Your opponent surrendered!");
 					// Left to implement.

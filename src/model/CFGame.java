@@ -33,9 +33,9 @@ public class CFGame extends Game {
 	 * @param player Player who makes the given move.
 	 * @param x      X-Coordinate of the given move.
 	 */
-	public void move(User player, int x) {
+	public boolean move(User player, int x) {
 		Move m = new Move(player, x, -1);
-		this.move(m);
+		return this.move(m);
 	}
 
 	@Override
