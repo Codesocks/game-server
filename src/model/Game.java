@@ -46,12 +46,12 @@ public abstract class Game {
 				// Move computer player.
 				if (currentPlayer.isComputer())
 					moveComputerPlayer(currentPlayer);
-
-				return true;
+			} else {
+				return false;
 			}
 		}
 		
-		return false;
+		return true;
 	}
 
 	/**

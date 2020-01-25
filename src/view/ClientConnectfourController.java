@@ -1,20 +1,11 @@
 package view;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
-
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.geometry.HPos;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -35,11 +26,11 @@ public class ClientConnectfourController extends ClientGameController {
 	void updateView() {
 		if (game == null) {
 			// Schlieﬂe Fenster, da Gegner aufgegeben.
-		} else if(game.isWon()) {
+		} else if (game.isWon()) {
 			// Game is won.
 		} else {
 			root.getChildren().clear();
-			
+
 			for (int i = 0; i < game.getWidth(); i++) {
 				for (int j = 0; j < game.getHeight(); j++) {
 					// Add image for each field.
@@ -93,16 +84,18 @@ public class ClientConnectfourController extends ClientGameController {
 			public void handle(MouseEvent e) {
 				if (game == null) {
 					updateView();
-				} else if(game.getCurrentPlayer().equals(game.getPlayer1())) {
-					boolean validMove =((CFGame) game).move(game.getPlayer1(), toIntExact(Math.round(e.getX() * ((double) game.getWidth() / width))));
-					if(validMove) {
-						client.execute("makemv " + toIntExact(Math.round(e.getX() * ((double) game.getWidth() / width))) + ";" + game.getPlayer2().getUsername());
-						updateView();
+				} else if (game.getCurrentPlayer().equals(game.getPlayer1())) {
+					boolean validMove = ((CFGame) game).move(game.getPlayer1(),
+							(int) (e.getX() * ((double) game.getWidth() / width)));
+					if (validMove && !game.getPlayer2().isComputer()) {
+						client.execute("makemv " + (int) (e.getX() * ((double) game.getWidth() / width)) + ";"
+								+ game.getPlayer2().getUsername());
 					}
+					updateView();
 				}
 			}
 		});
-		
+
 		mainVBox.getChildren().add(root);
 		updateView();
 	}

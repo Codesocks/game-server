@@ -322,10 +322,11 @@ public class ClientUIController implements Initializable {
 
 			// Choose a player to play against.
 			if (result.get() == buttonTypeHuman) {
-				System.out.println("Width+Height:" + width + " " + height);
 				invitePlayer(game, width, height);
 			} else {
-				System.out.println("COMPUTER");
+				// Computer opponent.
+				management.setGame(game, width, height, true);
+				openMainGame();
 			}
 		} else {
 			// User pressed cancel or closed dialogue...
@@ -336,7 +337,7 @@ public class ClientUIController implements Initializable {
 		try {
 			if (menueUserList.getSelectionModel().getSelectedItem() != null) {
 				System.out.println("Attempting to invite @" + menueUserList.getSelectionModel().getSelectedItem()
-						+ " to a new game.");
+						+ " to a new game of " + (game == Game.GAME_CHOMP ? "chomp" : "connect four") + ".");
 				client.execute("invite " + game + "-" + width + "-" + height + ";"
 						+ menueUserList.getSelectionModel().getSelectedItem());
 			} else {

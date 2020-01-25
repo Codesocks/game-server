@@ -114,6 +114,9 @@ public class Client extends Connection {
 		} else if(request.contains("invite ")) {
 			request = request.substring(7);
 			String[] invitation = request.split(";");
+			System.out.println("request: " + request);
+			System.out.println(invitation[0].toCharArray()[0]);
+			System.out.println("to int: " + Integer.valueOf(invitation[0].toCharArray()[0]));
 			System.out.println(
 					"[CLIENT] [INFO] An invitation for " + (Integer.valueOf(invitation[0].toCharArray()[0]) == Game.GAME_CHOMP ? "Chomp" : "Connect Four") + " on a " + invitation[0].split("-")[1]  + "x" + invitation[0].split("-")[2] + " board will be send to @" + invitation[1] + ".");
 			return execute("sendmsg $$00" + request);
@@ -122,7 +125,7 @@ public class Client extends Connection {
 			request = request.substring(7);
 			String[] invitation = request.split(";");
 			System.out.println(
-					"[CLIENT] [INFO] Attempt to accept invitation for " + (Integer.valueOf(invitation[0].toCharArray()[0]) == Game.GAME_CHOMP ? "Chomp" : "Connect Four") + " on a " + invitation[0].split("-")[1]  + "x" + invitation[0].split("-")[2] + " by @" + invitation[1] + ".");
+					"[CLIENT] [INFO] Attempt to accept invitation for " + (Character.getNumericValue(invitation[0].toCharArray()[0]) == Game.GAME_CHOMP ? "Chomp" : "Connect Four") + " on a " + invitation[0].split("-")[1]  + "x" + invitation[0].split("-")[2] + " by @" + invitation[1] + ".");
 			long returnValue= execute("sendmsg $$01" + request);
 			if(returnValue == 2) System.out.println("[CLIENT] There is no such invitation present at the server. Please remember that invitations expire after 60 seconds!");
 			return returnValue;

@@ -34,9 +34,9 @@ public class ChGame extends Game {
 	 * @param x      X-Coordinate of the given move.
 	 * @param y      Y-Coordinate of the given move.
 	 */
-	public void move(User player, int x, int y) {
+	public boolean move(User player, int x, int y) {
 		Move m = new Move(player, x, y);
-		this.move(m);
+		return this.move(m);
 	}
 
 	@Override
