@@ -152,7 +152,7 @@ public class ClientUIController implements Initializable {
 			root = loader.load();
 			gameController = loader.getController();
 			gameController.setClient(client);
-			gameController.setGame(management.getGame());
+			gameController.setClientManagement(management);
 
 			// Compute size.
 			int width, height;
@@ -178,13 +178,8 @@ public class ClientUIController implements Initializable {
 			stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 				@Override
 				public void handle(WindowEvent event) {
-					try {
-						client.execute("surrender");
-					} catch (Exception e) {
-						System.out.println("Failed to sign out!");
-						e.printStackTrace();
-					}
-					stage.close();
+					gameController.closeGame();
+					gameController.closeWindow();
 				}
 			});
 			stage.show();
@@ -266,10 +261,13 @@ public class ClientUIController implements Initializable {
 
 		ObservableList<Text> chatMessages = FXCollections.observableArrayList();
 		for (String[] message : management.getMessages(username)) {
-			Text text = new Text();
-			text.wrappingWidthProperty().bind(leftChatList.widthProperty().subtract(15));
-			text.setText("@" + message[0] + ": " + message[1]);
-			chatMessages.add(text);
+			// Do not show internal messages.
+			if (message[1].length() < 2 || !message[1].substring(0, 2).equals("$$")) {
+				Text text = new Text();
+				text.wrappingWidthProperty().bind(leftChatList.widthProperty().subtract(15));
+				text.setText("@" + message[0] + ": " + message[1]);
+				chatMessages.add(text);
+			}
 		}
 		leftChatList.setItems(chatMessages);
 		leftChatList.refresh();
@@ -279,19 +277,26 @@ public class ClientUIController implements Initializable {
 		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 		alert.setTitle((game == Game.GAME_CHOMP ? "CHOMP" : "CONNECT FOUR") + " - Choose your opponent!");
 		alert.setHeight(800);
-		alert.setHeaderText("Do you want to play against a computer or the currently selected player?");
 
+		// Set currently fitting alert text.
 		ButtonType buttonTypeHuman = new ButtonType("Human");
 		ButtonType buttonTypeComputer = new ButtonType("Computer");
 		ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-		alert.getButtonTypes().setAll(buttonTypeHuman, buttonTypeComputer, buttonTypeCancel);
+		if (menueUserList.getSelectionModel().getSelectedItem() != null) {
+			alert.setHeaderText("Do you want to play against a computer or the currently selected player?");
+			alert.getButtonTypes().setAll(buttonTypeHuman, buttonTypeComputer, buttonTypeCancel);
+		} else {
+			alert.setHeaderText(
+					"Do you want to play against the computer? If not press cancel and select a player to play against.");
+			alert.getButtonTypes().setAll(buttonTypeComputer, buttonTypeCancel);
+		}
 
 		GridPane grid = new GridPane();
 		grid.setHgap(10);
 		grid.setVgap(10);
 		grid.setPadding(new Insets(20, 150, 10, 10));
 
-		TextField widthBoard = new TextField("9");
+		TextField widthBoard = new TextField("8");
 		TextField heightBoard = new TextField("5");
 
 		grid.add(new Label("Width:"), 0, 0);
@@ -341,11 +346,16 @@ public class ClientUIController implements Initializable {
 				client.execute("invite " + game + "-" + width + "-" + height + ";"
 						+ menueUserList.getSelectionModel().getSelectedItem());
 			} else {
-				// Play against a computer player
-				System.out.println("try to play against computer. not yet implemented.");
+				throw new IllegalArgumentException("You have to choose a player to invite!");
 			}
 		} catch (Exception e) {
 			System.out.println("Failed to send message!");
+		}
+	}
+
+	public void opponentSurrendered() {
+		if (gameController != null) {
+			gameController.opponentSurrendered();
 		}
 	}
 }

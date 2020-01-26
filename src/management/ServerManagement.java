@@ -249,7 +249,8 @@ public class ServerManagement extends Management {
 
 				} else if(content.substring(2,4).equals("10")) { // Game played.
 					// Just forward the message - no check of validity at this point. Should be done at client's site.
-				} else if(content.substring(2,4).equals("10")) { // surrender.
+					
+				} else if(content.substring(2,4).equals("11")) { // surrender.
 					Game surrenderedGame = null;
 					for(Game g: games) {
 						if(g.getPlayer1().getUsername().equals(fromUser.getUsername()) || g.getPlayer2().getUsername().equals(fromUser.getUsername())) {

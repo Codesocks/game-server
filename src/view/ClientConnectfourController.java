@@ -17,6 +17,7 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import model.CFGame;
 import model.Game;
 
@@ -26,14 +27,10 @@ public class ClientConnectfourController extends ClientGameController {
 	@FXML
 	VBox mainVBox;
 
-	private GridPane root;
-
 	@Override
 	void updateView() {
 		if (game == null) {
 			// Schlieﬂe Fenster, da Gegner aufgegeben.
-		} else if (game.isWon()) {
-			// Game is won.
 		} else {
 			root.getChildren().clear();
 
@@ -57,6 +54,35 @@ public class ClientConnectfourController extends ClientGameController {
 					root.add(fieldContent, i, j);
 				}
 			}
+		}
+
+		// Handle win of the game.
+		if (game != null && game.isWon()) {
+			Alert alert = new Alert(Alert.AlertType.INFORMATION);
+			alert.setTitle("A WINNER WAS FOUND!");
+			alert.setHeight(800);
+			try {
+				if (game.getWinner().equals(game.getPlayer1())) {
+					alert.setHeaderText("Congratulations! You have just won a decisive victory!");
+					ImageView trophy = new ImageView(new Image(new FileInputStream("./assets/TROPHY.png")));
+					trophy.setFitHeight(65);
+					trophy.setPreserveRatio(true);
+					alert.setGraphic(trophy);
+				} else {
+					alert.setHeaderText("You lost this challenge. Now get home and practice!");
+					ImageView trophy = new ImageView(new Image(new FileInputStream("./assets/TROPHY.png")));
+					trophy.setFitHeight(65);
+					trophy.setPreserveRatio(true);
+					alert.setGraphic(trophy);
+				}
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+			closeGame();
+			alert.showAndWait();
+
+			// User pressed ok or closed the dialogue.
+			closeWindow();
 		}
 	}
 
@@ -89,8 +115,8 @@ public class ClientConnectfourController extends ClientGameController {
 			@Override
 			public void handle(MouseEvent e) {
 				if (game == null) {
-					updateView();
-				} else if(game.getCurrentPlayer().equals(game.getPlayer1())) {
+					// Game is already over.
+				} else if (game.getCurrentPlayer().equals(game.getPlayer1()) && !game.isWon()) {
 					boolean validMove = ((CFGame) game).move(game.getPlayer1(),
 							(int) (e.getX() * ((double) game.getWidth() / width)));
 					if (validMove && !game.getPlayer2().isComputer()) {
@@ -99,31 +125,10 @@ public class ClientConnectfourController extends ClientGameController {
 					}
 					updateView();
 				}
-				
-				if(game == null && game.isWon()) {
-					Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-					alert.setTitle("A WINNER WAS FOUND");
-					alert.setHeight(800);
-					if(game.getWinner().equals(game.getPlayer1())) {
-						alert.setHeaderText("Congratulations! You have just won a decisive victory!");
-					} else {
-						alert.setHeaderText("You lost this challenge. Now get home and practice!");
-					}
-					Optional<ButtonType> result = alert.showAndWait();
-				}
 			}
 		});
 
-	mainVBox.getChildren().add(root);
-	
-	try {
-		ImageView background = new ImageView(new Image(new FileInputStream("./assets/CF_UNIVERSE.jpg")));
-		background.setFitHeight(height);
-		background.setFitWidth(width);
-		mainVBox.getChildren().add(background);
-	} catch (FileNotFoundException e1) {
-		e1.printStackTrace();
+		mainVBox.getChildren().add(root);
+		updateView();
 	}
-
-	updateView();
-}}
+}

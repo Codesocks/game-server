@@ -27,12 +27,12 @@ public class ClientManagement extends Management {
 	private String pwd;
 	private ClientUIController uiController;
 
-	public ClientManagement (ClientUIController uiController) {
+	public ClientManagement(ClientUIController uiController) {
 		this.uiController = uiController;
 	}
 
 	// Only for LoginUI, ClientClI and debug-purposes.
-	public ClientManagement () {
+	public ClientManagement() {
 
 	}
 
@@ -125,28 +125,42 @@ public class ClientManagement extends Management {
 
 			User fromUser = users.get(username);
 
-			// Check whether message is internal message and deal with invitations and so on.
+			// Check whether message is internal message and deal with invitations and so
+			// on.
 			if (content.length() >= 2 && content.substring(0, 2).equals("$$")) {
 				if (content.substring(2, 4).equals("00")) { // game invitation received.
-					addReceivedInvitation(fromUser, Integer.valueOf(content.split("-")[1]), Integer.valueOf(content.split("-")[2]), Character.getNumericValue(content.toCharArray()[4]));
-					System.out.println("Received a game invitation from @" + fromUser.getUsername() + " for " + (Character.getNumericValue(content.toCharArray()[4]) == GameInvitation.GAME_CHOMP ? "Chomp" : "Connect Four") + " on a " + content.split("-")[1]  + "x" + content.split("-")[2] + " board");
+					addReceivedInvitation(fromUser, Integer.valueOf(content.split("-")[1]),
+							Integer.valueOf(content.split("-")[2]),
+							Character.getNumericValue(content.toCharArray()[4]));
+					System.out.println("Received a game invitation from @" + fromUser.getUsername() + " for "
+							+ (Character.getNumericValue(content.toCharArray()[4]) == GameInvitation.GAME_CHOMP
+									? "Chomp"
+									: "Connect Four")
+							+ " on a " + content.split("-")[1] + "x" + content.split("-")[2] + " board");
 
 				} else if (content.substring(2, 4).equals("01")) { // game invitation accept.
-					System.out.println("@" + fromUser.getUsername() + " accepted your game invitation for a game of " + ((int) content.toCharArray()[4] == GameInvitation.GAME_CHOMP ? "Chomp" : "Connect Four") + " on a " + content.split("-")[1]  + "x" + content.split("-")[2] + " board");
-					setGame(Character.getNumericValue(content.toCharArray()[4]), Integer.valueOf(content.split("-")[1]), Integer.valueOf(content.split("-")[2]), fromUser.getUsername(), false);
+					System.out.println("@" + fromUser.getUsername() + " accepted your game invitation for a game of "
+							+ ((int) content.toCharArray()[4] == GameInvitation.GAME_CHOMP ? "Chomp" : "Connect Four")
+							+ " on a " + content.split("-")[1] + "x" + content.split("-")[2] + " board");
+					setGame(Character.getNumericValue(content.toCharArray()[4]), Integer.valueOf(content.split("-")[1]),
+							Integer.valueOf(content.split("-")[2]), fromUser.getUsername(), false);
 					uiController.openMainGame();
 
-				} else if(content.substring(2, 4).equals("10")) { // game move.
+				} else if (content.substring(2, 4).equals("10")) { // game move.
 					System.out.println("Your opponent attempted a move. It is now your turn.");
-					if(game instanceof ChGame) {
-						((ChGame) game).move(fromUser, Integer.valueOf(content.split("-")[1]), Integer.valueOf(content.split("-")[2]));
+					if (game instanceof ChGame) {
+						((ChGame) game).move(fromUser, Integer.valueOf(content.split("-")[1]),
+								Integer.valueOf(content.split("-")[2]));
 					} else {
 						((CFGame) game).move(fromUser, Integer.valueOf(content.split("-")[1]));
 					}
 					uiController.updateGameView();
-					
-				} else if(content.substring(2, 4).equals("11")) {
-					System.out.println("Your opponent surrendered!");
+
+				} else if (content.substring(2, 4).equals("11")) {
+					System.out.println("Your opponent terminated the game.");
+					if (game != null) {
+						uiController.opponentSurrendered();
+					}
 					// Left to implement.
 				}
 			} else {
@@ -160,12 +174,13 @@ public class ClientManagement extends Management {
 	private void addReceivedInvitation(User fromUser, int width, int height, long game) {
 		// Delete earlier invitations from the same player.
 		GameInvitation delete = null;
-		for(GameInvitation g: receivedInvitations) {
-			if(g.getFromUser().getUsername().equals(fromUser.getUsername())) {
+		for (GameInvitation g : receivedInvitations) {
+			if (g.getFromUser().getUsername().equals(fromUser.getUsername())) {
 				delete = g;
 			}
 		}
-		if(delete != null) receivedInvitations.remove(delete);
+		if (delete != null)
+			receivedInvitations.remove(delete);
 
 		receivedInvitations.add(new GameInvitation(game, fromUser, width, height, System.currentTimeMillis()));
 	}
@@ -277,23 +292,24 @@ public class ClientManagement extends Management {
 
 	/**
 	 * Sets the current game to a game with the given parameters.
-	 * @param gametype Determines which game is played.
-	 * @param width Width of the board.
-	 * @param height Height of the board.
+	 * 
+	 * @param gametype     Determines which game is played.
+	 * @param width        Width of the board.
+	 * @param height       Height of the board.
 	 * @param opponentUser Username of player to play against.
-	 * @param firstMove If {@code true} this player is the one to move first.
+	 * @param firstMove    If {@code true} this player is the one to move first.
 	 */
 	public void setGame(long gametype, long width, long height, String opponentUser, boolean firstMove) {
-		if(gametype == Game.GAME_CHOMP) {
+		if (gametype == Game.GAME_CHOMP) {
 			game = new ChGame(thisUser, users.get(opponentUser), toIntExact(width), toIntExact(height), firstMove);
 		} else {
 			game = new CFGame(thisUser, users.get(opponentUser), toIntExact(width), toIntExact(height), firstMove);
 		}
 	}
-	
+
 	public void setGame(long gametype, long width, long height, boolean firstMove) {
 		computerUser.setComputer(true);
-		if(gametype == Game.GAME_CHOMP) {
+		if (gametype == Game.GAME_CHOMP) {
 			game = new ChGame(thisUser, computerUser, toIntExact(width), toIntExact(height), firstMove);
 		} else {
 			game = new CFGame(thisUser, computerUser, toIntExact(width), toIntExact(height), firstMove);
@@ -303,7 +319,11 @@ public class ClientManagement extends Management {
 	public Game getGame() {
 		return game;
 	}
-	
+
+	public void closeGame() {
+		game = null;
+	}
+
 	@Override
 	public ArrayList<String> getUsersOnline() {
 		ArrayList<String> onlinePlayers = new ArrayList<String>();

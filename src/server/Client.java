@@ -60,6 +60,7 @@ public class Client extends Connection {
 
 	/**
 	 * Executes the given command and returns the error-code returned.
+	 * 
 	 * @param request Command to execute.
 	 * @return Error code.
 	 */
@@ -94,7 +95,8 @@ public class Client extends Connection {
 
 				for (Object o : ((JSONArray) reply.get("messages"))) {
 					JSONArray jsonArray = (JSONArray) o;
-					if(!((String) jsonArray.get(0)).substring(0,2).equals("$$")) System.out.println("@" + ((String) jsonArray.get(1)) + ": " + ((String) jsonArray.get(0)));
+					if (!((String) jsonArray.get(0)).substring(0, 2).equals("$$"))
+						System.out.println("@" + ((String) jsonArray.get(1)) + ": " + ((String) jsonArray.get(0)));
 				}
 			}
 
@@ -103,31 +105,38 @@ public class Client extends Connection {
 			String[] message = request.split(";");
 			management.sendMessage(message[0], message[1]);
 			// Check whether internal control sequence present.
-			if(request.toCharArray()[0] == '$' && request.toCharArray()[1] == '$') {
+			if (request.toCharArray()[0] == '$' && request.toCharArray()[1] == '$') {
 				// Stay silent, internal message.
 			} else {
-				System.out.println(
-						"[CLIENT] [INFO] The following message will be send to @" + message[1] + ": '" + message[0] + "'");
+				System.out.println("[CLIENT] [INFO] The following message will be send to @" + message[1] + ": '"
+						+ message[0] + "'");
 			}
 			return execute("update");
 
-		} else if(request.contains("invite ")) {
+		} else if (request.contains("invite ")) {
 			request = request.substring(7);
 			String[] invitation = request.split(";");
 			System.out.println("request: " + request);
 			System.out.println(invitation[0].toCharArray()[0]);
 			System.out.println("to int: " + Integer.valueOf(invitation[0].toCharArray()[0]));
-			System.out.println(
-					"[CLIENT] [INFO] An invitation for " + (Integer.valueOf(invitation[0].toCharArray()[0]) == Game.GAME_CHOMP ? "Chomp" : "Connect Four") + " on a " + invitation[0].split("-")[1]  + "x" + invitation[0].split("-")[2] + " board will be send to @" + invitation[1] + ".");
+			System.out.println("[CLIENT] [INFO] An invitation for "
+					+ (Integer.valueOf(invitation[0].toCharArray()[0]) == Game.GAME_CHOMP ? "Chomp" : "Connect Four")
+					+ " on a " + invitation[0].split("-")[1] + "x" + invitation[0].split("-")[2]
+					+ " board will be send to @" + invitation[1] + ".");
 			return execute("sendmsg $$00" + request);
 
-		} else if(request.contains("accept ")) {
+		} else if (request.contains("accept ")) {
 			request = request.substring(7);
 			String[] invitation = request.split(";");
-			System.out.println(
-					"[CLIENT] [INFO] Attempt to accept invitation for " + (Character.getNumericValue(invitation[0].toCharArray()[0]) == Game.GAME_CHOMP ? "Chomp" : "Connect Four") + " on a " + invitation[0].split("-")[1]  + "x" + invitation[0].split("-")[2] + " by @" + invitation[1] + ".");
-			long returnValue= execute("sendmsg $$01" + request);
-			if(returnValue == 2) System.out.println("[CLIENT] There is no such invitation present at the server. Please remember that invitations expire after 60 seconds!");
+			System.out.println("[CLIENT] [INFO] Attempt to accept invitation for "
+					+ (Character.getNumericValue(invitation[0].toCharArray()[0]) == Game.GAME_CHOMP ? "Chomp"
+							: "Connect Four")
+					+ " on a " + invitation[0].split("-")[1] + "x" + invitation[0].split("-")[2] + " by @"
+					+ invitation[1] + ".");
+			long returnValue = execute("sendmsg $$01" + request);
+			if (returnValue == 2)
+				System.out.println(
+						"[CLIENT] There is no such invitation present at the server. Please remember that invitations expire after 60 seconds!");
 			return returnValue;
 
 		} else if (request.contains("makemv ")) {
@@ -137,6 +146,7 @@ public class Client extends Connection {
 
 		} else if (request.contains("surrender ")) {
 			request = request.substring(10);
+			System.out.println("[CLIENT] [INFO] Attempting to close the current game.");
 			return execute("sendmsg $$11" + request);
 
 		} else if (request.contains("setusername ")) {
