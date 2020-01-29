@@ -11,7 +11,6 @@ import management.ServerManagement;
  */
 public class Server extends Thread {
 	volatile ServerManagement management = new ServerManagement();
-	volatile ArrayList<String> log = new ArrayList<String>();
 	
 	@Override
 	public void run() {
@@ -39,7 +38,7 @@ public class Server extends Thread {
 	 * @return Logs.
 	 */
 	public ArrayList<String> getLogs() {
-		return log;
+		return management.getLogs();
 	}
 	
 	/**
@@ -51,6 +50,6 @@ public class Server extends Thread {
 	}
 	
 	void addLog(String stringToLog) {
-		log.add(stringToLog);
+		management.log(stringToLog);
 	}
 }

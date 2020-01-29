@@ -171,6 +171,8 @@ public class ClientUIController implements Initializable {
 
             // Create new stage for game.
             Stage stage = new Stage();
+            stage.setResizable(false);
+            stage.sizeToScene();
             stage.setScene(new Scene(root, width, height));
             stage.setTitle((management.getGame() instanceof ChGame ? "CHOMP" : "CONNECT FOUR")
                     + " - Games by Codesocks / j-bl");

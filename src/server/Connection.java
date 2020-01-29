@@ -40,7 +40,7 @@ abstract class Connection {
 			JSONParser parser = new JSONParser();
 			return (JSONObject) parser.parse(string);
 		} catch (ParseException e) {
-			e.printStackTrace();
+			// Parsing failed. Server is probably offline.
 			return null;
 		}
 	}

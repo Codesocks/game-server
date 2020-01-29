@@ -33,13 +33,13 @@ class ClientUIUpdater implements Runnable {
 								controller.openGameAcceptationDialogue();
 						}
 					} catch (Exception e) {
-						e.printStackTrace();
+						// Server is currently not available.
 					}
 				}
 			};
 
 			try {
-				Thread.sleep(10000);
+				Thread.sleep(2500);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

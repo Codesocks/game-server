@@ -86,6 +86,7 @@ public class Client extends Connection {
 			if ((Boolean) reply.get("playerUpdateAvailable")) {
 				management.setOnlinePlayers((JSONArray) reply.get("onlinePlayers"));
 				System.out.println("[CLIENT] [INFO] The list of online players has been updated.");
+				System.out.println("Current JSON to parse: " + ((JSONArray) reply.get("onlinePlayers")).toString());
 			}
 			if (((JSONArray) reply.get("messages")).size() > 0) {
 				management.addReceivedMessages((JSONArray) reply.get("messages"));

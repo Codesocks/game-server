@@ -18,6 +18,7 @@ class ServerUIUpdater implements Runnable {
 					try {
 						controller.loadLog();
 						controller.loadUser();
+						controller.loadGames();
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

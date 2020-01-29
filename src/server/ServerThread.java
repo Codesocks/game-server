@@ -101,13 +101,6 @@ class ServerThread extends Connection implements Runnable {
 				output.put("errorCode", -2);
 				e.printStackTrace();
 			}
-			// Log received Messages and Invitations.
-			if (!messages.toString().equals("[]")) {
-				server.addLog("Processing new messages send by @" + credentials.get(0) + ":");
-				for (Object message : messages)
-					server.addLog("...to @" + ((JSONArray) message).get(1) + ": "
-							+ ((JSONArray) message).get(0));
-			}
 
 			// Compute reply and send it.
 			output.put("messages", server.getManagement().getNewMessages(credentials, clientUpdateTime));

@@ -18,6 +18,8 @@ public class ServerUIController implements Initializable {
 	@FXML
 	ListView<String> leftUserList;
 	@FXML
+	ListView<String> leftGameList;
+	@FXML
 	ListView<String> rightLogList;
 
 	@Override
@@ -45,5 +47,13 @@ public class ServerUIController implements Initializable {
 
 		leftUserList.setItems(userList);
 		leftUserList.refresh();
+	}
+	
+	void loadGames() {
+		ObservableList<String> gameList = FXCollections.observableArrayList();
+		gameList.addAll(management.getCurrentGames());
+
+		leftGameList.setItems(gameList);
+		leftGameList.refresh();
 	}
 }
