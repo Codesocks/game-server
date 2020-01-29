@@ -50,9 +50,9 @@ public class ChGame extends Game {
 			Random rand = new Random();
 
 			do {
-				x = rand.nextInt(board.width);
-				y = rand.nextInt(board.height);
-			} while (board.getPlayerAt(x, y) != null && !(x == 0 && y == 0));
+                x = rand.nextInt(board.getWidth());
+                y = rand.nextInt(board.getHeight());
+            } while (board.getPlayerAt(x, y) != null && !(x == 0 && y == 0));
 		}
 
 		move(player, x, y);

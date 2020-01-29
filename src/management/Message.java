@@ -3,23 +3,21 @@ package management;
 import org.json.simple.JSONArray;
 
 class Message {
-	String content;
-	User toUser;
-	User fromUser;
-	long creationTime;
+    private String content;
+    private User toUser;
+    private User fromUser;
+    private long creationTime;
 
-	Message(String content, User toUser, long creationTime) {
-		this.content = content;
-		this.toUser = toUser;
-		this.creationTime = creationTime;
-	}
+    Message(String content, User toUser, long creationTime) {
+        this.content = content;
+        this.toUser = toUser;
+        this.creationTime = creationTime;
+    }
 
-	Message(String content, User toUser, User fromUser, long creationTime) {
-		this.content = content;
-		this.toUser = toUser;
-		this.fromUser = fromUser;
-		this.creationTime = creationTime;
-	}
+    Message(String content, User toUser, User fromUser, long creationTime) {
+        this(content, toUser, creationTime);
+        this.fromUser = fromUser;
+    }
 	
 	String getContent() {
 		return content;

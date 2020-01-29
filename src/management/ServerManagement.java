@@ -1,22 +1,21 @@
 package management;
 
-import java.util.ArrayList;
-import java.util.Map;
-
 import model.CFGame;
 import model.ChGame;
 import model.Game;
 import org.json.simple.JSONArray;
 
+import java.util.ArrayList;
+import java.util.Map;
+
 /**
  * Management of a Server. It contains the list of the currently online player
  * and all player's messages.
- * 
+ *
  * @author j-bl (Jan), Codesocks (Christian)
- * 
  */
 public class ServerManagement extends Management {
-	private volatile ArrayList<Game> games = new ArrayList<Game>();
+    private volatile ArrayList<Game> games = new ArrayList<Game>();
 
 	/**
 	 * Attempts to add the user with the given credentials to the management. If
@@ -58,12 +57,12 @@ public class ServerManagement extends Management {
 			if (!verifyCredentials(credentials))
 				return false;
 		} else {
-			boolean b = addUser(credentials);
-			if (b == false)
-				return false;
-		}
+            boolean b = addUser(credentials);
+            if (!b)
+                return false;
+        }
 
-		users.get(username).setOnline(true);
+        users.get(username).setOnline(true);
 		isUpdate();
 		return true;
 	}
@@ -119,17 +118,14 @@ public class ServerManagement extends Management {
 	 */
 	public boolean verifyCredentials(JSONArray credentials) {
 		// Extract username and password from JSON-Data.
-		String username = (String) credentials.get(0);
-		String pwd = (String) credentials.get(1);
+        String username = (String) credentials.get(0);
+        String pwd = (String) credentials.get(1);
 
-		// Check credentials and set user to online if necessary.
-		if (users.containsKey(username) && users.get(username).verifyPWD(pwd)) {
-			return true;
-		}
-		return false;
-	}
+        // Check credentials and set user to online if necessary.
+        return users.containsKey(username) && users.get(username).verifyPWD(pwd);
+    }
 
-	/**
+    /**
 	 * Returns all currently online players (precisely: their usernames).
 	 * 
 	 * @return Array containing currently online players.
@@ -206,78 +202,92 @@ public class ServerManagement extends Management {
 
 			// Check whether message is internal message and deal with invitations and so on.
 			if(content.length() >= 2 && content.substring(0,2).equals("$$")) {
-				if(content.substring(2,4).equals("00")) { // game invitation.
-					// Is player already in game?
-					for(Game g: games) {
-						if(g.getPlayer1().getUsername().equals(fromUser.getUsername()) || g.getPlayer2().getUsername().equals(fromUser.getUsername())) {
-							throw new IllegalArgumentException("The player trying to invite is already in a game. He cannot join a second game now!");
-						}
-						if(g.getPlayer1().getUsername().equals(toUser.getUsername()) || g.getPlayer2().getUsername().equals(toUser.getUsername())) {
-							throw new IllegalArgumentException("The player you are trying to invite is already in a game. He cannot join a second game now!");
-						}
-					}
+                switch (content.substring(2, 4)) {
+                    case "00":  // game invitation.
+                        // Is player already in game?
+                        for (Game g : games) {
+                            if (g.getPlayer1().getUsername().equals(fromUser.getUsername()) || g.getPlayer2().getUsername().equals(fromUser.getUsername())) {
+                                throw new IllegalArgumentException("The player trying to invite is already in a game. He cannot join a second game now!");
+                            }
+                            if (g.getPlayer1().getUsername().equals(toUser.getUsername()) || g.getPlayer2().getUsername().equals(toUser.getUsername())) {
+                                throw new IllegalArgumentException("The player you are trying to invite is already in a game. He cannot join a second game now!");
+                            }
+                        }
 
-					// Valid invite -> add it.
-					addReceivedInvitation(fromUser, toUser, Integer.valueOf(content.toCharArray()[4]));
-					System.out.println("Received a game invitation from @" + fromUser.getUsername() + " for @" + toUser.getUsername() + " to play " + (Integer.valueOf(content.toCharArray()[4]) == GameInvitation.GAME_CHOMP ? "Chomp" : "Connect Four"));
+                        // Valid invite -> add it.
+                        addReceivedInvitation(fromUser, toUser, Integer.valueOf(content.toCharArray()[4]));
+                        System.out.println("Received a game invitation from @" + fromUser.getUsername() + " for @" + toUser.getUsername() + " to play " + (Integer.valueOf(content.toCharArray()[4]) == GameInvitation.GAME_CHOMP ? "Chomp" : "Connect Four"));
 
-				} else if(content.substring(2,4).equals("01")) { // game invitation accept.
-					// Does invite exist?
-					GameInvitation invite = null;
-					for(GameInvitation g: receivedInvitations) {
-						if(g.getToUser().getUsername().equals(fromUser.getUsername()) && g.getFromUser().getUsername().equals(toUser.getUsername()) && (System.currentTimeMillis() - 60000)<= g.getCreationTime()) {
-							invite = g;
-						}
-					}
-					if(invite == null) throw new IllegalArgumentException("There is no such invitation. Please remember that it might have already expired! Invites are only valid for 60 seconds after being send.");
+                        break;
+                    case "01":  // game invitation accept.
+                        // Does invite exist?
+                        GameInvitation invite = null;
+                        for (GameInvitation g : receivedInvitations) {
+                            if (g.getToUser().getUsername().equals(fromUser.getUsername()) && g.getFromUser().getUsername().equals(toUser.getUsername()) && (System.currentTimeMillis() - 60000) <= g.getCreationTime()) {
+                                invite = g;
+                            }
+                        }
+                        if (invite == null)
+                            throw new IllegalArgumentException("There is no such invitation. Please remember that it might have already expired! Invites are only valid for 60 seconds after being send.");
 
-					// Is player already in game?
-					for(Game g: games) {
-						if(g.getPlayer1().getUsername().equals(fromUser.getUsername()) || g.getPlayer2().getUsername().equals(fromUser.getUsername())) {
-							throw new IllegalArgumentException("The player trying to accept an invitation is already in a game. He cannot join a second game now!");
-						}
-					}
+                        // Is player already in game?
+                        for (Game g : games) {
+                            if (g.getPlayer1().getUsername().equals(fromUser.getUsername()) || g.getPlayer2().getUsername().equals(fromUser.getUsername())) {
+                                throw new IllegalArgumentException("The player trying to accept an invitation is already in a game. He cannot join a second game now!");
+                            }
+                        }
 
-					// Deal with accepted invitation.
-					receivedInvitations.remove(invite);
-					if(Integer.valueOf(content.toCharArray()[4]) == GameInvitation.GAME_CHOMP) {
-						games.add(new ChGame(fromUser, toUser, Integer.valueOf(content.split("-")[1]), Integer.valueOf(content.split("-")[2]), true));
-					} else {
-						games.add(new CFGame(fromUser, toUser, Integer.valueOf(content.split("-")[1]), Integer.valueOf(content.split("-")[2]), true));
-					}
-					System.out.println("@" + fromUser.getUsername() + " accepted the challenge by @" + toUser.getUsername() + " to play a game of " + (Integer.valueOf(content.toCharArray()[4]) == GameInvitation.GAME_CHOMP ? "Chomp" : "Connect Four"));
+                        // Deal with accepted invitation.
+                        receivedInvitations.remove(invite);
+                        if (Integer.valueOf(content.toCharArray()[4]) == GameInvitation.GAME_CHOMP) {
+                            games.add(new ChGame(fromUser, toUser, Integer.valueOf(content.split("-")[1]), Integer.valueOf(content.split("-")[2]), true));
+                        } else {
+                            games.add(new CFGame(fromUser, toUser, Integer.valueOf(content.split("-")[1]), Integer.valueOf(content.split("-")[2]), true));
+                        }
+                        System.out.println("@" + fromUser.getUsername() + " accepted the challenge by @" + toUser.getUsername() + " to play a game of " + (Integer.valueOf(content.toCharArray()[4]) == GameInvitation.GAME_CHOMP ? "Chomp" : "Connect Four"));
 
-				} else if(content.substring(2,4).equals("10")) { // Game played.
-					// Just forward the message - no check of validity at this point. Should be done at client's site.
-					
-				} else if(content.substring(2,4).equals("11")) { // surrender.
-					Game surrenderedGame = null;
-					for(Game g: games) {
-						if(g.getPlayer1().getUsername().equals(fromUser.getUsername()) || g.getPlayer2().getUsername().equals(fromUser.getUsername())) {
-							surrenderedGame = g;
-						}
-					}
-					if(surrenderedGame != null) games.remove(surrenderedGame);
-				}
+                        break;
+                    case "10":  // Game played.
+                        // Just forward the message - no check of validity at this point. Should be done at client's site.
 
-			}
-			receivedMessages.add(new Message(content, toUser, fromUser, creationTime));
-		}
+                        break;
+                    case "11":  // surrender.
+                        Game surrenderedGame = null;
+                        for (Game g : games) {
+                            if (g.getPlayer1().getUsername().equals(fromUser.getUsername()) || g.getPlayer2().getUsername().equals(fromUser.getUsername())) {
+                                surrenderedGame = g;
+                            }
+                        }
+                        if (surrenderedGame != null) games.remove(surrenderedGame);
+                        break;
+                }
 
-		isUpdate();
-	}
+            }
+            receivedMessages.add(new Message(content, toUser, fromUser, creationTime));
+        }
 
-	private synchronized void addReceivedInvitation(User fromUser, User toUser, int game) {
-		// Delete earlier invitations to the same player.
-		GameInvitation delete = null;
-		for(GameInvitation g: receivedInvitations) {
-			if(g.getToUser().getUsername().equals(toUser.getUsername()) && g.getFromUser().getUsername().equals(fromUser.getUsername())) {
-				delete = g;
-			}
-		}
-		if(delete != null) receivedInvitations.remove(delete);
+        isUpdate();
+    }
 
-		receivedInvitations.add(new GameInvitation(game, toUser, fromUser, System.currentTimeMillis()));
+    /**
+     * Adds current game invitation to receivedInvitations.
+     * If the same invitation already exists, the existing one will be deleted
+     *
+     * @param fromUser User who sent the invitation.
+     * @param toUser   User who receives the invitation.
+     * @param game     Game that was invited to.
+     */
+    private synchronized void addReceivedInvitation(User fromUser, User toUser, int game) {
+        // Delete earlier invitations to the same player.
+        GameInvitation delete = null;
+        for (GameInvitation g : receivedInvitations) {
+            if (g.getToUser().getUsername().equals(toUser.getUsername()) && g.getFromUser().getUsername().equals(fromUser.getUsername())) {
+                delete = g;
+            }
+        }
+        if (delete != null) receivedInvitations.remove(delete);
+
+        receivedInvitations.add(new GameInvitation(game, toUser, fromUser, System.currentTimeMillis()));
 	}
 	
 	@Override

@@ -1,10 +1,10 @@
 package server;
 
-import java.io.IOException;
-import java.net.Socket;
-
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+
+import java.io.IOException;
+import java.net.Socket;
 
 class ServerThread extends Connection implements Runnable {
 	Server server;
@@ -52,9 +52,9 @@ class ServerThread extends Connection implements Runnable {
 	 * 	0: Success
 	 * 	1: Credentials failed
 	 * 	2: There is no such invitation to accept or one of the players is already in a game.
-	 * 
-	 * @param jo
-	 * @return
+	 *
+	 * @param jo    JSONObject
+	 * @return Error Code
 	 */
 	private String processData(JSONObject jo) {
 		JSONObject output = new JSONObject();
@@ -62,7 +62,7 @@ class ServerThread extends Connection implements Runnable {
 
 		// Extract from JSONObject.
 		JSONArray credentials = (JSONArray) jo.get("credentials");
-		int mode = Integer.valueOf((String) jo.get("mode"));
+		int mode = Integer.parseInt((String) jo.get("mode"));
 
 		// Verify credentials if not attempting to sign-in.
 		if (mode != 0) {
@@ -75,7 +75,6 @@ class ServerThread extends Connection implements Runnable {
 		}
 
 		// Deal with modes.
-
 		switch (mode) {
 		case 0: // Sign-in.
 			boolean b = server.getManagement().signIn(credentials);
@@ -106,8 +105,8 @@ class ServerThread extends Connection implements Runnable {
 			if (!messages.toString().equals("[]")) {
 				server.addLog("Processing new messages send by @" + credentials.get(0) + ":");
 				for (Object message : messages)
-					server.addLog("...to @" + (String) ((JSONArray) message).get(1) + ": "
-							+ (String) ((JSONArray) message).get(0));
+					server.addLog("...to @" + ((JSONArray) message).get(1) + ": "
+							+ ((JSONArray) message).get(0));
 			}
 
 			// Compute reply and send it.

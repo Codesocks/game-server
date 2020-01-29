@@ -1,7 +1,5 @@
 package model;
 
-import management.User;
-
 class ChBoard extends Board {
 	/**
 	 * Creates a new chomp board with the given width and height. The board must
@@ -21,33 +19,40 @@ class ChBoard extends Board {
 
 	@Override
 	boolean move(Move m) {
-		// Check whether move is valid (field is empty and exists)
-		if (m.getX() < 0 || m.getY() < 0 || m.getX() >= width || m.getY() >= height) {
-			throw new IllegalArgumentException("The field you try to choose does not exist!");
-		} else if (board[m.getX()][m.getY()] != null) {
-			return false;
-		}
+        // Check whether move is valid (field is empty and exists)
+        if (m.getX() < 0 || m.getY() < 0 || m.getX() >= getWidth() || m.getY() >= getHeight()) {
+            throw new IllegalArgumentException("The field you try to choose does not exist!");
+        } else if (getBoard()[m.getX()][m.getY()] != null) {
+            return false;
+        }
 
-		// Move is valid, save it.
-		for (int i = m.getX(); i < super.width; i++) {
-			for (int j = m.getY(); j < super.height; j++) {
-				if (board[i][j] == null)
-					super.board[i][j] = m.getPlayer();
-			}
-		}
+        // Move is valid, save it.
+        for (int i = m.getX(); i < super.getWidth(); i++) {
+            for (int j = m.getY(); j < super.getHeight(); j++) {
+                if (getBoard()[i][j] == null)
+                    super.getBoard()[i][j] = m.getPlayer();
+            }
+        }
 
-		// Check whether game is won with this move.
-		isWon = moveIsWinningMove(m.getX(), m.getY(), m.getPlayer());
-		if (isWon && m.getPlayer().equals(game.getPlayer1()))
-			winner = game.getPlayer2();
-		if (isWon && m.getPlayer().equals(game.getPlayer2()))
-			winner = game.getPlayer1();
+        // Check whether game is won with this move.
+        setWon(moveIsWinningMove(m.getX(), m.getY()));
+        if (isWon() && m.getPlayer().equals(getGame().getPlayer1()))
+            setWinner(getGame().getPlayer2());
+        if (isWon() && m.getPlayer().equals(getGame().getPlayer2()))
+            setWinner(getGame().getPlayer1());
 
-		// Output that move is valid.
-		return true;
-	}
+        // Output that move is valid.
+        return true;
+    }
 
-	private boolean moveIsWinningMove(int x, int y, User p) {
-		return x == 0 && y == 0;
-	}
+    /**
+     * Checks if the game is won with the given move
+     *
+     * @param x X coordinate of given move.
+     * @param y Y coordinate of given move.
+     * @return true if given move is winning move
+     */
+    private boolean moveIsWinningMove(int x, int y) {
+        return x == 0 && y == 0;
+    }
 }

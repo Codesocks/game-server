@@ -1,13 +1,12 @@
 package server;
 
-import java.io.IOException;
-import java.net.Socket;
-
 import management.ClientManagement;
-
 import model.Game;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+
+import java.io.IOException;
+import java.net.Socket;
 
 /**
  * Client of the game. Can connect to the server and execute commands. You need
@@ -96,7 +95,7 @@ public class Client extends Connection {
 				for (Object o : ((JSONArray) reply.get("messages"))) {
 					JSONArray jsonArray = (JSONArray) o;
 					if (!((String) jsonArray.get(0)).substring(0, 2).equals("$$"))
-						System.out.println("@" + ((String) jsonArray.get(1)) + ": " + ((String) jsonArray.get(0)));
+						System.out.println("@" + jsonArray.get(1) + ": " + jsonArray.get(0));
 				}
 			}
 

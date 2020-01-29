@@ -1,7 +1,6 @@
 package model;
 
 import management.User;
-import org.json.simple.JSONObject;
 
 public abstract class Game {
 	Protocol protocol = new Protocol();
@@ -69,16 +68,6 @@ public abstract class Game {
 	 */
 	public boolean isWon() {
 		return board.isWon();
-	}
-
-	/**
-	 * Conducts the given move on the board if the move is a valid move. Otherwise
-	 * no move is made.
-	 * 
-	 * @param m JSONObject containing the instructions for the move.
-	 */
-	void move(JSONObject m) {
-		move(new Move(m));
 	}
 
 	/**

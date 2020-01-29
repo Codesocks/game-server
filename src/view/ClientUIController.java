@@ -1,12 +1,6 @@
 package view;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.Optional;
-import java.util.ResourceBundle;
-
 import javafx.animation.FadeTransition;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -19,11 +13,11 @@ import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
-import javafx.scene.text.Text;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
@@ -33,15 +27,20 @@ import model.ChGame;
 import model.Game;
 import server.Client;
 
-public class ClientUIController implements Initializable {
-	private ClientManagement management;
-	private Client client;
-	private ClientGameController gameController;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Optional;
+import java.util.ResourceBundle;
 
-	@FXML
-	private Label leftLogoTxt; // Text of logo.
-	@FXML
-	GridPane chatArea;
+public class ClientUIController implements Initializable {
+    private ClientManagement management;
+    private Client client;
+    private ClientGameController gameController;
+
+    @FXML
+    private Label leftLogoTxt; // Text of logo.
+    @FXML
+    GridPane chatArea;
 	@FXML
 	ScrollPane chatView;
 	@FXML
@@ -161,27 +160,27 @@ public class ClientUIController implements Initializable {
 				width = 100 * management.getGame().getWidth();
 			} else {
 				if (management.getGame().getWidth() >= management.getGame().getHeight()) {
-					width = 1000;
-					height = (int) ((1000.0 / management.getGame().getWidth()) * management.getGame().getHeight());
-				} else {
-					height = 1000;
-					width = (int) ((1000.0 / management.getGame().getHeight()) * management.getGame().getWidth());
-				}
-			}
-			gameController.setDimensions(width, height);
+                    width = 1000;
+                    height = (int) ((1000.0 / management.getGame().getWidth()) * management.getGame().getHeight());
+                } else {
+                    height = 1000;
+                    width = (int) ((1000.0 / management.getGame().getHeight()) * management.getGame().getWidth());
+                }
+            }
+            gameController.setDimensions(width, height);
 
-			// Create new stage for game.
-			Stage stage = (Stage) new Stage();
-			stage.setScene(new Scene(root, width, height));
-			stage.setTitle((management.getGame() instanceof ChGame ? "CHOMP" : "CONNECT FOUR")
-					+ " - Games by Codesocks / j-bl");
-			stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-				@Override
-				public void handle(WindowEvent event) {
-					gameController.closeGame();
-					gameController.closeWindow();
-				}
-			});
+            // Create new stage for game.
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root, width, height));
+            stage.setTitle((management.getGame() instanceof ChGame ? "CHOMP" : "CONNECT FOUR")
+                    + " - Games by Codesocks / j-bl");
+            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent event) {
+                    gameController.closeGame();
+                    gameController.closeWindow();
+                }
+            });
 			stage.show();
 			gameController.initializeView();
 

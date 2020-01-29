@@ -1,8 +1,5 @@
 package view;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -10,6 +7,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 import management.ServerManagement;
 import server.Server;
+
+import java.net.URL;
+import java.util.ResourceBundle;
 
 public class ServerUIController implements Initializable {
 	private ServerManagement management;
@@ -33,20 +33,16 @@ public class ServerUIController implements Initializable {
 	
 	void loadLog() {
 		ObservableList<String> logMessages = FXCollections.observableArrayList();
-		for (String log: server.getLogs()) {
-			logMessages.add(log);
-		}
-		
+		logMessages.addAll(server.getLogs());
+
 		rightLogList.setItems(logMessages);
 		rightLogList.refresh();
 	}
 	
 	void loadUser() {
 		ObservableList<String> userList = FXCollections.observableArrayList();
-		for (String username : management.getUsersOnline()) {
-			userList.add(username);
-		}
-		
+		userList.addAll(management.getUsersOnline());
+
 		leftUserList.setItems(userList);
 		leftUserList.refresh();
 	}

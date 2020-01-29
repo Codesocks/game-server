@@ -2,7 +2,6 @@ package management;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 abstract class Management {    
 	HashMap<String, User> users = new HashMap<String, User>();

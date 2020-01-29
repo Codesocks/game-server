@@ -43,8 +43,8 @@ public class CFGame extends Game {
 		Random rand = new Random();
 		int x;
 		do {
-			x = rand.nextInt(board.width);
-		} while (board.getPlayerAt(x, 0) != null);
+            x = rand.nextInt(board.getWidth());
+        } while (board.getPlayerAt(x, 0) != null);
 
 		move(player, x);
 	}
