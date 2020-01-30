@@ -137,7 +137,7 @@
                                                 <RowConstraints maxHeight="351.0" minHeight="10.0" prefHeight="336.0" vgrow="SOMETIMES" />
                                             </rowConstraints>
                                              <children>
-                                                <Button fx:id="menueButtonCollapse" mnemonicParsing="false" onAction="#collapseMenue" style="-fx-background-color: #0000FF;" text="-" textFill="WHITE" GridPane.rowIndex="1">
+                                                <Button fx:id="menueButtonCollapse" mnemonicParsing="false" onAction="#collapseMenue" style="-fx-background-color: #0000FF;" text="🡄" textFill="WHITE" GridPane.rowIndex="1">
                                                    <font>
                                                       <Font name="System Bold" size="15.0" />
                                                    </font>

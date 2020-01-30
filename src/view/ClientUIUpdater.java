@@ -39,7 +39,7 @@ class ClientUIUpdater implements Runnable {
 			};
 
 			try {
-				Thread.sleep(2500);
+				Thread.sleep(550);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

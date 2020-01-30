@@ -29,6 +29,8 @@ public class Server extends Thread {
 				mulThread.start();
 			}
 		} catch (IOException e) {
+			addLog("WARNING: This socket is already taken by another instance!");
+			addLog("Server will be shut down...");
 			e.printStackTrace();
 		}
 	}

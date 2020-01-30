@@ -38,10 +38,8 @@ public class Client extends Connection {
 		try {
 			socket = new Socket(HOSTNAME, PORT);
 			send(o.toString());
-			System.out.println("Send:  " + o.toString());
 
 			reply = read();
-			System.out.println("Reply: " + reply);
 
 			if (socket != null) {
 				try {
@@ -80,13 +78,11 @@ public class Client extends Connection {
 			j.put("mode", "2");
 			j.put("latestUpdateTime", management.getLatestUpdateTime());
 			j.put("messages", management.getLatestMessages());
-			// j.put("invitations", management.getLatestInvitations());
 
 			reply = stringToJSONObject(request(j));
 			if ((Boolean) reply.get("playerUpdateAvailable")) {
 				management.setOnlinePlayers((JSONArray) reply.get("onlinePlayers"));
 				System.out.println("[CLIENT] [INFO] The list of online players has been updated.");
-				System.out.println("Current JSON to parse: " + ((JSONArray) reply.get("onlinePlayers")).toString());
 			}
 			if (((JSONArray) reply.get("messages")).size() > 0) {
 				management.addReceivedMessages((JSONArray) reply.get("messages"));
@@ -116,9 +112,6 @@ public class Client extends Connection {
 		} else if (request.contains("invite ")) {
 			request = request.substring(7);
 			String[] invitation = request.split(";");
-			System.out.println("request: " + request);
-			System.out.println(invitation[0].toCharArray()[0]);
-			System.out.println("to int: " + Integer.valueOf(invitation[0].toCharArray()[0]));
 			System.out.println("[CLIENT] [INFO] An invitation for "
 					+ (Integer.valueOf(invitation[0].toCharArray()[0]) == Game.GAME_CHOMP ? "Chomp" : "Connect Four")
 					+ " on a " + invitation[0].split("-")[1] + "x" + invitation[0].split("-")[2]
@@ -137,6 +130,7 @@ public class Client extends Connection {
 			if (returnValue == 2)
 				System.out.println(
 						"[CLIENT] There is no such invitation present at the server. Please remember that invitations expire after 60 seconds!");
+			management.removeLatestInvitation();
 			return returnValue;
 
 		} else if (request.contains("makemv ")) {
@@ -148,12 +142,6 @@ public class Client extends Connection {
 			request = request.substring(10);
 			System.out.println("[CLIENT] [INFO] Attempting to close the current game.");
 			return execute("sendmsg $$11" + request);
-
-		} else if (request.contains("setusername ")) {
-			request = request.substring(12);
-			management.setCredentials(request, "pwddummy");
-			System.out.println("[CLIENT] [INFO]	Your username was set to '" + request + "'");
-			return 0;
 
 		} else {
 			System.out.println("Invalid input :(");

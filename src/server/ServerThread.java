@@ -30,14 +30,10 @@ class ServerThread extends Connection implements Runnable {
 
 			// Handle msg of client.
 			JSONObject jo = stringToJSONObject(msg);
-			// server.addLog("[RECEIVED] Incoming request: " + msg);
-			System.out.println("[RECEIVED] Incoming request:	    " + msg);
 			String reply = processData(jo);
 
 			// Send reply.
 			send(reply);
-			// server.addLog("[SEND] Reply to request: " + reply);
-			System.out.println("[SEND]     Reply to request:	    " + reply);
 
 			// Fehler bei Ein- und Ausgabe
 		} catch (Exception e) {
@@ -105,7 +101,7 @@ class ServerThread extends Connection implements Runnable {
 			try {
 				server.getManagement().addReceivedMessages(messages, credentials);
 			} catch (IllegalArgumentException e) {
-				output.put("errorCode", -2);
+				output.put("errorCode", 2);
 				e.printStackTrace();
 			}
 

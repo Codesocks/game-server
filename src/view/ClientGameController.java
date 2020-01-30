@@ -125,4 +125,38 @@ abstract class ClientGameController implements Initializable {
 		// User pressed ok or closed the dialogue.
 		closeWindow();
 	}
+
+	/**
+	 * Checks whether the game is already won and deals with that information
+	 * accordingly.
+	 */
+	void handleWin() {
+		if (game != null && game.isWon()) {
+			Alert alert = new Alert(Alert.AlertType.INFORMATION);
+			alert.setTitle("A WINNER WAS FOUND!");
+			alert.setHeight(800);
+			try {
+				if (game.getWinner().equals(game.getPlayer1())) {
+					alert.setHeaderText("Congratulations! You have just won a decisive victory!");
+					ImageView trophy = new ImageView(new Image(new FileInputStream("./assets/TROPHY.png")));
+					trophy.setFitHeight(65);
+					trophy.setPreserveRatio(true);
+					alert.setGraphic(trophy);
+				} else {
+					alert.setHeaderText("You lost this challenge. Now go home and practice!");
+					ImageView trophy = new ImageView(new Image(new FileInputStream("./assets/TROPHY.png")));
+					trophy.setFitHeight(65);
+					trophy.setPreserveRatio(true);
+					alert.setGraphic(trophy);
+				}
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+			closeGame();
+			alert.showAndWait();
+
+			// User pressed ok or closed the dialogue.
+			closeWindow();
+		}
+	}
 }

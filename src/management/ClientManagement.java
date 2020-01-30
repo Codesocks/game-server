@@ -121,10 +121,7 @@ public class ClientManagement extends Management {
 			String content = (String) j.get(0);
 			String username = (String) j.get(1);
 			Long creationTime = (Long) j.get(2);
-
 			User fromUser = users.get(username);
-			System.out.println("USERNAME: " + username);
-			System.out.println("fromUser USERNAME: " + fromUser.getUsername());
 
 			// Check whether message is internal message and deal with invitations and so
 			// on.
@@ -363,5 +360,16 @@ public class ClientManagement extends Management {
 		}
 
 		return onlinePlayers;
+	}
+
+	/**
+	 * Removes the latest game acceptation that was sent. If none was sent,
+	 * nothing happens. This is to be called, when the invitation to accept is invalid.
+	 * Otherwise client would constantly fail at sending it.
+	 */
+	public void removeLatestInvitation() {
+		if(sendMessages != null && sendMessages.get(sendMessages.size() - 1).getContent().length() >= 2 && sendMessages.get(sendMessages.size() - 1).getContent().substring(0, 4).equals("$$01")) {
+			sendMessages.remove(sendMessages.get(sendMessages.size() - 1));
+		}
 	}
 }

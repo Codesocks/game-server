@@ -32,7 +32,6 @@ public abstract class Game {
 			boolean validMove = board.move(m);
 
 			// Protocol last move.
-			System.out.println("Winning: " + board.isWon());
 			if (validMove) {
 				protocol.push(m);
 

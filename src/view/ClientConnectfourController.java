@@ -3,7 +3,6 @@ package view;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
-import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -54,33 +53,7 @@ public class ClientConnectfourController extends ClientGameController {
 		}
 
 		// Handle win of the game.
-		if (game != null && game.isWon()) {
-			Alert alert = new Alert(Alert.AlertType.INFORMATION);
-			alert.setTitle("A WINNER WAS FOUND!");
-			alert.setHeight(800);
-			try {
-				if (game.getWinner().equals(game.getPlayer1())) {
-					alert.setHeaderText("Congratulations! You have just won a decisive victory!");
-					ImageView trophy = new ImageView(new Image(new FileInputStream("./assets/TROPHY.png")));
-					trophy.setFitHeight(65);
-					trophy.setPreserveRatio(true);
-					alert.setGraphic(trophy);
-				} else {
-					alert.setHeaderText("You lost this challenge. Now get home and practice!");
-					ImageView trophy = new ImageView(new Image(new FileInputStream("./assets/TROPHY.png")));
-					trophy.setFitHeight(65);
-					trophy.setPreserveRatio(true);
-					alert.setGraphic(trophy);
-				}
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
-			closeGame();
-			alert.showAndWait();
-
-			// User pressed ok or closed the dialogue.
-			closeWindow();
-		}
+		handleWin();
 	}
 
 	void initializeView() {

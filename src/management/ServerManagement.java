@@ -200,7 +200,7 @@ public class ServerManagement extends Management {
 			// on.
 			if (content.length() >= 2 && content.substring(0, 2).equals("$$")) {
 				switch (content.substring(2, 4)) {
-				case "00": // game invitation.
+				case "00": // game invitation.					
 					// Is player already in game?
 					for (Game g : games) {
 						if (g.getPlayer1().getUsername().equals(fromUser.getUsername())

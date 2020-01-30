@@ -231,6 +231,7 @@ public class ClientUIController implements Initializable {
 	void openGameAcceptationDialogue() {
 		GameInvitation invitation = management.getReceivedInvitations()
 				.get(management.getReceivedInvitations().size() - 1);
+		management.closeInvitation(invitation);
 
 		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 		alert.setTitle("CHALLENGE!");
@@ -253,11 +254,14 @@ public class ClientUIController implements Initializable {
 				management.setGame(invitation.getGame(), invitation.getWidth(), invitation.getHeight(),
 						invitation.getFromUsername(), true);
 				openMainGame();
+			} else {
+				management.closeInvitation(invitation);
+				showWarning("Expired invitation",
+						"The invitation you are trying to accept is already expired. Please remember that invitations are only valid for 60 seconds!");
 			}
 		} else {
 			// User pressed decline or closed dialogue...
 		}
-		management.closeInvitation(invitation);
 	}
 
 	void openSelectedChat() {
