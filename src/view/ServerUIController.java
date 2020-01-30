@@ -11,10 +11,14 @@ import server.Server;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ * Controller for the UI of the server. Can be initialized, but does not take
+ * any inputs. Closing the window terminates the server.
+ */
 public class ServerUIController implements Initializable {
 	private ServerManagement management;
 	Server server;
-	
+
 	@FXML
 	ListView<String> leftUserList;
 	@FXML
@@ -23,16 +27,16 @@ public class ServerUIController implements Initializable {
 	ListView<String> rightLogList;
 
 	@Override
-	public void initialize(URL arg0, ResourceBundle arg1) {		
+	public void initialize(URL arg0, ResourceBundle arg1) {
 		// Starts a new server and a new updater.
 		server = new Server();
 		management = server.getManagement();
-		
+
 		Thread s = new Thread(server);
 		s.start();
 		(new Thread(new ServerUIUpdater(this))).start();
 	}
-	
+
 	void loadLog() {
 		ObservableList<String> logMessages = FXCollections.observableArrayList();
 		logMessages.addAll(server.getLogs());
@@ -40,7 +44,7 @@ public class ServerUIController implements Initializable {
 		rightLogList.setItems(logMessages);
 		rightLogList.refresh();
 	}
-	
+
 	void loadUser() {
 		ObservableList<String> userList = FXCollections.observableArrayList();
 		userList.addAll(management.getUsersOnline());
@@ -48,7 +52,7 @@ public class ServerUIController implements Initializable {
 		leftUserList.setItems(userList);
 		leftUserList.refresh();
 	}
-	
+
 	void loadGames() {
 		ObservableList<String> gameList = FXCollections.observableArrayList();
 		gameList.addAll(management.getCurrentGames());

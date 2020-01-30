@@ -17,6 +17,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
+/**
+ * Controller of a game of connect four.
+ */
 public class ClientConnectfourController extends ClientGameController {
 	@FXML
 	VBox mainVBox;

@@ -20,6 +20,11 @@ import javafx.stage.WindowEvent;
 import management.ClientManagement;
 import server.Client;
 
+/**
+ * Controller of the UI for login. The user can input his credentials and
+ * attempt to sign-in for the games.
+ *
+ */
 public class LoginUIController implements Initializable {
 	private ClientManagement management = new ClientManagement();
 	private Client client = new Client(management);

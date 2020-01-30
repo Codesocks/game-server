@@ -219,7 +219,7 @@ public class ServerManagement extends Management {
 					addReceivedInvitation(fromUser, toUser, Integer.valueOf(content.toCharArray()[4]));
 					log("Received a game invitation from @" + fromUser.getUsername() + " for @" + toUser.getUsername()
 							+ " to play "
-							+ (Integer.valueOf(content.toCharArray()[4]) == GameInvitation.GAME_CHOMP ? "Chomp"
+							+ (Integer.valueOf(content.toCharArray()[4]) == Game.GAME_CHOMP ? "Chomp"
 									: "Connect Four"));
 
 					break;
@@ -248,7 +248,7 @@ public class ServerManagement extends Management {
 
 					// Deal with accepted invitation.
 					receivedInvitations.remove(invite);
-					if (Integer.valueOf(content.toCharArray()[4]) == GameInvitation.GAME_CHOMP) {
+					if (Integer.valueOf(content.toCharArray()[4]) == Game.GAME_CHOMP) {
 						games.add(new ChGame(fromUser, toUser, Integer.valueOf(content.split("-")[1]),
 								Integer.valueOf(content.split("-")[2]), true));
 					} else {
@@ -257,7 +257,7 @@ public class ServerManagement extends Management {
 					}
 					log("@" + fromUser.getUsername() + " accepted the challenge by @" + toUser.getUsername()
 							+ " to play a game of "
-							+ (Integer.valueOf(content.toCharArray()[4]) == GameInvitation.GAME_CHOMP ? "Chomp"
+							+ (Integer.valueOf(content.toCharArray()[4]) == Game.GAME_CHOMP ? "Chomp"
 									: "Connect Four"));
 
 					break;

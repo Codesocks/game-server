@@ -3,11 +3,16 @@ package management;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-abstract class Management {    
+abstract class Management {
 	HashMap<String, User> users = new HashMap<String, User>();
 	ArrayList<Message> receivedMessages = new ArrayList<Message>();
 	ArrayList<GameInvitation> receivedInvitations = new ArrayList<GameInvitation>();
 
+	/**
+	 * Returns all currently active received invitations for games.
+	 * 
+	 * @return List of invitations for games.
+	 */
 	public ArrayList<GameInvitation> getReceivedInvitations() {
 		return receivedInvitations;
 	}

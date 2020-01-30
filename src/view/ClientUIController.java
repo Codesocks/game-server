@@ -32,15 +32,19 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+/**
+ * Controller for the main UI of the client. A player can choose games to play
+ * and send messages to other online players.
+ */
 public class ClientUIController implements Initializable {
-    private ClientManagement management;
-    private Client client;
-    private ClientGameController gameController;
+	private ClientManagement management;
+	private Client client;
+	private ClientGameController gameController;
 
-    @FXML
-    private Label leftLogoTxt; // Text of logo.
-    @FXML
-    GridPane chatArea;
+	@FXML
+	private Label leftLogoTxt; // Text of logo.
+	@FXML
+	GridPane chatArea;
 	@FXML
 	ScrollPane chatView;
 	@FXML
@@ -66,7 +70,6 @@ public class ClientUIController implements Initializable {
 		menueStackPane.setPickOnBounds(false);
 		menueUserList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
 			public void changed(ObservableValue<? extends String> ov, final String oldvalue, final String newvalue) {
-				System.out.println("User selected: " + menueUserList.getSelectionModel().getSelectedItem());
 				openSelectedChat();
 			}
 		});
@@ -135,6 +138,9 @@ public class ClientUIController implements Initializable {
 		openGameInvitationDialogue(Game.GAME_CONNECTFOUR);
 	}
 
+	/**
+	 * Opens the current game of the management in a new window.
+	 */
 	public void openMainGame() {
 		// Load second scene
 		FXMLLoader loader;
@@ -145,55 +151,67 @@ public class ClientUIController implements Initializable {
 			loader = new FXMLLoader(getClass().getResource("ClientConnectfour.fxml"));
 		}
 
+		// Get controller for the stage of the game. Pass necessary data to the
+		// controller of the new stage.
 		try {
-			// Get controller for the stage of the game. Pass necessary data to the
-			// controller of the new stage.
 			root = loader.load();
-			gameController = loader.getController();
-			gameController.setClient(client);
-			gameController.setClientManagement(management);
-
-			// Compute size.
-			int width, height;
-			if (management.getGame().getHeight() < 11 && management.getGame().getWidth() < 15) {
-				height = 100 * management.getGame().getHeight();
-				width = 100 * management.getGame().getWidth();
-			} else {
-				if (management.getGame().getWidth() >= management.getGame().getHeight()) {
-                    width = 1000;
-                    height = (int) ((1000.0 / management.getGame().getWidth()) * management.getGame().getHeight());
-                } else {
-                    height = 1000;
-                    width = (int) ((1000.0 / management.getGame().getHeight()) * management.getGame().getWidth());
-                }
-            }
-            gameController.setDimensions(width, height);
-
-            // Create new stage for game.
-            Stage stage = new Stage();
-            stage.setResizable(false);
-            stage.sizeToScene();
-            stage.setScene(new Scene(root, width, height));
-            stage.setTitle((management.getGame() instanceof ChGame ? "CHOMP" : "CONNECT FOUR")
-                    + " - Games by Codesocks / j-bl");
-            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-                @Override
-                public void handle(WindowEvent event) {
-                    gameController.closeGame();
-                    gameController.closeWindow();
-                }
-            });
-			stage.show();
-			gameController.initializeView();
-
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return;
 		}
+		gameController = loader.getController();
+		gameController.setClient(client);
+		gameController.setClientManagement(management);
+
+		// Compute size.
+		int width, height;
+		if (management.getGame().getHeight() < 11 && management.getGame().getWidth() < 15) {
+			height = 100 * management.getGame().getHeight();
+			width = 100 * management.getGame().getWidth();
+		} else {
+			if (management.getGame().getWidth() >= management.getGame().getHeight()) {
+				width = 1000;
+				height = (int) ((1000.0 / management.getGame().getWidth()) * management.getGame().getHeight());
+			} else {
+				height = 1000;
+				width = (int) ((1000.0 / management.getGame().getHeight()) * management.getGame().getWidth());
+			}
+		}
+		gameController.setDimensions(width, height);
+
+		// Create new stage for game.
+		Stage stage = new Stage();
+		stage.setResizable(false);
+		stage.sizeToScene();
+		stage.setScene(new Scene(root, width, height));
+		stage.setTitle(
+				(management.getGame() instanceof ChGame ? "CHOMP" : "CONNECT FOUR") + " - Games by Codesocks / j-bl");
+		stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+			@Override
+			public void handle(WindowEvent event) {
+				gameController.closeGame();
+				gameController.closeWindow();
+			}
+		});
+		stage.show();
+		gameController.initializeView();
 	}
 
+	/**
+	 * Redraws the current view of the game. Therefore the current state of the game
+	 * is displayed.
+	 */
 	public void updateGameView() {
 		gameController.updateView();
+	}
+
+	/**
+	 * Called to inform the current view of the game that the opponent surrendered.
+	 */
+	public void opponentSurrendered() {
+		if (gameController != null) {
+			gameController.opponentSurrendered();
+		}
 	}
 
 	void setClientManagement(ClientManagement management) {
@@ -202,7 +220,6 @@ public class ClientUIController implements Initializable {
 		client.execute("update");
 
 		// Create Updater.
-		System.out.println(management.getCredentials().toString());
 		Thread updater = new Thread(new ClientUIUpdater(this, management));
 		updater.start();
 	}
@@ -214,7 +231,6 @@ public class ClientUIController implements Initializable {
 	void openGameAcceptationDialogue() {
 		GameInvitation invitation = management.getReceivedInvitations()
 				.get(management.getReceivedInvitations().size() - 1);
-		System.out.println("Long. " + invitation.getGame());
 
 		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 		alert.setTitle("CHALLENGE!");
@@ -238,10 +254,8 @@ public class ClientUIController implements Initializable {
 						invitation.getFromUsername(), true);
 				openMainGame();
 			}
-		} else if (result.get() == buttonTypeDecline) {
-			System.out.println("DECLINE");
 		} else {
-			// User pressed cancel or closed dialogue...
+			// User pressed decline or closed dialogue...
 		}
 		management.closeInvitation(invitation);
 	}
@@ -313,16 +327,18 @@ public class ClientUIController implements Initializable {
 			// Check inputs for validity.
 			int width = 7;
 			int height = 6;
+
 			try {
 				width = Integer.valueOf(widthBoard.getText());
 				height = Integer.valueOf(heightBoard.getText());
-
-				if (width < 1 || width >= 999 || height < 1 || height > 999) {
-					System.out.println("Width and height of the board may not exceed 999 or 1.");
-					return;
-				}
 			} catch (Exception e) {
-				System.out.println("Invalid parameters for width or height of the board!");
+				showWarning("Invalid arguments!", "Width and height of the board must be integers!");
+				return;
+			}
+
+			if (width < 1 || width >= 999 || height < 1 || height > 999) {
+				showWarning("Invalid arguments!",
+						"Width and height of the game must be at least 1 and cannot exceed 999!");
 				return;
 			}
 
@@ -339,6 +355,14 @@ public class ClientUIController implements Initializable {
 		}
 	}
 
+	private void showWarning(String title, String headerText) {
+		Alert errorAlert = new Alert(Alert.AlertType.WARNING);
+		errorAlert.setTitle(title);
+		errorAlert.setHeaderText(headerText);
+		errorAlert.setHeight(800);
+		errorAlert.show();
+	}
+
 	private void invitePlayer(long game, int width, int height) {
 		try {
 			if (menueUserList.getSelectionModel().getSelectedItem() != null) {
@@ -351,12 +375,6 @@ public class ClientUIController implements Initializable {
 			}
 		} catch (Exception e) {
 			System.out.println("Failed to send message!");
-		}
-	}
-
-	public void opponentSurrendered() {
-		if (gameController != null) {
-			gameController.opponentSurrendered();
 		}
 	}
 }

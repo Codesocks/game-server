@@ -17,6 +17,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
+/**
+ * Controller of a game of chomp.
+ * @author jbadmin
+ *
+ */
 public class ClientChompController extends ClientGameController {
 	@FXML
 	VBox mainVBox;

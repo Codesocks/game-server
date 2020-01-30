@@ -74,11 +74,11 @@ abstract class Board {
 		return s.toString();
 	}
 
-	public User[][] getBoard() {
+	User[][] getBoard() {
 		return board;
 	}
 
-	public Game getGame() {
+	Game getGame() {
 		return game;
 	}
 
@@ -86,7 +86,7 @@ abstract class Board {
 		return isWon;
 	}
 
-	public void setWon(boolean won) {
+	void setWon(boolean won) {
 		isWon = won;
 	}
 

@@ -9,13 +9,22 @@ import java.net.Socket;
 class ServerThread extends Connection implements Runnable {
 	Server server;
 
+	/**
+	 * Creates a new ServerThread that responds to the given connection.
+	 * 
+	 * @param client Client of this ServerThread.
+	 * @param server Server that the ServerThread reports to.
+	 */
 	ServerThread(Socket client, Server server) {
 		socket = client;
 		this.server = server;
 	}
 
+	/**
+	 * Handles the given connection.
+	 */
 	public void run() {
-		// Bearbeitung einer aufgebauten Verbindung
+		// Handles a given connection.
 		try {
 			String msg = read();
 
@@ -47,14 +56,12 @@ class ServerThread extends Connection implements Runnable {
 
 	@SuppressWarnings("unchecked")
 	/**
-	 * Error-Codes:
-	 * 	-1: Something unexpected went wrong
-	 * 	0: Success
-	 * 	1: Credentials failed
-	 * 	2: There is no such invitation to accept or one of the players is already in a game.
+	 * Error-Codes: -1: Something unexpected went wrong 0: Success 1: Credentials
+	 * failed 2: There is no such invitation to accept or one of the players is
+	 * already in a game.
 	 *
-	 * @param jo    JSONObject
-	 * @return Error Code
+	 * @param jo Received JSONObject that shall be analyzed.
+	 * @return Error code of parsing and handling the JSONObject.
 	 */
 	private String processData(JSONObject jo) {
 		JSONObject output = new JSONObject();
@@ -104,7 +111,8 @@ class ServerThread extends Connection implements Runnable {
 
 			// Compute reply and send it.
 			output.put("messages", server.getManagement().getNewMessages(credentials, clientUpdateTime));
-			// output.put("invitations", server.getManagement().getNewInvitations(credentials, clientUpdateTime));
+			// output.put("invitations",
+			// server.getManagement().getNewInvitations(credentials, clientUpdateTime));
 			output.put("playerUpdateAvailable", false);
 			if (clientUpdateTime < server.getManagement().getLatestUpdateTime()) {
 				output.put("onlinePlayers", server.getManagement().getOnlinePlayers());

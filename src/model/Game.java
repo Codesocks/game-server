@@ -49,7 +49,7 @@ public abstract class Game {
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
 
@@ -118,10 +118,20 @@ public abstract class Game {
 		return currentPlayer;
 	}
 
+	/**
+	 * Returns the width of this game measured in fields.
+	 * 
+	 * @return Width.
+	 */
 	public int getWidth() {
 		return board.getWidth();
 	}
 
+	/**
+	 * Returns the height of this game measured in fields.
+	 * 
+	 * @return Height.
+	 */
 	public int getHeight() {
 		return board.getHeight();
 	}

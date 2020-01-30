@@ -134,15 +134,14 @@ public class ClientManagement extends Management {
 							Integer.parseInt(content.split("-")[2]),
 							Character.getNumericValue(content.toCharArray()[4]));
 					System.out.println("Received a game invitation from @" + fromUser.getUsername() + " for "
-							+ (Character.getNumericValue(content.toCharArray()[4]) == GameInvitation.GAME_CHOMP
-									? "Chomp"
+							+ (Character.getNumericValue(content.toCharArray()[4]) == Game.GAME_CHOMP ? "Chomp"
 									: "Connect Four")
 							+ " on a " + content.split("-")[1] + "x" + content.split("-")[2] + " board");
 
 				} else if (content.substring(2, 4).equals("01")) { // game invitation accept.
 					System.out.println("@" + fromUser.getUsername() + " accepted your game invitation for a game of "
-							+ ((int) content.toCharArray()[4] == GameInvitation.GAME_CHOMP ? "Chomp" : "Connect Four")
-							+ " on a " + content.split("-")[1] + "x" + content.split("-")[2] + " board");
+							+ ((int) content.toCharArray()[4] == Game.GAME_CHOMP ? "Chomp" : "Connect Four") + " on a "
+							+ content.split("-")[1] + "x" + content.split("-")[2] + " board");
 					setGame(Character.getNumericValue(content.toCharArray()[4]),
 							Integer.parseInt(content.split("-")[1]), Integer.parseInt(content.split("-")[2]),
 							fromUser.getUsername(), false);
@@ -284,10 +283,20 @@ public class ClientManagement extends Management {
 		return messages;
 	}
 
+	/**
+	 * Marks a given invitation for a game as "dealt with".
+	 * 
+	 * @param invitation Invitation to close.
+	 */
 	public void closeInvitation(GameInvitation invitation) {
 		receivedInvitations.remove(invitation);
 	}
 
+	/**
+	 * Sets the UIController of this management to the given controller.
+	 * 
+	 * @param uiController UIController.
+	 */
 	public void setUiController(ClientUIController uiController) {
 		this.uiController = uiController;
 	}
@@ -326,10 +335,19 @@ public class ClientManagement extends Management {
 		}
 	}
 
+	/**
+	 * Returns the currently active game.
+	 * 
+	 * @return Game.
+	 */
 	public Game getGame() {
 		return game;
 	}
 
+	/**
+	 * Is to be called when the game is finished. Then the game of this management
+	 * is closed as well.
+	 */
 	public void closeGame() {
 		game = null;
 	}
