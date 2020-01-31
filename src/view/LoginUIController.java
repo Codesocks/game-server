@@ -101,6 +101,9 @@ public class LoginUIController implements Initializable {
 			Stage stage = (Stage) loginText.getScene().getWindow();
 			stage.setScene(new Scene(root, 800, 450));
 			stage.setTitle("Games by Codesocks / j-bl");
+			stage.setResizable(false);
+			stage.sizeToScene();
+
 			stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 				@Override
 				public void handle(WindowEvent event) {

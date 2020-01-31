@@ -25,6 +25,8 @@ public class MainClient extends Application {
 
 		primaryStage.setTitle("GAMES - Login");
 		primaryStage.setScene(scene);
+		primaryStage.setResizable(false);
+		primaryStage.sizeToScene();
 		primaryStage.show();
 
 		// Exit program when window is closed.

@@ -25,6 +25,8 @@ public class MainServer extends Application {
 		primaryStage.setTitle("Game Server by Codesocks / j-bl");
 		primaryStage.setScene(scene);
 		primaryStage.show();
+		primaryStage.setResizable(false);
+		primaryStage.sizeToScene();
 
 		// Exit program when window is closed.
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
